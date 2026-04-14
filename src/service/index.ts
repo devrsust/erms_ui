@@ -109,7 +109,7 @@ export interface Admin {
     firstname: string
     lastname: string
     email: string
-    role: { name: string }
+    role: { id: number, name: string }
     isActive: boolean
 }
 
@@ -127,6 +127,26 @@ export const createUser = async (payload: {
 export const getAdmins = async (params: string): Promise<PaginatedResponse<Admin>> => {
     const { data } = await http.get(`/user?${params}`);
     return data;
+}
+
+export const updateUser = async (id: number, payload: {
+    firstname: string
+    lastname: string
+    email: string
+    roleId: number
+    isActive: boolean
+}) => {
+    const response = await http.put(`/user/${id}`, payload)
+    return response.data
+}
+
+export const deleteUser = async (id: number) => {
+    try {
+        const response = await http.delete(`/user/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('An Error Occoured: ', error)
+    }
 }
 
 
@@ -152,6 +172,11 @@ export const getUsers = async (params: string): Promise<PaginatedResponse<User>>
     return data;
 }
 
+export const getUserProfile = async (id: number) => {
+    const { data } = await http.get(`/alumni/${id}`);
+    return data;
+}
+
 
 /*
 ==========================
@@ -166,6 +191,7 @@ export interface Document {
     amount: number
     totalAmount: number
     status: 'pending' | 'processing' | 'success' | 'failed'
+    createdAt: string
 }
 
 export const createDocument = async (payload: {
@@ -175,16 +201,31 @@ export const createDocument = async (payload: {
     createdById: number;
     price: number;
     processingFee: number;
-    totalAmount: number;
+    approvalChainId: number;
 }) => {
-    const { data } = await http.post("/document", payload);
+    const { data } = await http.post("/documents", payload);
     return data;
 }
 
 export const getDocuments = async (params?: string): Promise<PaginatedResponse<Document>> => {
-    const { data } = await http.get(`/document?${params}`);
+    const { data } = await http.get(`/documents?${params}`);
     return data;
 }
+export const getDocument = async (id: number) => {
+    const { data } = await http.get(`/documents/${id}`);
+    return data;
+}
+
+export const deleteDocument = async (id: number) => {
+    try {
+        const response = await http.delete(`/documents/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('An Error Occoured: ', error)
+    }
+}
+
+
 
 /*
 ==========================
@@ -214,6 +255,22 @@ export const getFaculties = async (params: string): Promise<PaginatedResponse<Fa
     const { data } = await http.get(`/faculty?${params}`);
     return data;
 }
+export const updateFaculty = async (id: number, payload: {
+    name: string;
+    createdById: number;
+}) => {
+    const { data } = await http.patch(`/faculty/${id}`, payload);
+    return data;
+}
+
+export const deleteFaculty = async (id: number) => {
+    try {
+        const response = await http.delete(`/faculty/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('An Error Occoured: ', error)
+    }
+}
 
 /*
 ==========================
@@ -224,14 +281,40 @@ Department
 export interface Department {
     id: string
     name: string
-    faculty: { name: string }
+    faculty: { id: number, name: string }
     createdBy: { email: string }
     createdAt: string
+}
+
+export const createDepartment = async (payload: {
+    name: string;
+    createdById: number;
+}) => {
+    const { data } = await http.post("/faculty", payload);
+    return data;
 }
 
 export const getDepartments = async (params: string): Promise<PaginatedResponse<Department>> => {
     const { data } = await http.get(`/department?${params}`);
     return data;
+}
+
+export const updateDepartment = async (id: number, payload: {
+    name: string;
+    createdById: number;
+}) => {
+    const { data } = await http.patch(`/department/${id}`, payload);
+    return data;
+}
+
+
+export const deleteDepartment = async (id: number) => {
+    try {
+        const response = await http.delete(`/department/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('An Error Occoured: ', error)
+    }
 }
 
 /*
@@ -247,6 +330,8 @@ export interface Request {
     type: string
     user: {
         id: number
+        firstname: string
+        lastname: string
         matric_number: string
         email: string
     }
@@ -280,10 +365,31 @@ export const getRequests = async (params: string): Promise<PaginatedResponse<Req
     return data;
 }
 
+
 export const getRequestsByUser = async (userId: number): Promise<PaginatedResponse<Request>> => {
     const { data } = await http.get(`/request/user/${userId}`);
     return data;
 }
+
+export const getRequestById = async (id: number) => {
+    const { data } = await http.get(`/request/${id}`);
+    return data;
+}
+
+export const getRequestByAdmin = async (id: number) => {
+    const { data } = await http.get(`/request/admin/${id}`);
+    return data;
+}
+
+export const getPendingRequests = async (userId: number): Promise<PaginatedResponse<Request>> => {
+    const { data } = await http.get(`/request/pending/${userId}`);
+    return data;
+}
+export const submitApproval = async (userId: number): Promise<PaginatedResponse<Request>> => {
+    const { data } = await http.get(`/request/pending/${userId}`);
+    return data;
+}
+
 
 /*
 ==========================
@@ -292,47 +398,85 @@ Combo
 */
 
 export interface Combo {
-    id: number
-    firstname: string
-    middlename: string
-    lastname: string
-    email: string
-    phone_number: string
-    matric_number: string
-    isPrinted: boolean
-    createdAt: string
+    id: number;
+    name: string;
+    email: string;
+    matric_number: string;
+    certNo: string;
+    type: string;
+    year: string;
+    remark: string;
+    session: string;
+    print_date: string;
+    createdBy: {
+        id: number;
+        email: string;
+    };
+    createdAt: string;
+    updatedAt: string;
 }
 
-export const createCombo = async (payload: {
-    firstname: string
-    middlename?: string
-    lastname: string
-    email: string
-    phone_number?: string
-    matric_number: string
-    createdById: number
-    isPrinted: boolean
-}) => {
-    const { data } = await http.post("/combo", payload);
-    return data;
+export interface CreateComboPayload {
+    name: string;
+    email: string;
+    matric_number: string;
+    certNo: string;
+    type: string;
+    year: string;
+    remark: string;
+    session: string;
+    print_date: string;
 }
 
-export const getCombos = async (params: string): Promise<PaginatedResponse<Combo>> => {
-    const { data } = await http.get(`/combo?${params}`);
-    return data;
-}
+export type UpdateComboPayload = Partial<CreateComboPayload>;
 
-export const checkPrintStatus = async (params: string) => {
-    const { data } = await http.get(`/combo/user?matric=${params}`);
-    return data;
-}
 
-export const updatePrintStatus = async (payload: {
-    matric: string,
-    isPrinted: boolean
-}) => {
-    const { data } = await http.patch('/combo/user/print', payload);
+export const createCombo = async (payload: CreateComboPayload) => {
+    const { data } = await http.post('/combos', payload);
     return data;
+};
+
+export const getCombos = async (params: Record<string, any> | string): Promise<PaginatedResponse<Combo>> => {
+    const queryString = typeof params === 'string' ? params : new URLSearchParams(params).toString();
+    const { data } = await http.get(`/combos?${queryString}`);
+    return data;
+};
+
+export const getCombo = async (id: number) => {
+    const { data } = await http.get(`/combos/${id}`);
+    return data;
+};
+
+export const updateCombo = async (id: number, payload: UpdateComboPayload) => {
+    const { data } = await http.patch(`/combos/${id}`, payload);
+    return data;
+};
+
+export const deleteCombo = async (id: number) => {
+    const { data } = await http.delete(`/combos/${id}`);
+    return data;
+};
+
+export const deleteCombosByYear = async (year: string) => {
+    const { data } = await http.delete(`/combos/year/${year}`);
+    return data;
+};
+
+export const uploadComboFile = async (id: number, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('adminId', id.toString());
+    const { data } = await http.post('/combos/bulk-upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data;
+};
+
+export const checkPrintStatus = async (matric: string) => {
+  const { data } = await http.get(`/combos/check`, {
+    params: { matric }
+  });
+  return data;
 };
 
 
@@ -456,4 +600,43 @@ export const updateChain = async (id: number, payload: {
 }) => {
     const response = await http.put(`/chains/${id}`, payload)
     return response.data
+}
+
+export const deleteChain = async (id: number) => {
+    try {
+        const response = await http.delete(`/approval-chains/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('An Error Occoured: ', error)
+    }
+}
+
+/*
+==========================
+Approval
+==========================
+*/
+
+export interface Approval {
+    id: number
+    adminId: number
+    requestId: number
+    stepId: number
+    action: string
+    comment: String
+}
+
+export const getApprovals = async (params: string): Promise<PaginatedResponse<Approval>> => {
+    const { data } = await http.get(`/approvals?${params}`);
+    return data;
+}
+export const createApproval = async (payload: {
+    adminId: number
+    requestId: number
+    stepId: number
+    action: string
+    comment: String
+}) => {
+    const { data } = await http.post('/approvals', payload)
+    return data
 }

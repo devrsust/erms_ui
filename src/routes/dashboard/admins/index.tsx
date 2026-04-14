@@ -12,35 +12,49 @@ import {
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal, UserCog, Mail, Shield, Calendar, CheckCircle, XCircle, Plus } from 'lucide-react'
-import { useQueries } from '@tanstack/react-query'
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Controller, useForm } from 'react-hook-form'
+import { useState } from 'react'
 
-import { createUser, getAdmins, getRoles, type Admin } from '@/service'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { createUser, updateUser, deleteUser, getAdmins, getRoles, type Admin } from '@/service'
 import { SiteHeader } from '@/components/site-header'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useState } from 'react'
+import IsPending from '@/components/Illustrations/isPending'
+import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard/admins/')({
   component: RouteComponent,
 })
 
 type CreateUserForm = {
-  firstname: string,
-  lastname: string,
-  roleId: number,
-  email: string,
-  password: string,
+  firstname: string
+  lastname: string
+  roleId: number
+  email: string
+  password: string
+  isActive: boolean
 }
 
 function RouteComponent() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [adminToDelete, setAdminToDelete] = useState<string | null>(null)
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null)
+
+  const queryClient = useQueryClient()
   const searchParams = new URLSearchParams({
     page: '1',
     limit: '10',
@@ -53,7 +67,7 @@ function RouteComponent() {
       roleId: 0,
       email: '',
       password: '',
-    }
+    },
   })
 
   const results = useQueries({
@@ -68,59 +82,108 @@ function RouteComponent() {
         queryFn: () => getRoles(searchParams),
         staleTime: 30_000,
       },
-    ]
-  });
+    ],
+  })
 
-  const [adminQuery, roleQuery] = results;
+  const [adminQuery, roleQuery] = results
+  const admins = adminQuery.data?.data ?? []
+  const roles = roleQuery.data?.data ?? []
 
-  const admins = adminQuery.data?.data ?? [];
-  const roles = roleQuery.data?.data ?? [];
+  const isPending = adminQuery.isPending || roleQuery.isPending
+  const isError = adminQuery.isError || roleQuery.isError
+  const error = adminQuery.error || roleQuery.error
 
-  const isPending = adminQuery.isPending || roleQuery.isPending;
-  const isError = adminQuery.isError || roleQuery.isError;
-  const error = adminQuery.error || roleQuery.error;
+  // Mutations
+  const createMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      toast.success('User created.', {
+        style: { background: '#10b981', color: 'white', border: 'none' },
+      })
+      queryClient.invalidateQueries({ queryKey: ['admins', searchParams] })
+      handleCloseForm()
+    },
+    onError: () => toast.error('Failed to create user.'),
+  })
 
-  console.log(roles)
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CreateUserForm }) => updateUser(Number(id), data),
+    onSuccess: () => {
+      toast.success('User updated.', {
+        style: { background: '#10b981', color: 'white', border: 'none' },
+      })
+      queryClient.invalidateQueries({ queryKey: ['admins', searchParams] })
+      handleCloseForm()
+    },
+    onError: () => toast.error('Failed to update user.'),
+  })
 
+  const deleteMutation = useMutation<unknown, Error, number>({
+    mutationFn: (id: number) => deleteUser(id),
+    onSuccess: () => {
+      toast.success('User deleted.')
+      queryClient.invalidateQueries({ queryKey: ['admins', searchParams] })
+    },
+    onError: () => toast.error('Failed to delete user.'),
+  })
+
+  const handleOpenCreate = () => {
+    setSelectedAdmin(null)
+    createUserForm.reset({
+      firstname: '',
+      lastname: '',
+      roleId: 0,
+      email: '',
+      password: '',
+    })
+    setOpen(true)
+  }
+
+  const handleEdit = (admin: Admin) => {
+    setSelectedAdmin(admin)
+    createUserForm.reset({
+      firstname: admin.firstname,
+      lastname: admin.lastname,
+      roleId: admin.role.id,
+      email: admin.email,
+    })
+    setOpen(true)
+  }
+
+  const handleCloseForm = () => {
+    setOpen(false)
+    setSelectedAdmin(null)
+    createUserForm.reset()
+  }
+
+  const onSubmit = (values: CreateUserForm) => {
+    if (selectedAdmin) {
+      updateMutation.mutate({ id: selectedAdmin.id, data: values })
+    } else {
+      createMutation.mutate(values)
+    }
+  }
+
+  const handleDelete = (id: string) => {
+    setAdminToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (adminToDelete) {
+      deleteMutation.mutate(Number(adminToDelete));
+    }
+    setDeleteDialogOpen(false)
+    setAdminToDelete(null)
+  }
 
   if (isPending) {
-    return (
-      <div className="space-y-6 p-6">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96" />
-        </div>
-        <Separator />
-        <div className="grid gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <IsPending page="Administrators" />
   }
 
   if (isError) {
-    toast.error(
-      (error as any)?.response?.data?.message ??
-      'Failed to load admins'
-    )
+    toast.error((error as any)?.response?.data?.message ?? 'Failed to load admins')
     return null
-  }
-
-  const onCreateUser = async (values: CreateUserForm) => {
-    console.log(values)
-
-    const res = await createUser(values);
-    console.log(res)
-    toast.success("User Created.")
-    createUserForm.reset()
-    setOpen(false);
   }
 
   const columns: ColumnDef<Admin>[] = [
@@ -132,9 +195,7 @@ function RouteComponent() {
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
-          onCheckedChange={(value) =>
-            table.toggleAllPageRowsSelected(!!value)
-          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
           className="border-gray-300"
         />
@@ -155,44 +216,28 @@ function RouteComponent() {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() =>
-            column.toggleSorting(
-              column.getIsSorted() === 'asc'
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="font-semibold hover:bg-gray-50"
         >
           First Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {row.getValue('firstname')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue('firstname')}</div>,
     },
     {
       accessorKey: 'lastname',
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() =>
-            column.toggleSorting(
-              column.getIsSorted() === 'asc'
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="font-semibold hover:bg-gray-50"
         >
           Last Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {row.getValue('lastname')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue('lastname')}</div>,
     },
     {
       accessorKey: 'email',
@@ -202,11 +247,7 @@ function RouteComponent() {
           <span>Email</span>
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="text-gray-700">
-          {row.getValue('email')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="text-gray-700">{row.getValue('email')}</div>,
     },
     {
       id: 'role',
@@ -218,7 +259,7 @@ function RouteComponent() {
       ),
       accessorFn: (row) => row.role?.name ?? '—',
       cell: ({ getValue }) => {
-        const role = getValue<string>();
+        const role = getValue<string>()
         return (
           <Badge variant="outline" className="capitalize">
             {role}
@@ -231,7 +272,6 @@ function RouteComponent() {
       header: 'Status',
       cell: ({ row }) => {
         const isActive = row.getValue('isActive') as boolean
-
         return (
           <div className="flex items-center gap-2">
             {isActive ? (
@@ -239,10 +279,7 @@ function RouteComponent() {
             ) : (
               <XCircle className="h-4 w-4 text-red-500" />
             )}
-            <Badge
-              variant={isActive ? "default" : "destructive"}
-              className="gap-1.5"
-            >
+            <Badge variant={isActive ? 'default' : 'destructive'} className="gap-1.5">
               {isActive ? 'Active' : 'Inactive'}
             </Badge>
           </div>
@@ -258,26 +295,23 @@ function RouteComponent() {
         </div>
       ),
       cell: ({ row }) => {
-        const dateString = row.getValue('createdAt') as string;
-        const date = new Date(dateString);
+        const dateString = row.getValue('createdAt') as string
+        if (!dateString) return <div className="text-gray-400">—</div>
+        const date = new Date(dateString)
+        if (isNaN(date.getTime())) return <div className="text-gray-400">Invalid date</div>
         const formatted = new Intl.DateTimeFormat('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        }).format(date);
-
+        }).format(date)
         return (
           <div className="space-y-0.5">
-            <div className="text-sm font-medium">
-              {formatted.split(',')[0]}
-            </div>
-            <div className="text-xs text-gray-500">
-              {formatted.split(',')[1].trim()}
-            </div>
+            <div className="text-sm font-medium">{formatted.split(',')[0]}</div>
+            <div className="text-xs text-gray-500">{formatted.split(',')[1].trim()}</div>
           </div>
-        );
+        )
       },
     },
     {
@@ -285,7 +319,6 @@ function RouteComponent() {
       enableHiding: false,
       cell: ({ row }) => {
         const admin = row.original
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -304,22 +337,20 @@ function RouteComponent() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(admin.id)
-                }
+                onClick={() => navigator.clipboard.writeText(admin.id)}
                 className="cursor-pointer gap-2"
               >
                 Copy ID
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                View Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
+              <DropdownMenuItem className="cursor-pointer gap-2" onSelect={() => handleEdit(admin)}>
                 Edit Admin
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer gap-2 focus:text-red-600">
-                Deactivate
+              <DropdownMenuItem
+                className="text-red-600 cursor-pointer gap-2 focus:text-red-600"
+                onSelect={() => handleDelete(admin.id)}
+              >
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -329,76 +360,68 @@ function RouteComponent() {
   ]
 
   const totalAdmins = admins?.length || 0
-  const activeAdmins = admins?.filter(admin => admin.isActive).length || 0
-  const adminRoles = [...new Set(admins?.map(admin => admin.role?.name).filter(Boolean))]
+  const activeAdmins = admins?.filter((admin) => admin.isActive).length || 0
+  const adminRoles = [...new Set(admins?.map((admin) => admin.role?.name).filter(Boolean))]
 
   return (
     <>
-      <SiteHeader title='Administrators' />
+      <SiteHeader title="Administrators" />
 
-      <main className="min-h-screen p-4 lg:p-6">
+      <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900">Administrators</h1>
-                <p className="text-gray-600">
-                  Manage system administrators and their permissions
-                </p>
+                <p className="text-gray-600">Manage system administrators and their permissions</p>
               </div>
 
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2" onClick={handleOpenCreate}>
                     <Plus className="h-4 w-4" />
                     Add Admin
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="min-w-xl">
-                  <form onSubmit={createUserForm.handleSubmit(onCreateUser)}>
+                  <form onSubmit={createUserForm.handleSubmit(onSubmit)}>
                     <DialogHeader>
-                      <DialogTitle>Edit profile</DialogTitle>
+                      <DialogTitle>{selectedAdmin ? 'Edit Admin' : 'Create Admin'}</DialogTitle>
                       <DialogDescription>
-                        Make changes to your profile here. Click save when you&apos;re
-                        done.
+                        {selectedAdmin
+                          ? 'Update admin details. Leave password blank to keep unchanged.'
+                          : 'Create a new administrator account.'}
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="grid  gap-3">
+                      <div className="grid gap-3">
                         <Label htmlFor="firstname">Firstname</Label>
                         <Input
                           id="firstname"
-                          placeholder='Enter Firstname'
-                          {...createUserForm.register('firstname', {
-                            required: 'Firstname is required',
-                          })}
+                          placeholder="Enter Firstname"
+                          {...createUserForm.register('firstname', { required: 'Firstname is required' })}
                         />
                       </div>
                       <div className="grid gap-3">
                         <Label htmlFor="lastname">Lastname</Label>
                         <Input
                           id="lastname"
-                          placeholder='Enter Lastname'
-                          {...createUserForm.register('lastname', {
-                            required: 'Lastname is required',
-                          })}
+                          placeholder="Enter Lastname"
+                          {...createUserForm.register('lastname', { required: 'Lastname is required' })}
                         />
                       </div>
                       <div className="grid col-span-2 gap-3">
                         <Label htmlFor="email">Email</Label>
                         <Input
                           id="email"
-                          placeholder='Enter Email'
-                          {...createUserForm.register('email', {
-                            required: 'Email is required',
-                          })}
+                          placeholder="Enter Email"
+                          {...createUserForm.register('email', { required: 'Email is required' })}
                         />
                       </div>
 
-                      <div className='col-span-2 flex items-center gap-3'>
+                      <div className="col-span-2 flex items-center gap-3">
                         <div className="grid gap-3 w-[40%]">
                           <Label>Role</Label>
-
                           <Controller
                             name="roleId"
                             control={createUserForm.control}
@@ -411,11 +434,9 @@ function RouteComponent() {
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder="Select a role" />
                                 </SelectTrigger>
-
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Role</SelectLabel>
-
                                     {roles.map((item) => (
                                       <SelectItem key={item.id} value={String(item.id)}>
                                         {item.name}
@@ -426,7 +447,6 @@ function RouteComponent() {
                               </Select>
                             )}
                           />
-
                           {createUserForm.formState.errors.roleId && (
                             <p className="text-sm text-red-600">
                               {createUserForm.formState.errors.roleId.message}
@@ -438,10 +458,9 @@ function RouteComponent() {
                           <Label htmlFor="password">Password</Label>
                           <Input
                             id="password"
-                            placeholder='Enter Password'
-
+                            placeholder={selectedAdmin ? 'Leave blank to keep unchanged' : 'Enter Password'}
                             {...createUserForm.register('password', {
-                              required: 'Password is required',
+                              required: !selectedAdmin && 'Password is required',
                             })}
                           />
                         </div>
@@ -449,9 +468,17 @@ function RouteComponent() {
                     </div>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline" onClick={handleCloseForm}>
+                          Cancel
+                        </Button>
                       </DialogClose>
-                      <Button type="submit">Save changes</Button>
+                      <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                        {createMutation.isPending || updateMutation.isPending
+                          ? 'Saving...'
+                          : selectedAdmin
+                            ? 'Update'
+                            : 'Save'}
+                      </Button>
                     </DialogFooter>
                   </form>
                 </DialogContent>
@@ -459,10 +486,8 @@ function RouteComponent() {
             </div>
           </div>
 
-
-
           <div className="grid gap-4 md:grid-cols-3">
-            <div className='grid gap-4 p-4 shadow rounded-2xl'>
+            <div className="grid gap-4 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Total Administrators</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
@@ -472,7 +497,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className='grid gap-4 p-4 shadow rounded-2xl'>
+            <div className="grid gap-4 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Active Administrators</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
@@ -482,7 +507,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className='grid gap-4 p-4 shadow rounded-2xl'>
+            <div className="grid gap-4 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Roles</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
@@ -493,14 +518,36 @@ function RouteComponent() {
             </div>
           </div>
 
-          <DataTable
-            columns={columns}
-            data={admins ?? []}
-            filterColumn="email"
-            filterPlaceholder="Search by email or name…"
-          />
+          <div className="p-4 shadow rounded-2xl bg-white">
+            <DataTable
+              columns={columns}
+              data={admins ?? []}
+              filterColumn="email"
+              filterPlaceholder="Search by email or name…"
+            />
+          </div>
         </div>
-      </main >
+      </main>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Administrator</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this administrator? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:justify-end">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

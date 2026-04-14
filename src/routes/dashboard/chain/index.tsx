@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Plus, MoreHorizontal, Copy, Eye, Edit, Trash2, GripVertical, User, Shield, Link2 } from 'lucide-react'
+import { ArrowUpDown, Plus, MoreHorizontal, Copy, Eye, Edit, Trash2, User, Shield, Link2, GripVertical } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useState } from 'react'
 
-import { createChain, getChains, getRoles, getAdmins, updateChain, type Chain } from '@/service'
+import { createChain, deleteChain, getChains, getRoles, getAdmins, updateChain, type Chain } from '@/service'
 import { SiteHeader } from '@/components/site-header'
 import {
   Dialog,
@@ -29,12 +29,13 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { useAppSelector } from '@/store/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import IsPending from '@/components/Illustrations/isPending'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const Route = createFileRoute('/dashboard/chain/')({
@@ -60,6 +61,10 @@ function RouteComponent() {
   const [editOpen, setEditOpen] = useState(false)
   const [viewStepsOpen, setViewStepsOpen] = useState(false)
   const [selectedChain, setSelectedChain] = useState<Chain | null>(null)
+  // Delete confirmation dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [chainToDelete, setChainToDelete] = useState<number | null>(null)
+
   const { user } = useAppSelector((state) => state.auth)
   const queryClient = useQueryClient()
 
@@ -121,15 +126,11 @@ function RouteComponent() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: createChain,
-    onSuccess: (newChain) => {
+    onSuccess: () => {
       toast.success("Approval chain created.", {
         style: { background: '#10b981', color: 'white', border: 'none' }
       })
-      // Update cache for real‑time feel
-      queryClient.setQueryData(['chains', searchParams], (old: any) => ({
-        ...old,
-        data: [newChain, ...(old?.data || [])]
-      }))
+      queryClient.invalidateQueries({ queryKey: ['chains', searchParams] })
       createChainForm.reset()
       setOpen(false)
     },
@@ -139,22 +140,26 @@ function RouteComponent() {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: CreateChainForm }) => updateChain(id, data),
-    onSuccess: (updatedChain) => {
+    onSuccess: () => {
       toast.success("Approval chain updated.", {
         style: { background: '#10b981', color: 'white', border: 'none' }
       })
-      // Update cache
-      queryClient.setQueryData(['chains', searchParams], (old: any) => ({
-        ...old,
-        data: old?.data?.map((chain: Chain) =>
-          chain.id === updatedChain.id ? updatedChain : chain
-        ) ?? []
-      }))
+      queryClient.invalidateQueries({ queryKey: ['chains', searchParams] })
       setEditOpen(false)
       setSelectedChain(null)
     },
     onError: () => toast.error("Failed to update chain"),
   })
+
+  // Delete mutation with proper typing
+  const deleteMutation = useMutation<unknown, Error, number>({
+    mutationFn: deleteChain,
+    onSuccess: () => {
+      toast.success("Approval chain deleted.");
+      queryClient.invalidateQueries({ queryKey: ['chains', searchParams] })
+    },
+    onError: () => toast.error("Failed to delete chain"),
+  });
 
   const onSubmit = (values: CreateChainForm) => {
     if (selectedChain) {
@@ -166,7 +171,6 @@ function RouteComponent() {
 
   const handleEdit = (chain: Chain) => {
     setSelectedChain(chain)
-    // Populate form with chain data
     createChainForm.reset({
       name: chain.name,
       description: chain.description || '',
@@ -188,15 +192,23 @@ function RouteComponent() {
     setViewStepsOpen(true)
   }
 
+  // Open delete confirmation dialog
+  const handleDelete = (id: number) => {
+    setChainToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  // Confirm deletion
+  const confirmDelete = () => {
+    if (chainToDelete) {
+      deleteMutation.mutate(chainToDelete)
+    }
+    setDeleteDialogOpen(false)
+    setChainToDelete(null)
+  }
+
   if (isPending) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="text-gray-600">Loading chains…</p>
-        </div>
-      </div>
-    )
+    return <IsPending page="Approval Chains" />;
   }
 
   if (isError) {
@@ -232,7 +244,7 @@ function RouteComponent() {
     },
     {
       header: 'Steps',
-      accessorFn: (row) => row.steps.length,
+      accessorFn: (row) => row.steps?.length ?? 0,
       cell: ({ getValue }) => (
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
           {getValue<number>()} {getValue<number>() === 1 ? 'step' : 'steps'}
@@ -252,7 +264,10 @@ function RouteComponent() {
         </Button>
       ),
       cell: ({ row }) => {
-        const date = new Date(row.getValue('createdAt') as string)
+        const createdAt = row.getValue('createdAt') as string | undefined;
+        if (!createdAt) return <div className="text-gray-400">—</div>;
+        const date = new Date(createdAt);
+        if (isNaN(date.getTime())) return <div className="text-gray-400">Invalid date</div>;
         return (
           <div className="text-gray-600">
             {new Intl.DateTimeFormat('en-US', {
@@ -261,7 +276,7 @@ function RouteComponent() {
               day: 'numeric',
             }).format(date)}
           </div>
-        )
+        );
       }
     },
     {
@@ -290,7 +305,10 @@ function RouteComponent() {
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
+              <DropdownMenuItem
+                className="text-red-600"
+                onSelect={() => handleDelete(chain.id)}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -323,7 +341,6 @@ function RouteComponent() {
                     New Chain
                   </Button>
                 </DialogTrigger>
-
                 <DialogContent className="w-full max-w-4xl max-h-[90vh] overflow-y-auto p-0">
                   <ChainForm
                     form={createChainForm}
@@ -375,7 +392,6 @@ function RouteComponent() {
       </main>
 
       {/* View Steps Modal */}
-      {/* View Steps Modal */}
       <Dialog open={viewStepsOpen} onOpenChange={setViewStepsOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -406,7 +422,7 @@ function RouteComponent() {
                           )}
                         </div>
                         {/* Step Label */}
-                        <span className="mt-2 text-sm font-semibold text-center max-w-[120px] text-gray-700">
+                        <span className="mt-2 text-sm font-semibold text-center max-w-30 text-gray-700">
                           {step.name}
                         </span>
                       </div>
@@ -427,6 +443,30 @@ function RouteComponent() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setViewStepsOpen(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Approval Chain</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this approval chain? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:justify-end">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -633,14 +673,11 @@ function ChainForm({ form, stepsField, onSubmit, onCancel, roles, users, isPendi
   )
 }
 
-// Add CSS for hexagon shape (you can place this in a global CSS file or use a style tag)
-// If you don't have a global CSS, add this to your component:
 const hexagonStyles = `
   .hex-mask {
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   }
 `;
-// Inject style (optional)
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
   style.innerHTML = hexagonStyles;

@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { checkPrintStatus, initPayment, logout, updatePayment } from '@/service'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowRightIcon, ChevronDown, CircleCheck, Clipboard, Home, LogOut, OctagonX, TriangleAlert } from 'lucide-react'
+import { ArrowRightIcon, ChevronDown, CircleCheck, Clipboard, Home, LogOut, OctagonX } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import PaystackPop from "@paystack/inline-js"
@@ -18,22 +18,26 @@ type CheckStatusForm = {
 
 interface PrintStatus {
     status: number;
-    isPrinted?: boolean;
+    data?: {
+        id: number;
+        name: string;
+        matric_number: string;
+        certNo: string;
+        print_date: string;
+        // add any other fields you want to display
+    };
 }
 
 export const Route = createFileRoute('/certificate')({
     component: RouteComponent,
 })
 
-
-
 function RouteComponent() {
     const { user, accessToken } = useAppSelector((state) => state.auth)
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [result, setResult] = useState<PrintStatus | null>(null);
-    const [paymentData, setPaymentData] = useState<any | null>(null)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
     const handleLogout = async () => {
@@ -56,74 +60,75 @@ function RouteComponent() {
     })
 
     const onCreate = async (values: CheckStatusForm) => {
-        if (paymentData) {
-            handlePayment(values.matric)
-            return
-        }
-
         if (!user) {
             toast.error('Please login to proceed');
+            return;
         }
 
+        setLoading(true);
         try {
-            setLoading(true)
-
+            // 1. Initiate payment
             const payload = {
                 user,
                 type: 'CERTIFICATE STATUS CHECK',
                 request: 'CERTIFICATE_PRINT_STATUS',
                 price: 2000,
                 processing_fee: 500,
-            }
+            };
+            const paymentResponse = await initPayment(payload);
 
-            const response = await initPayment(payload)
-            setPaymentData(response)
+            // 2. Immediately show Paystack popup
+            const paystack = new PaystackPop();
+            paystack.resumeTransaction(paymentResponse.access_code, {
+                onSuccess: async () => {
+                    try {
+                        // 3. Update payment status to SUCCESSFUL
+                        await updatePayment(paymentResponse.payment_id, {
+                            status: "SUCCESSFUL",
+                            transaction_id: paymentResponse.reference,
+                            reference: paymentResponse.reference,
+                            access_code: paymentResponse.access_code,
+                        });
 
+                        // 4. Check print status
+                        const statusRes = await checkPrintStatus(values.matric);
+                        if (statusRes.status === 200) {
+                            setResult({
+                                status: 200,
+                                data: statusRes.data,
+                            });
+                        } else {
+                            setResult({ status: statusRes.status });
+                        }
+                        setShowPopup(true);
+                    } catch (err) {
+                        console.error(err);
+                        toast.error('Payment verification failed');
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+                onError: async () => {
+                    // Payment encountered an error (e.g., network issue, payment failed)
+                    await updatePayment(paymentResponse.payment_id, {
+                        status: "FAILED",
+                        transaction_id: paymentResponse.reference,
+                        reference: paymentResponse.reference,
+                        access_code: paymentResponse.access_code,
+                    });
+                    setLoading(false);
+                    toast.error('Payment failed. Please try again.');
+                },
+            });
         } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
+            console.error(err);
+            toast.error('Failed to initiate payment');
+            setLoading(false);
         }
     }
-
-    const handlePayment = async (matric: string) => {
-        if (!paymentData?.access_code || !paymentData.payment_id) return
-
-        const paystack = new PaystackPop()
-
-        paystack.resumeTransaction(paymentData.access_code, {
-            onSuccess: async () => {
-                try {
-                    await updatePayment(paymentData.payment_id, {
-                        status: "SUCCESSFUL",
-                        transaction_id: paymentData.reference,
-                        reference: paymentData.reference,
-                        access_code: paymentData.access_code,
-                    })
-
-                    const res = await checkPrintStatus(matric)
-
-                    if (res.status === 200) {
-                        setResult({
-                            status: 200,
-                            isPrinted: res.data.isPrinted,
-                        })
-                    } else {
-                        setResult({ status: res.status })
-                    }
-
-                    setShowPopup(true)
-                    setPaymentData(null)
-                } catch (err) {
-                    console.error(err)
-                }
-            },
-        })
-    }
-
-
     return (
         <div className="relative grid lg:grid-cols-2 min-h-screen px-4 sm:px-8 py-6 lg:py-12 overflow-x-hidden">
+            {/* Header – unchanged */}
             <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex flex-wrap gap-2 justify-end z-10">
                 {user && user?.role ? (
                     <div className='flex items-center gap-4'>
@@ -137,12 +142,17 @@ function RouteComponent() {
                         <Button
                             className="bg-green-800"
                             onClick={() => {
-                                user.role.name === "ALUMNI" ? navigate({ to: "/user" }) : navigate({ to: "/admin" })
+                                if (user?.role?.name === "ALUMNI") {
+                                    navigate({ to: "/user" });
+                                } else if (["Super Admin", "Admin"].includes(user?.role?.name)) {
+                                    navigate({ to: "/dashboard" });
+                                } else {
+                                    navigate({ to: "/faculty" });
+                                }
                             }}
                         >
                             Dashboard
                         </Button>
-
                         <Button
                             variant='destructive'
                             size='icon'
@@ -184,11 +194,12 @@ function RouteComponent() {
                 )}
             </div>
 
+            {/* Left column (form) */}
             <div className="flex flex-col justify-center gap-8 max-w-xl mx-auto text-center lg:text-left">
-
                 <div className='grid gap-3'>
                     <h1 className="text-blue-900 font-extrabold text-4xl sm:text-5xl lg:text-6xl leading-tight">
-                        Certificate Print Status</h1>
+                        Certificate Print Status
+                    </h1>
                     <p>Want to know if your certificate has been printed?</p>
                 </div>
 
@@ -204,15 +215,13 @@ function RouteComponent() {
                             required: 'Matric Number is required',
                         })}
                     />
-                    { }
                     <Button
                         type="submit"
                         className="rounded-l-none bg-blue-900 font-bold uppercase h-12 px-6 transition-colors disabled:opacity-60"
                         disabled={loading}
                     >
-                        {paymentData ? 'Complete Payment' : 'Check'}
+                        Check
                     </Button>
-
                 </form>
 
                 <button
@@ -226,6 +235,8 @@ function RouteComponent() {
                     </span>
                 </button>
             </div>
+
+            {/* Right column (image) */}
             <div className="hidden lg:flex items-center justify-center">
                 <img
                     src="/certificate.png"
@@ -234,22 +245,20 @@ function RouteComponent() {
                 />
             </div>
 
+            {/* Result popup – updated */}
             {showPopup && result && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    {/* Backdrop with fade-in animation */}
+                    {/* Backdrop */}
                     <div
                         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
                         onClick={() => setShowPopup(false)}
                     />
-
-                    {/* Modal with slide-up animation */}
                     <div className="relative w-full max-w-md transform transition-all duration-300 ease-out scale-100 opacity-100">
                         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                             <div className="p-8">
-                                {/* Icon with background circle */}
+                                {/* Icon */}
                                 <div className="flex justify-center mb-6">
-                                    {/* 404 → Contact ICT */}
-                                    {result?.status === 404 && (
+                                    {result.status === 404 && (
                                         <div className="relative">
                                             <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse-slow" />
                                             <div className="relative p-4">
@@ -257,19 +266,7 @@ function RouteComponent() {
                                             </div>
                                         </div>
                                     )}
-
-                                    {/* 200 + NOT printed */}
-                                    {result?.status === 200 && result.isPrinted === false && (
-                                        <div className="relative">
-                                            <div className="absolute inset-0 bg-amber-100 rounded-full" />
-                                            <div className="relative p-4">
-                                                <TriangleAlert className="stroke-amber-600 size-16" />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* 200 + printed */}
-                                    {result?.status === 200 && result.isPrinted === true && (
+                                    {result.status === 200 && (
                                         <div className="relative">
                                             <div className="absolute inset-0 bg-green-100 rounded-full animate-pulse-slow" />
                                             <div className="relative p-4">
@@ -282,82 +279,102 @@ function RouteComponent() {
                                 {/* Title */}
                                 <div className="text-center mb-2">
                                     <h3 className="text-2xl font-bold text-gray-900">
-                                        {result.status === 404 && 'Action Required'}
-                                        {result.status === 200 && result.isPrinted === false && 'Notice'}
-                                        {result.status === 200 && result.isPrinted === true && 'Success!'}
+                                        {result.status === 404 && 'Certificate Details'}
+                                        {result.status === 200 && 'Certificate Details'}
                                     </h3>
                                 </div>
 
-                                {/* Message */}
-                                <p className="text-center text-gray-600 mb-8 text-lg">
+                                {/* Message / Details */}
+                                <div className="text-center text-gray-600 mb-6 text-lg">
                                     {result.status === 404 && (
                                         <span>
-                                            Certificate not found in system.<br />
-                                            <span className="font-semibold text-red-600">Please contact ICT department</span> for assistance.
-                                        </span>
-                                    )}
-
-                                    {result.status === 200 && result.isPrinted === false && (
-                                        <span>
-                                            Your certificate is processed but <span className="font-semibold text-amber-600">not yet printed</span>.<br />
-                                            Please check back later or contact the administration office.
-                                        </span>
-                                    )}
-
-                                    {result.status === 200 && result.isPrinted === true && (
-                                        <span>
-                                            Your certificate has been <span className="font-semibold text-green-600">successfully printed</span> and is ready for collection.
-                                        </span>
-                                    )}
-                                </p>
-
-                                {/* Status badge for additional context */}
-                                {(result.status === 200) && (
-                                    <div className="flex justify-center mb-8">
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${result.isPrinted ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
-                                            <div className={`w-2 h-2 rounded-full ${result.isPrinted ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`} />
-                                            <span className="text-sm font-medium">
-                                                Status: {result.isPrinted ? 'Printed' : 'Pending Print'}
+                                            Certificate not ready.
+                                            <span className="font-semibold text-blue-300">
+                                                Please check back next week.
                                             </span>
-                                        </div>
-                                    </div>
-                                )}
+                                        </span>
+                                    )}
+
+                                    {result.status === 200 && result.data && (
+                                        <>
+                                            <div className="text-left space-y-3 bg-gray-50 p-4 rounded-lg">
+                                                <div>
+                                                    <span className="text-sm text-gray-500">Full Name</span>
+                                                    <p className="font-medium text-gray-900">{result.data.name}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-sm text-gray-500">Matric Number</span>
+                                                    <p className="font-medium text-gray-900">{result.data.matric_number}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-sm text-gray-500">Certificate Number</span>
+                                                    <p className="font-medium text-gray-900">{result.data.certNo}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-sm text-gray-500">Print Date</span>
+                                                    <p className="font-medium text-gray-900">{result.data.print_date}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Follow-up instructions based on certificate number prefix */}
+                                            {result.data.certNo && (
+                                                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                                    <p className="text-sm text-blue-800">
+                                                        {result.data.certNo.toUpperCase().startsWith('DE') && (
+                                                            <>Visit the <span className='font-bold'>Exams and Records Office</span> with these details to collect your certificate.</>
+                                                        )}
+                                                        {result.data.certNo.toUpperCase().startsWith('PG') && (
+                                                            <>Visit the <span className='font-bold'>College of Postgraduate Studies</span> with these details to collect your certificate.</>
+                                                        )}
+                                                        {result.data.certNo.toUpperCase().startsWith('PD') && (
+                                                            <>Visit the <span className='font-bold'>College of Postgraduate Studies</span> with these details to collect your certificate.</>
+                                                        )}
+                                                        {result.data.certNo.toUpperCase().startsWith('PM') && (
+                                                            <>Visit the <span className='font-bold'>College of Postgraduate Studies</span> with these details to collect your certificate.</>
+                                                        )}
+                                                        {!result.data.certNo.toUpperCase().startsWith('DE') &&
+                                                            !result.data.certNo.toUpperCase().startsWith('PG') && (
+                                                                <>Please contact the <strong>Academic Affairs</strong> for further guidance.</>
+                                                            )}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
 
                                 {/* Actions */}
                                 <div className="flex flex-col sm:flex-row gap-3">
-                                    {result.status === 200 && result.isPrinted && (
+                                    {result.status === 200 && (
                                         <Button
                                             className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                                             onClick={() => {
-                                                // Add copy functionality here
-                                                console.log('Copy button clicked');
+                                                navigator.clipboard.writeText(result.data?.certNo || '');
+                                                toast.success('Certificate number copied');
                                             }}
                                         >
                                             <Clipboard className="w-4 h-4 mr-2 inline" />
-                                            Copy Reference ID
+                                            Copy Cert No.
                                         </Button>
                                     )}
-
                                     <Button
-                                        variant={result.status === 200 && result.isPrinted ? "outline" : "default"}
-                                        className={`flex-1 font-semibold py-3 rounded-lg transition-all duration-200 ${result.status === 200 && result.isPrinted
+                                        variant={result.status === 200 ? "outline" : "default"}
+                                        className={`flex-1 font-semibold py-3 rounded-lg transition-all duration-200 ${result.status === 200
                                             ? 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                                            : result.status === 404
-                                                ? 'bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg'
-                                                : 'bg-amber-600 hover:bg-amber-700 text-white shadow-md hover:shadow-lg'
+                                            : 'bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg'
                                             }`}
                                         onClick={() => setShowPopup(false)}
                                     >
-                                        {result.status === 404 ? 'Got it, will contact ICT' : 'Close'}
+                                        {result.status === 404 ? 'Close' : 'Close'}
                                     </Button>
                                 </div>
 
-                                {/* Additional info for 404 */}
+                                {/* Additional contact info for 404 */}
                                 {result.status === 404 && (
                                     <div className="mt-6 pt-6 border-t border-gray-200">
                                         <p className="text-sm text-gray-500 text-center">
-                                            ICT Department Contact:<br />
-                                            <span className="font-medium">Email: ict@example.com | Phone: (123) 456-7890</span>
+                                            Faculty Admin Office<br />
+                                            <span className="font-medium">Visit your faculty administration desk</span>
                                         </p>
                                     </div>
                                 )}

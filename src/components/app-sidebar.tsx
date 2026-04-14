@@ -118,7 +118,7 @@ const power = {
         },
         {
           title: "Vetting & Processing",
-          url: "/dashboard/vetting",
+          url: "/dashboard/vet",
         },
         {
           title: "Approved Documents",
@@ -126,7 +126,7 @@ const power = {
         },
         {
           title: "Bulk Combos",
-          url: "/dashboard/combos",
+          url: "/dashboard/combo",
         },
       ],
     },
@@ -134,34 +134,12 @@ const power = {
       title: "Transactions",
       url: "/dashboard/transactions/",
       icon: WalletMinimal,
-      // items: [
-      //   {
-      //     title: "Introduction",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Get Started",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Tutorials",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Changelog",
-      //     url: "#",
-      //   },
-      // ],
     },
     {
       title: "Config",
       url: "#",
       icon: MonitorCog,
       items: [
-        {
-          title: "Documents",
-          url: "/dashboard/documents/",
-        },
         {
           title: "Roles",
           url: "/dashboard/roles/",
@@ -173,6 +151,10 @@ const power = {
         {
           title: "Departments",
           url: "/dashboard/department/",
+        },
+        {
+          title: "Documents",
+          url: "/dashboard/documents/",
         },
         {
           title: "Chain",
@@ -250,7 +232,7 @@ const faculty = {
         },
         {
           title: "Vetting & Processing",
-          url: "/dashboard/vetting",
+          url: "/dashboard/vet",
         },
         {
           title: "Approved Documents",

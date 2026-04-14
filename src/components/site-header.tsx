@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Bell, LogOut } from "lucide-react"
+import { Bell } from "lucide-react"
 import LogoutButton from "./logout-button"
 
 interface SiteHeaderProps {

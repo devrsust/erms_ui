@@ -9,34 +9,70 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal, Mail, Calendar, CheckCircle, XCircle, Users } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useState } from 'react'
 
-import { getUsers, type User, } from '@/service'
+import { getUsers, deleteUser, type User } from '@/service'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { SiteHeader } from '@/components/site-header'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 export const Route = createFileRoute('/dashboard/users/')({
   component: RouteComponent,
 })
 
-
 function RouteComponent() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<string | null>(null)
+
   const searchParams = new URLSearchParams({
     page: '1',
     limit: '10',
   }).toString()
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['admins', searchParams],
+    queryKey: ['users', searchParams],
     queryFn: () => getUsers(searchParams),
     staleTime: 30_000,
   })
+
+  // Delete mutation
+  const deleteMutation = useMutation<unknown, Error, number>({
+    mutationFn: (id: number) => deleteUser(id),
+    onSuccess: () => {
+      toast.success('User deleted.')
+      queryClient.invalidateQueries({ queryKey: ['users', searchParams] })
+    },
+    onError: () => toast.error('Failed to delete user.'),
+  })
+
+  const handleDelete = (id: string) => {
+    setUserToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      deleteMutation.mutate(Number(userToDelete))
+    }
+    setDeleteDialogOpen(false)
+    setUserToDelete(null)
+  }
 
   if (isPending) {
     return (
@@ -60,12 +96,10 @@ function RouteComponent() {
     )
   }
 
-  console.log("Admin Data", data);
-
   if (isError) {
     toast.error(
       (error as any)?.response?.data?.message ??
-      'Failed to load admins'
+      'Failed to load users'
     )
     return null
   }
@@ -79,9 +113,7 @@ function RouteComponent() {
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
-          onCheckedChange={(value) =>
-            table.toggleAllPageRowsSelected(!!value)
-          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
           className="border-gray-300"
         />
@@ -102,58 +134,37 @@ function RouteComponent() {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() =>
-            column.toggleSorting(
-              column.getIsSorted() === 'asc'
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="font-semibold hover:bg-gray-50"
         >
           First Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {row.getValue('firstname')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue('firstname')}</div>,
     },
     {
       accessorKey: 'lastname',
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() =>
-            column.toggleSorting(
-              column.getIsSorted() === 'asc'
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="font-semibold hover:bg-gray-50"
         >
           Last Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {row.getValue('lastname')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue('lastname')}</div>,
     },
     {
       accessorKey: 'matric_number',
       header: () => (
         <div className="flex items-center gap-2">
-          {/* <Mail className="h-4 w-4 text-gray-500" /> */}
           <span>Matric Number</span>
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="text-gray-700">
-          {row.getValue('matric_number')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="text-gray-700">{row.getValue('matric_number')}</div>,
     },
     {
       accessorKey: 'email',
@@ -163,28 +174,19 @@ function RouteComponent() {
           <span>Email</span>
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="text-gray-700">
-          {row.getValue('email')}
-        </div>
-      ),
+      cell: ({ row }) => <div className="text-gray-700">{row.getValue('email')}</div>,
     },
     {
       id: 'requests',
       header: 'Requests',
       accessorFn: (row) => row._count?.requests ?? 0,
-      cell: ({ getValue }) => (
-        <div className="text-left">
-          {getValue<number>()}
-        </div>
-      ),
+      cell: ({ getValue }) => <div className="text-left">{getValue<number>()}</div>,
     },
     {
       accessorKey: 'isActive',
       header: 'Status',
       cell: ({ row }) => {
         const isActive = row.getValue('isActive') as boolean
-
         return (
           <div className="flex items-center gap-2">
             {isActive ? (
@@ -192,10 +194,7 @@ function RouteComponent() {
             ) : (
               <XCircle className="h-4 w-4 text-red-500" />
             )}
-            <Badge
-              variant={isActive ? "default" : "destructive"}
-              className="gap-1.5"
-            >
+            <Badge variant={isActive ? 'default' : 'destructive'} className="gap-1.5">
               {isActive ? 'Active' : 'Inactive'}
             </Badge>
           </div>
@@ -211,34 +210,30 @@ function RouteComponent() {
         </div>
       ),
       cell: ({ row }) => {
-        const dateString = row.getValue('createdAt') as string;
-        const date = new Date(dateString);
+        const dateString = row.getValue('createdAt') as string
+        if (!dateString) return <div className="text-gray-400">—</div>
+        const date = new Date(dateString)
+        if (isNaN(date.getTime())) return <div className="text-gray-400">Invalid date</div>
         const formatted = new Intl.DateTimeFormat('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        }).format(date);
-
+        }).format(date)
         return (
           <div className="space-y-0.5">
-            <div className="text-sm font-medium">
-              {formatted.split(',')[0]}
-            </div>
-            <div className="text-xs text-gray-500">
-              {formatted.split(',')[1].trim()}
-            </div>
+            <div className="text-sm font-medium">{formatted.split(',')[0]}</div>
+            <div className="text-xs text-gray-500">{formatted.split(',')[1].trim()}</div>
           </div>
-        );
+        )
       },
     },
     {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
-        const admin = row.original
-
+        const user = row.original
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -253,25 +248,26 @@ function RouteComponent() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuLabel className="text-xs font-semibold text-gray-600">
-                Admin Actions
+                Actions
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(admin.id)
-                }
+                onClick={() => navigator.clipboard.writeText(user.id)}
                 className="cursor-pointer gap-2"
               >
                 Copy ID
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
+              <DropdownMenuItem
+                onClick={() => navigate({ to: `/dashboard/users/${user.id}` })}
+                className="cursor-pointer gap-2"
+              >
                 View Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                Edit Admin
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer gap-2 focus:text-red-600">
+              <DropdownMenuItem
+                className="text-red-600 cursor-pointer gap-2 focus:text-red-600"
+                onSelect={() => handleDelete(user.id)}
+              >
                 Deactivate
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -281,62 +277,78 @@ function RouteComponent() {
     },
   ]
 
-  console.log(data);
-
-  const totalAdmins = data?.data?.length || 0
-  const activeAdmins = data?.data?.filter(admin => admin.isActive).length || 0
+  const users = data?.data ?? []
+  const totalUsers = users.length || 0
+  const activeUsers = users.filter((u) => u.isActive).length || 0
 
   return (
     <>
-      <SiteHeader title='Users' />
+      <SiteHeader title="Users" />
 
-      <main className="min-h-screen p-4 lg:p-6">
+      <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900">Users</h1>
-                <p className="text-gray-600">
-                  Manage system users and their data
-                </p>
+                <p className="text-gray-600">Manage system users and their data</p>
               </div>
-              {/* <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Admin
-              </Button> */}
+              {/* No create button as per original UI */}
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className='grid gap-4 p-4 shadow rounded-2xl'>
+            <div className="grid gap-4 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Total Users</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold">{totalAdmins}</h3>
+                <h3 className="text-2xl font-bold">{totalUsers}</h3>
               </div>
             </div>
 
-            <div className='grid gap-4 p-4 shadow rounded-2xl'>
+            <div className="grid gap-4 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Active Users</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold">{activeAdmins}</h3>
+                <h3 className="text-2xl font-bold">{activeUsers}</h3>
               </div>
             </div>
           </div>
 
-          <DataTable
-            columns={columns}
-            data={data?.data ?? []}
-            filterColumn="email"
-            filterPlaceholder="Search by email or name…"
-          />
+          <div className="p-4 bg-white rounded-2xl shadow">
+            <DataTable
+              columns={columns}
+              data={users}
+              filterColumn="email"
+              filterPlaceholder="Search by email or name…"
+            />
+          </div>
         </div>
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Deactivate User</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to deactivate this user? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:justify-end">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? 'Deleting...' : 'Deactivate'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

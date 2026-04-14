@@ -33,7 +33,11 @@ import { Route as DashboardComboIndexRouteImport } from './routes/dashboard/comb
 import { Route as DashboardChainIndexRouteImport } from './routes/dashboard/chain/index'
 import { Route as DashboardApprovedIndexRouteImport } from './routes/dashboard/approved/index'
 import { Route as DashboardAdminsIndexRouteImport } from './routes/dashboard/admins/index'
-import { Route as UserRequestsIdRouteImport } from './routes/user/requests/id'
+import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
+import { Route as DashboardVetIdRouteImport } from './routes/dashboard/vet/$id'
+import { Route as DashboardUsersIdRouteImport } from './routes/dashboard/users/$id'
+import { Route as DashboardDocumentsIdRouteImport } from './routes/dashboard/documents/$id'
+import { Route as DashboardAdminsIdRouteImport } from './routes/dashboard/admins/$id'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -158,9 +162,29 @@ const DashboardAdminsIndexRoute = DashboardAdminsIndexRouteImport.update({
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
-  id: '/requests/id',
-  path: '/requests/id',
+  id: '/requests/$id',
+  path: '/requests/$id',
   getParentRoute: () => UserRouteRoute,
+} as any)
+const DashboardVetIdRoute = DashboardVetIdRouteImport.update({
+  id: '/vet/$id',
+  path: '/vet/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardUsersIdRoute = DashboardUsersIdRouteImport.update({
+  id: '/users/$id',
+  path: '/users/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardDocumentsIdRoute = DashboardDocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardAdminsIdRoute = DashboardAdminsIdRouteImport.update({
+  id: '/admins/$id',
+  path: '/admins/$id',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -174,7 +198,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/faculty/': typeof FacultyIndexRoute
   '/user/': typeof UserIndexRoute
-  '/user/requests/id': typeof UserRequestsIdRoute
+  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
+  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
+  '/dashboard/users/$id': typeof DashboardUsersIdRoute
+  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins': typeof DashboardAdminsIndexRoute
   '/dashboard/approved': typeof DashboardApprovedIndexRoute
   '/dashboard/chain': typeof DashboardChainIndexRoute
@@ -198,7 +226,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/faculty': typeof FacultyIndexRoute
   '/user': typeof UserIndexRoute
-  '/user/requests/id': typeof UserRequestsIdRoute
+  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
+  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
+  '/dashboard/users/$id': typeof DashboardUsersIdRoute
+  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins': typeof DashboardAdminsIndexRoute
   '/dashboard/approved': typeof DashboardApprovedIndexRoute
   '/dashboard/chain': typeof DashboardChainIndexRoute
@@ -226,7 +258,11 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/faculty/': typeof FacultyIndexRoute
   '/user/': typeof UserIndexRoute
-  '/user/requests/id': typeof UserRequestsIdRoute
+  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
+  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
+  '/dashboard/users/$id': typeof DashboardUsersIdRoute
+  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins/': typeof DashboardAdminsIndexRoute
   '/dashboard/approved/': typeof DashboardApprovedIndexRoute
   '/dashboard/chain/': typeof DashboardChainIndexRoute
@@ -255,7 +291,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/faculty/'
     | '/user/'
-    | '/user/requests/id'
+    | '/dashboard/admins/$id'
+    | '/dashboard/documents/$id'
+    | '/dashboard/users/$id'
+    | '/dashboard/vet/$id'
+    | '/user/requests/$id'
     | '/dashboard/admins'
     | '/dashboard/approved'
     | '/dashboard/chain'
@@ -279,7 +319,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/faculty'
     | '/user'
-    | '/user/requests/id'
+    | '/dashboard/admins/$id'
+    | '/dashboard/documents/$id'
+    | '/dashboard/users/$id'
+    | '/dashboard/vet/$id'
+    | '/user/requests/$id'
     | '/dashboard/admins'
     | '/dashboard/approved'
     | '/dashboard/chain'
@@ -306,7 +350,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/faculty/'
     | '/user/'
-    | '/user/requests/id'
+    | '/dashboard/admins/$id'
+    | '/dashboard/documents/$id'
+    | '/dashboard/users/$id'
+    | '/dashboard/vet/$id'
+    | '/user/requests/$id'
     | '/dashboard/admins/'
     | '/dashboard/approved/'
     | '/dashboard/chain/'
@@ -503,18 +551,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/user/requests/id': {
-      id: '/user/requests/id'
-      path: '/requests/id'
-      fullPath: '/user/requests/id'
+    '/user/requests/$id': {
+      id: '/user/requests/$id'
+      path: '/requests/$id'
+      fullPath: '/user/requests/$id'
       preLoaderRoute: typeof UserRequestsIdRouteImport
       parentRoute: typeof UserRouteRoute
+    }
+    '/dashboard/vet/$id': {
+      id: '/dashboard/vet/$id'
+      path: '/vet/$id'
+      fullPath: '/dashboard/vet/$id'
+      preLoaderRoute: typeof DashboardVetIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/users/$id': {
+      id: '/dashboard/users/$id'
+      path: '/users/$id'
+      fullPath: '/dashboard/users/$id'
+      preLoaderRoute: typeof DashboardUsersIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/documents/$id': {
+      id: '/dashboard/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/dashboard/documents/$id'
+      preLoaderRoute: typeof DashboardDocumentsIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/admins/$id': {
+      id: '/dashboard/admins/$id'
+      path: '/admins/$id'
+      fullPath: '/dashboard/admins/$id'
+      preLoaderRoute: typeof DashboardAdminsIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
   }
 }
 
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAdminsIdRoute: typeof DashboardAdminsIdRoute
+  DashboardDocumentsIdRoute: typeof DashboardDocumentsIdRoute
+  DashboardUsersIdRoute: typeof DashboardUsersIdRoute
+  DashboardVetIdRoute: typeof DashboardVetIdRoute
   DashboardAdminsIndexRoute: typeof DashboardAdminsIndexRoute
   DashboardApprovedIndexRoute: typeof DashboardApprovedIndexRoute
   DashboardChainIndexRoute: typeof DashboardChainIndexRoute
@@ -531,6 +611,10 @@ interface DashboardRouteRouteChildren {
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardAdminsIdRoute: DashboardAdminsIdRoute,
+  DashboardDocumentsIdRoute: DashboardDocumentsIdRoute,
+  DashboardUsersIdRoute: DashboardUsersIdRoute,
+  DashboardVetIdRoute: DashboardVetIdRoute,
   DashboardAdminsIndexRoute: DashboardAdminsIndexRoute,
   DashboardApprovedIndexRoute: DashboardApprovedIndexRoute,
   DashboardChainIndexRoute: DashboardChainIndexRoute,

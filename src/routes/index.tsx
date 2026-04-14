@@ -2,11 +2,10 @@ import Triangle from '@/components/background/Triangle'
 import LogoutButton from '@/components/logout-button';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { logout } from '@/service';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { Separator } from '@radix-ui/react-separator';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRightIcon, ChevronDown, LogOut, Star, FileText, Shield, Clock, CheckCircle, Users, BookOpen } from 'lucide-react';
+import { ArrowRightIcon, ChevronDown, Star, FileText, Shield, Clock, CheckCircle, Users } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 
 export const Route = createFileRoute('/')({
@@ -17,32 +16,39 @@ const featureFlags = ["Request", "Verify", "Anytime", "Anywhere"];
 
 function Home() {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const { user, accessToken } = useAppSelector((state) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
 
     return (
         <div className="min-h-screen flex flex-col relative bg-white">
             {/* Enhanced Background Pattern */}
-            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-50" />
-            <div className="absolute inset-0 bg-gradient-to-b from-green-50/50 via-transparent to-transparent" />
-            
+            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[32px_32px] opacity-50" />
+            <div className="absolute inset-0 bg-linear-to-b from-green-50/50 via-transparent to-transparent" />
+
             {/* Decorative Elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-green-500/5 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-600/5 rounded-full blur-3xl" />
-            
+
             {/* Floating Shapes */}
             <div className="absolute top-20 left-20 w-32 h-32 border-2 border-green-200/30 rounded-full animate-pulse" />
             <div className="absolute bottom-40 right-20 w-24 h-24 border-2 border-green-300/20 rotate-45 animate-[spin_20s_linear_infinite]" />
-            
+
             {/* Navigation */}
             <div className="relative z-10 flex justify-end p-4 md:p-6">
                 <div className="flex justify-end absolute right-5 md:top-5 md:right-5">
                     {user && user?.role ? (
                         <div className='flex items-center gap-4'>
                             <Button
-                                className="bg-green-800 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-green-800"
                                 onClick={() => {
-                                    user.role.name === "ALUMNI" ? navigate({ to: "/user" }) : navigate({ to: "/admin" })
+                                    if (user?.role?.name === "ALUMNI") {
+                                        navigate({ to: "/user" });
+                                    } else if (user?.role?.name === "Super Admin") {
+                                        navigate({ to: "/dashboard" });
+                                    } else if (user?.role?.name === "Admin") {
+                                        navigate({ to: "/dashboard" });
+                                    } else {
+                                        navigate({ to: "/faculty" });
+                                    }
                                 }}
                             >
                                 Dashboard
@@ -92,14 +98,14 @@ function Home() {
                         alt="Rivers State University Logo"
                         className="mx-auto size-28 md:size-38 animate-in fade-in duration-1000"
                     />
-                    
+
                     <h1 className="text-center text-3xl md:text-5xl font-extrabold text-gray-900 max-w-4xl mx-auto my-8 leading-tight">
                         RIVERS STATE UNIVERSITY
                         <span className="block text-green-800 text-4xl md:text-6xl mt-2">
                             ACADEMIC RECORDS PORTAL
                         </span>
                     </h1>
-                    
+
                     {/* Feature Flags with Enhanced Design */}
                     <div className="flex justify-center items-center gap-6 md:gap-8 my-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
                         {featureFlags.map((flag, index) => (
@@ -114,7 +120,7 @@ function Home() {
                             </Fragment>
                         ))}
                     </div>
-                    
+
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                         <Button
@@ -123,9 +129,9 @@ function Home() {
                         >
                             Request Document
                         </Button>
-                        <Button 
-                            size="lg" 
-                            variant="outline" 
+                        <Button
+                            size="lg"
+                            variant="outline"
                             className="border-2 border-green-800 text-green-800 hover:bg-green-50 px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
                         >
                             <Link to="/verify" className="flex items-center gap-2">
@@ -134,7 +140,7 @@ function Home() {
                             </Link>
                         </Button>
                     </div>
-                    
+
                     {/* Certificate Status Link */}
                     <div className="flex justify-center items-center mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
                         <button
@@ -155,8 +161,8 @@ function Home() {
             {/* Features Section with Green Mesh Pattern */}
             <section className="relative z-10 py-20 bg-white">
                 {/* Green Mesh Pattern Header */}
-                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] [background-size:16px_16px] opacity-20" />
-                
+                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] bg-size[16px_16px] opacity-20" />
+
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -169,8 +175,8 @@ function Home() {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {/* Feature 1 */}
-                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+                            <div className="absolute inset-0 bg-linear-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             <div className="relative">
                                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                                     <FileText className="w-8 h-8 text-green-800" />
@@ -187,8 +193,8 @@ function Home() {
                         </div>
 
                         {/* Feature 2 */}
-                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                            <div className="absolute inset-0 bg-linear-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             <div className="relative">
                                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                                     <Shield className="w-8 h-8 text-green-800" />
@@ -205,8 +211,8 @@ function Home() {
                         </div>
 
                         {/* Feature 3 */}
-                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
-                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all border border-gray-100 hover:border-green-200 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                            <div className="absolute inset-0 bg-linear-to-br from-green-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             <div className="relative">
                                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                                     <Clock className="w-8 h-8 text-green-800" />
@@ -226,10 +232,10 @@ function Home() {
             </section>
 
             {/* Stats Section with Green Mesh Pattern */}
-            <section className="relative z-10 py-20 bg-gradient-to-b from-white to-green-50/30">
+            <section className="relative z-10 py-20 bg-linear-to-b from-white to-green-50/30">
                 {/* Green Mesh Pattern Header */}
-                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] [background-size:16px_16px] opacity-10" />
-                
+                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] bg-size-[16px_16px] opacity-10" />
+
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-4 gap-8">
                         <div className="text-center group animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -255,8 +261,8 @@ function Home() {
             {/* How It Works Section with Green Mesh Pattern */}
             <section className="relative z-10 py-20 bg-white">
                 {/* Green Mesh Pattern Header */}
-                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] [background-size:16px_16px] opacity-20" />
-                
+                <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(#22c55e_0.5px,transparent_0.5px)] bg-size-[16px_16px] opacity-20" />
+
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
