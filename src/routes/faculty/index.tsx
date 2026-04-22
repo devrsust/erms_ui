@@ -1,5 +1,4 @@
 import { ChartAreaInteractive } from '@/components/chart-area-interactive'
-import { UserSectionCards } from '@/components/user-section-cards'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/faculty/')({

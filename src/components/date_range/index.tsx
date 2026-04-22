@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { DateRangePicker } from "react-date-range";
 import { format } from "date-fns";
 import "react-date-range/dist/styles.css";
@@ -13,10 +13,10 @@ import "react-date-range/dist/theme/default.css";
 
 // Define the range type
 export interface DateRange {
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate?: Date;
+  endDate?: Date;
   key: string;
-  label?: string; // for display
+  label?: string;
 }
 
 interface DateFilterBarProps {
@@ -41,14 +41,14 @@ export function DateFilterBar({ onRangeChange }: DateFilterBarProps) {
   const [isCustomOpen, setIsCustomOpen] = useState(false);
 
   const handleQuickSelect = (option: (typeof quickOptions)[0]) => {
-    let startDate: Date | null = new Date();
-    let endDate: Date | null = new Date();
+    let startDate: Date | undefined = new Date();
+    let endDate: Date | undefined = new Date();
     let label = option.label;
 
     if (option.daysOffset === null) {
       // All: set to null to represent no filter
-      startDate = null;
-      endDate = null;
+      startDate = undefined;
+      endDate = undefined;
     } else if (option.daysOffset === 0) {
       // Today: start and end are today
       startDate = new Date();
@@ -68,12 +68,14 @@ export function DateFilterBar({ onRangeChange }: DateFilterBarProps) {
 
   const handleCustomSelect = (ranges: any) => {
     const range = ranges.selection;
-    const newRange = {
+
+    const newRange: DateRange = {
       startDate: range.startDate,
       endDate: range.endDate,
       key: "selection",
       label: "Custom",
     };
+
     setSelectedRange(newRange);
     onRangeChange?.(newRange);
     setIsCustomOpen(false);
@@ -89,7 +91,7 @@ export function DateFilterBar({ onRangeChange }: DateFilterBarProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-4 bg-background border-b">
-      
+
       {quickOptions.map((option) => (
         <Button
           key={option.label}

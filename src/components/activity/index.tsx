@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Activity,
   FilePlus,
   FileEdit,
   FileMinus,
@@ -9,32 +8,15 @@ import {
   LogIn,
   LogOut,
   KeyRound,
-  EllipsisVertical,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+
 import { Separator } from "../ui/separator";
 
 interface ActivityItem {
   id: string;
   user: string;
   avatar?: string;
-  action:
-    | "create"
-    | "update"
-    | "delete"
-    | "view"
-    | "login"
-    | "logout"
-    | "password";
+  action: "create" | "update" | "delete" | "view" | "login" | "logout" | "password";
   target?: string;
   timestamp: string;
 }
@@ -75,6 +57,7 @@ const sampleActivities: ActivityItem[] = [
 
 function formatRelativeTime(iso: string) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+
   if (diff < 60) return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
@@ -82,90 +65,40 @@ function formatRelativeTime(iso: string) {
 }
 
 const actionConfig = {
-  create: {
-    icon: FilePlus,
-    color: "text-green-500",
-    label: "created",
-    type: "data",
-  },
-  update: {
-    icon: FileEdit,
-    color: "text-blue-500",
-    label: "updated",
-    type: "data",
-  },
-  delete: {
-    icon: FileMinus,
-    color: "text-red-500",
-    label: "deleted",
-    type: "data",
-  },
-  view: { icon: Eye, color: "text-purple-500", label: "viewed", type: "data" },
-  login: {
-    icon: LogIn,
-    color: "text-emerald-500",
-    label: "logged in",
-    type: "auth",
-  },
-  logout: {
-    icon: LogOut,
-    color: "text-gray-500",
-    label: "logged out",
-    type: "auth",
-  },
-  password: {
-    icon: KeyRound,
-    color: "text-yellow-500",
-    label: "changed password",
-    type: "auth",
-  },
+  create: { icon: FilePlus, color: "text-green-500", label: "created" },
+  update: { icon: FileEdit, color: "text-blue-500", label: "updated" },
+  delete: { icon: FileMinus, color: "text-red-500", label: "deleted" },
+  view: { icon: Eye, color: "text-purple-500", label: "viewed" },
+  login: { icon: LogIn, color: "text-emerald-500", label: "logged in" },
+  logout: { icon: LogOut, color: "text-gray-500", label: "logged out" },
+  password: { icon: KeyRound, color: "text-yellow-500", label: "changed password" },
 };
-
-type FilterType = "all" | "auth" | "data";
 
 export function ActivityCard({
   activities = sampleActivities,
 }: {
   activities?: ActivityItem[];
 }) {
-  const [filter, setFilter] = useState<FilterType>("all");
   const [expanded, setExpanded] = useState(false);
 
-  const filtered = activities.filter((item) => {
-    if (filter === "all") return true;
-    return actionConfig[item.action].type === filter;
-  });
-
-  const visibleItems = expanded ? filtered : filtered.slice(0, 4);
+  const visibleItems = expanded ? activities : activities.slice(0, 4);
 
   return (
-    <Card className="w-full max-w-md shadow-md gap-3">
-      <CardHeader className="pb-0 mb-0 flex items-center w-full">
-        <CardTitle className="w-full flex justify-between items-center text-base font-semibold">
-          <span>Recent Activity</span>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <EllipsisVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Options</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Refresh</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <Card className="w-full max-w-md shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-base font-semibold">
+          Recent Activity
         </CardTitle>
       </CardHeader>
+
       <Separator />
-      <CardContent className="">
+
+      <CardContent>
         {visibleItems.length === 0 ? (
           <p className="text-sm text-muted-foreground">No activity</p>
         ) : (
           <div className="relative">
-            {/* Timeline */}
-            <div className="absolute left-4 top-2 bottom-2 w-[2px] bg-gray-200" />
+            <div className="absolute left-4 top-2 bottom-2 w-px bg-gray-200" />
 
             <ul className="space-y-5">
               {visibleItems.map((item) => {
@@ -174,25 +107,21 @@ export function ActivityCard({
 
                 return (
                   <li key={item.id} className="relative flex gap-4">
-                    {/* Icon */}
                     <div
-                      className={cn(
-                        "bg-white p-1 rounded-full border h-8 w-8 flex items-center justify-center",
-                        config.color,
-                      )}
+                      className={`h-8 w-8 flex items-center justify-center rounded-full border bg-white ${config.color}`}
                     >
-                      <Icon className="w-3.5 h-3.5" />
+                      <Icon className="h-3.5 w-3.5" />
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1">
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <p className="text-sm">
                           <span className="font-medium">{item.user}</span>{" "}
                           <span className="text-muted-foreground">
                             {config.label}
                           </span>
                         </p>
+
                         <span className="text-xs text-muted-foreground">
                           {formatRelativeTime(item.timestamp)}
                         </span>
@@ -209,12 +138,11 @@ export function ActivityCard({
               })}
             </ul>
 
-            {/* Show more */}
-            {filtered.length > 4 && (
+            {activities.length > 4 && (
               <div className="mt-4 text-center">
                 <button
-                  onClick={() => setExpanded(!expanded)}
-                  className="text-xs text-[#9c2eba] font-medium"
+                  onClick={() => setExpanded((v) => !v)}
+                  className="text-xs font-medium text-[#9c2eba]"
                 >
                   {expanded ? "Show less" : "Show more"}
                 </button>

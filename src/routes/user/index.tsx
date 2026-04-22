@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { CheckCircle, Clock, FileText, TrendingUp } from "lucide-react";
+import { CheckCircle, Clock, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/user/")({
   component: Dashboard,

@@ -1,15 +1,5 @@
 import Chart from "react-apexcharts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { EllipsisVertical } from "lucide-react";
 import { Separator } from "../ui/separator";
 
 const RequestSummary = () => {
@@ -66,19 +56,6 @@ const RequestSummary = () => {
       <CardHeader className="pb-0 mb-0 flex items-center w-full">
         <CardTitle className="w-full flex justify-between items-center text-base font-semibold">
           <span>Request Summary</span>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <EllipsisVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Options</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Refresh</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </CardTitle>
       </CardHeader>
       <Separator />

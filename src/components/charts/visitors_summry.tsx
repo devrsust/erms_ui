@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
@@ -12,45 +12,33 @@ import {
 import { Button } from "../ui/button";
 import { EllipsisVertical } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { cn } from "@/lib/utils";
 
 type Range = "day" | "week" | "month" | "year";
 
 const VisitorsSummary = () => {
   const [range, setRange] = useState<Range>("week");
 
-  // Data mapped per range
-  const dataMap = {
-    day: Array.from({ length: 24 }, () => Math.floor(Math.random() * 50 + 10)),
-    week: [120, 200, 150, 170, 210, 250, 300],
-    month: Array.from({ length: 30 }, () =>
-      Math.floor(Math.random() * 400 + 100),
-    ),
-    year: [
-      1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400,
-    ],
-  };
+  const dataMap = useMemo(
+    () => ({
+      day: Array.from({ length: 24 }, () => Math.floor(Math.random() * 50 + 10)),
+      week: [120, 200, 150, 170, 210, 250, 300],
+      month: Array.from({ length: 30 }, () =>
+        Math.floor(Math.random() * 400 + 100),
+      ),
+      year: [1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400],
+    }),
+    [],
+  );
 
-  // Labels mapped per range
-  const categoriesMap = {
-    day: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-    week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    month: Array.from({ length: 30 }, (_, i) => `${i + 1}`),
-    year: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-  };
+  const categoriesMap = useMemo(
+    () => ({
+      day: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+      week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      month: Array.from({ length: 30 }, (_, i) => `${i + 1}`),
+      year: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    }),
+    [],
+  );
 
   const series = [
     {
@@ -81,7 +69,7 @@ const VisitorsSummary = () => {
       categories: categoriesMap[range],
       labels: {
         show: true,
-        rotate: range === "day" ? -45 : 0, // prevent overlap
+        rotate: range === "day" ? -45 : 0,
       },
     },
     yaxis: {
@@ -101,7 +89,7 @@ const VisitorsSummary = () => {
 
   return (
     <Card className="w-full shadow-md">
-      <CardHeader className="pb-0 mb-0">
+      <CardHeader className="pb-2">
         <CardTitle className="flex justify-between items-center text-base font-semibold">
           <span>Visitors Overview</span>
 
@@ -111,10 +99,16 @@ const VisitorsSummary = () => {
                 <EllipsisVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Options</DropdownMenuLabel>
+              <DropdownMenuLabel>Range</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Refresh</DropdownMenuItem>
+
+              {(["day", "week", "month", "year"] as Range[]).map((r) => (
+                <DropdownMenuItem key={r} onClick={() => setRange(r)}>
+                  {r.toUpperCase()}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </CardTitle>
