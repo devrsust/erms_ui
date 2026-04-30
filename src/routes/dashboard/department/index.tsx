@@ -337,7 +337,7 @@ function RouteComponent() {
                           onValueChange={(value) => createForm.setValue('facultyId', Number(value))}
                           defaultValue={createForm.watch('facultyId')?.toString()}
                         >
-                          <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                          <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500 w-full">
                             <SelectValue placeholder="Select faculty" />
                           </SelectTrigger>
                           <SelectContent>

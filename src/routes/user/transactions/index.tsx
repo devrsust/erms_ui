@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
 import React from 'react'
+import { SiteHeader } from '@/components/site-header'
 
 export const Route = createFileRoute('/user/transactions/')({
   component: RouteComponent,
@@ -314,137 +315,141 @@ function RouteComponent() {
         : transactions.filter(t => t.status === "FAILED")
 
   return (
-    <main className="min-h-screen p-4 lg:p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">My Transactions</h1>
-            <p className="text-gray-600">
-              View and manage your payment history and transactions
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Filter
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="grid gap-2 p-4 shadow rounded-2xl">
-            <p className="text-sm font-medium text-gray-600">Total Transactions</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="text-2xl font-bold">{totalTransactions}</h3>
+    <>
+      <SiteHeader title="Transactions" />
+      
+      <main className="min-h-screen p-4 lg:p-6">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">My Transactions</h1>
+              <p className="text-gray-600">
+                View and manage your payment history and transactions
+              </p>
             </div>
-            <div>
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span>Success Rate</span>
-                <span>{successRate.toFixed(0)}%</span>
-              </div>
-              <Progress value={successRate} className="h-1.5" />
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
             </div>
           </div>
 
-          <div className="grid gap-2 p-4 shadow rounded-2xl">
-            <p className="text-sm font-medium text-gray-600">Total Amount</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2 p-4 shadow rounded-2xl">
+              <p className="text-sm font-medium text-gray-600">Total Transactions</p>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <CreditCard className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{totalTransactions}</h3>
               </div>
-              <h3 className="text-2xl font-bold">{new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "NGN",
-                minimumFractionDigits: 0,
-              }).format(totalAmount)}</h3>
-            </div>
-            <div className="text-xs text-gray-500">
-              Avg: {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "NGN",
-                minimumFractionDigits: 0,
-              }).format(averageAmount)}
-            </div>
-          </div>
-
-          <div className="grid gap-2 p-4 shadow rounded-2xl">
-            <p className="text-sm font-medium text-gray-600">Successful</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-emerald-600" />
-              </div>
-              <h3 className="text-2xl font-bold">{successfulPayments}</h3>
-            </div>
-            <p className="text-xs text-gray-500">
-              Completed payments
-            </p>
-          </div>
-
-          <div className="grid gap-2 p-4 shadow rounded-2xl">
-            <p className="text-sm font-medium text-gray-600">Pending</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-amber-600" />
-              </div>
-              <h3 className="text-2xl font-bold">{pendingPayments}</h3>
-            </div>
-            <p className="text-xs text-gray-500">
-              Awaiting confirmation
-            </p>
-          </div>
-        </div>
-
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-xl">Transaction History</CardTitle>
-                <CardDescription>
-                  View all your payment transactions and their status
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-                  <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-                    <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-                    <TabsTrigger value="successful" className="text-xs">Successful</TabsTrigger>
-                    <TabsTrigger value="pending" className="text-xs">Pending</TabsTrigger>
-                    <TabsTrigger value="failed" className="text-xs">Failed</TabsTrigger>
-                  </TabsList>
-                </Tabs>
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                  <span>Success Rate</span>
+                  <span>{successRate.toFixed(0)}%</span>
+                </div>
+                <Progress value={successRate} className="h-1.5" />
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <DataTable
-              columns={columns}
-              data={filteredTransactions}
-              filterColumn="transaction"
-              filterPlaceholder="Search by transaction ID or amount…"
-            />
-            {filteredTransactions.length === 0 && (
-              <div className="p-8 text-center">
-                <CreditCard className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No {activeTab !== 'all' ? activeTab : ''} transactions found
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  {activeTab === 'all'
-                    ? "You haven't made any transactions yet."
-                    : `You don't have any ${activeTab} transactions.`}
-                </p>
+
+            <div className="grid gap-2 p-4 shadow rounded-2xl">
+              <p className="text-sm font-medium text-gray-600">Total Amount</p>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "NGN",
+                  minimumFractionDigits: 0,
+                }).format(totalAmount)}</h3>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+              <div className="text-xs text-gray-500">
+                Avg: {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "NGN",
+                  minimumFractionDigits: 0,
+                }).format(averageAmount)}
+              </div>
+            </div>
+
+            <div className="grid gap-2 p-4 shadow rounded-2xl">
+              <p className="text-sm font-medium text-gray-600">Successful</p>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-emerald-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{successfulPayments}</h3>
+              </div>
+              <p className="text-xs text-gray-500">
+                Completed payments
+              </p>
+            </div>
+
+            <div className="grid gap-2 p-4 shadow rounded-2xl">
+              <p className="text-sm font-medium text-gray-600">Pending</p>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-amber-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{pendingPayments}</h3>
+              </div>
+              <p className="text-xs text-gray-500">
+                Awaiting confirmation
+              </p>
+            </div>
+          </div>
+
+          <Card className="border border-gray-200 shadow-sm">
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-xl">Transaction History</CardTitle>
+                  <CardDescription>
+                    View all your payment transactions and their status
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+                    <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+                      <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+                      <TabsTrigger value="successful" className="text-xs">Successful</TabsTrigger>
+                      <TabsTrigger value="pending" className="text-xs">Pending</TabsTrigger>
+                      <TabsTrigger value="failed" className="text-xs">Failed</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                data={filteredTransactions}
+                filterColumn="transaction"
+                filterPlaceholder="Search by transaction ID or amount…"
+              />
+              {filteredTransactions.length === 0 && (
+                <div className="p-8 text-center">
+                  <CreditCard className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No {activeTab !== 'all' ? activeTab : ''} transactions found
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    {activeTab === 'all'
+                      ? "You haven't made any transactions yet."
+                      : `You don't have any ${activeTab} transactions.`}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </>
   )
 }

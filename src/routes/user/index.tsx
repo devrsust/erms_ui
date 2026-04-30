@@ -15,18 +15,86 @@ import {
 
 import { CheckCircle, Clock, TrendingUp } from "lucide-react";
 
+import { useQueries } from "@tanstack/react-query";
+import axios from "axios";
+import { alumniStats } from "@/service";
+import { useAppSelector } from "@/store/hooks";
+
+
+
 export const Route = createFileRoute("/user/")({
   component: Dashboard,
 });
 
 function Dashboard() {
+  const { user } = useAppSelector((state) => state.auth);
+
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["dashboard-stats", user?.id],
+        queryFn: () => alumniStats(user?.id || 0),
+        enabled: !!user?.id,
+        staleTime: 30_000,
+      },
+      {
+        queryKey: ["recent-requests"],
+        queryFn: async () => {
+          const { data } = await axios.get("/api/requests/recent");
+          return data;
+        },
+      }
+    ],
+  });
+
+  const [statsQuery, recentQuery] = results;
+
+  if (statsQuery.isLoading || recentQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const stats = statsQuery.data;
+
   return (
     <>
       <SiteHeader title="Dashboard" />
 
       <div className="flex flex-1 flex-col bg-gray-50 p-6 gap-6">
         {/* Top Stats */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card className="grid gap-4 p-4">
+            <p className="text-sm font-medium text-gray-600">Total Requests</p>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold">{stats?.totalRequests}</h3>
+            </div>
+            <p className="text-xs text-gray-500">Total number of requests</p>
+          </Card>
+
+          <Card className="grid gap-4 p-4">
+            <p className="text-sm font-medium text-gray-600">Pending</p>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <Clock className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="text-2xl font-bold">{stats?.pendingRequests}</h3>
+            </div>
+            <p className="text-xs text-gray-500">Awaiting processing</p>
+          </Card>
+
+          <Card className="grid gap-4 p-4">
+            <p className="text-sm font-medium text-gray-600">Completed</p>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold">{stats?.completedRequests}</h3>
+            </div>
+            <p className="text-xs text-gray-500">Successfully delivered</p>
+          </Card>
+
           <Card className="grid gap-4 p-4">
             <p className="text-sm font-medium text-gray-600">Total Requests</p>
             <div className="flex items-center gap-4">
@@ -45,29 +113,9 @@ function Dashboard() {
               {/* {completionRate.toFixed(0)}% completion rate */}
             </p>
           </Card>
-
-          <Card className="grid gap-4 p-4">
-            <p className="text-sm font-medium text-gray-600">Pending</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                <Clock className="h-6 w-6 text-amber-600" />
-              </div>
-              {/* <h3 className="text-2xl font-bold">{pendingRequests}</h3> */}
-            </div>
-            <p className="text-xs text-gray-500">Awaiting processing</p>
-          </Card>
-
-          <Card className="grid gap-4 p-4">
-            <p className="text-sm font-medium text-gray-600">Completed</p>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-600" />
-              </div>
-              {/* <h3 className="text-2xl font-bold">{successfulRequests}</h3> */}
-            </div>
-            <p className="text-xs text-gray-500">Successfully delivered</p>
-          </Card>
         </div>
+
+
 
         {/* Middle Section */}
         <div className="grid gap-6 lg:grid-cols-3">

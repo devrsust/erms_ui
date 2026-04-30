@@ -285,12 +285,12 @@ function Home() {
                     </div>
 
                     {/* Interactive Hint */}
-                    <div className="text-center mt-4 text-sm text-gray-500 animate-pulse">
+                    <div className="text-center mt-22 text-sm text-gray-500 animate-pulse">
                         ✨ Hover over the colored dots to explore the document request process
                     </div>
                 </div>
 
-                <div className="container mx-auto px-4 pt-16">
+                <div className="container mx-auto px-4 ">
                     <img
                         src="/rsu-logo.png"
                         alt="Rivers State University Logo"

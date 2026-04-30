@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   ClipboardList,
+  FileCheckCorner,
   Frame,
   Layers,
   LayoutGrid,
@@ -47,6 +48,11 @@ const alumni = {
       title: "Transactions",
       url: "/user/transactions/",
       icon: WalletMinimal,
+    },
+    {
+      title: "Documents",
+      url: "/user/documents/",
+      icon: FileCheckCorner,
     },
   ],
   navSecondary: [
@@ -141,6 +147,14 @@ const power = {
       icon: MonitorCog,
       items: [
         {
+          title: "Chain",
+          url: "/dashboard/chain/",
+        },
+        {
+          title: "Documents",
+          url: "/dashboard/documents/",
+        },
+        {
           title: "Roles",
           url: "/dashboard/roles/",
         },
@@ -152,14 +166,8 @@ const power = {
           title: "Departments",
           url: "/dashboard/department/",
         },
-        {
-          title: "Documents",
-          url: "/dashboard/documents/",
-        },
-        {
-          title: "Chain",
-          url: "/dashboard/chain/",
-        }
+
+
       ],
     },
   ],
@@ -437,7 +445,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       avatar: base.user.avatar,
     },
   }
- 
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

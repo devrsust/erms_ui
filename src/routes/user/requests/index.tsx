@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -60,6 +60,7 @@ import { useAppSelector } from "@/store/hooks"
 import { toast } from "sonner"
 import PaystackPop from "@paystack/inline-js"
 import { SiteHeader } from "@/components/site-header"
+import { Textarea } from "@/components/ui/textarea"
 
 export const Route = createFileRoute("/user/requests/")({
   component: RouteComponent,
@@ -117,6 +118,8 @@ function RouteComponent() {
   const documents = documentQuery.data?.data ?? []
   const faculties = facultyQuery.data?.data ?? []
   const requests = requestQuery.data?.data ?? []
+
+  console.log(requests);
 
   const form = useForm<RequestForm>({
     defaultValues: {
@@ -199,17 +202,22 @@ function RouteComponent() {
         const status = row.getValue("status") as string
         // const request = row.original
 
-        const variantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-          PENDING: "secondary",
-          SUCCESSFUL: "default",
-          FAILED: "destructive",
-        }
+        type Status = "PENDING" | "SUCCESSFUL" | "FAILED";
 
-        const config = variantMap[status] || "outline"
+        const statusStyles: Record<Status, string> = {
+          PENDING: "bg-yellow-100 text-yellow-700",
+          SUCCESSFUL: "bg-green-100 text-green-700",
+          FAILED: "bg-red-100 text-red-700",
+        };
+
+
 
         return (
           <div className="space-y-1.5">
-            <Badge variant={config} className="gap-1.5">
+            <Badge
+              className={`gap-1.5 ${statusStyles[status as Status] || "bg-gray-100 text-gray-700"
+                }`}
+            >
               {status === "PENDING" && <Clock className="h-3 w-3" />}
               {status === "SUCCESSFUL" && <CheckCircle className="h-3 w-3" />}
               {status === "FAILED" && <XCircle className="h-3 w-3" />}
@@ -217,7 +225,7 @@ function RouteComponent() {
             </Badge>
             {status === "PENDING" && (
               <div className="flex items-center gap-2">
-                <Progress value={50} className="h-1.5 w-20" />
+                <Progress value={50} className="h-1.5 w-20 [&>div]:bg-green-800" />
                 <span className="text-xs text-gray-500">Processing</span>
               </div>
             )}
@@ -273,13 +281,19 @@ function RouteComponent() {
       accessorFn: (row) => row.payments?.[0]?.status ?? "—",
       cell: ({ row }) => {
         const status = row.original.payments?.[0]?.status ?? "—"
-        const variantMap: Record<string, "default" | "secondary" | "destructive"> = {
-          SUCCESSFUL: "default",
-          PENDING: "secondary",
-        }
+        type Status = "PENDING" | "SUCCESSFUL" | "FAILED";
+
+        const statusStyles: Record<Status, string> = {
+          PENDING: "bg-yellow-100 text-yellow-700",
+          SUCCESSFUL: "bg-green-100 text-green-700",
+          FAILED: "bg-red-100 text-red-700",
+        };
 
         return (
-          <Badge variant={variantMap[status] || "outline"} className="capitalize gap-1.5">
+          <Badge
+            className={`gap-1.5 ${statusStyles[status as Status] || "capitalize bg-gray-100 text-gray-700"
+              }`}
+          >
             {status === "SUCCESSFUL" && <CheckCircle className="h-3 w-3" />}
             {status === "PENDING" && <Clock className="h-3 w-3" />}
             {status === "—" && <AlertCircle className="h-3 w-3" />}
@@ -339,21 +353,20 @@ function RouteComponent() {
                 <Eye className="h-4 w-4" />
                 View Details
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                <Download className="h-4 w-4" />
-                Download Document
-              </DropdownMenuItem>
-              {request.status === "PENDING" && (
+              {request.status === "COMPLETED" && (
                 <DropdownMenuItem className="cursor-pointer gap-2 text-amber-600">
-                  <Clock className="h-4 w-4" />
-                  Track Progress
+                  <Download className="h-4 w-4" />
+                  Download Document
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer gap-2 focus:text-red-600">
-                <Trash2 className="h-4 w-4" />
-                Cancel Request
-              </DropdownMenuItem>
+              {request.status === "PENDING" && (
+                <DropdownMenuItem className="text-red-600 cursor-pointer gap-2 focus:text-red-600">
+                  <Trash2 className="h-4 w-4" />
+                  Cancel Request
+                </DropdownMenuItem>
+              )}
+
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -448,12 +461,6 @@ function RouteComponent() {
     });
   };
 
-  // Calculate stats
-  const totalRequests = requests.length
-  const pendingRequests = requests.filter(r => r.status === 'PENDING').length
-  const successfulRequests = requests.filter(r => r.status === 'SUCCESSFUL').length
-  const totalAmount = requests.reduce((sum, req) => sum + (req.document?.totalAmount || 0), 0)
-  const completionRate = totalRequests > 0 ? (successfulRequests / totalRequests) * 100 : 0
 
   if (documentQuery.isLoading || facultyQuery.isLoading || requestQuery.isLoading) {
     return (
@@ -490,34 +497,35 @@ function RouteComponent() {
       <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
         <div className="mx-auto max-w-7xl space-y-6">
 
-          <Card className="p-4">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">My Document Requests</h1>
-                <p className="text-gray-600">
-                  Track, manage, and create new document requests
-                </p>
-              </div>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gap-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    <PlusCircle className="h-4 w-4" />
-                    New Document Request
-                  </Button>
-                </DialogTrigger>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">My Requests</h1>
+              <p className="text-gray-600">
+                Track, manage, and create new document requests
+              </p>
+            </div>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2 bg-green-900 hover:bg-green-800">
+                  <PlusCircle className="h-4 w-4" />
+                  New Request
+                </Button>
+              </DialogTrigger>
 
-                <DialogContent className="max-w-xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl">New Document Request</DialogTitle>
-                    <DialogDescription>
-                      Request a document for internal or external use
-                    </DialogDescription>
-                  </DialogHeader>
+              <DialogContent className="max-w-xl">
+                <DialogHeader>
+                  <DialogTitle className="text-xl">New Document Request</DialogTitle>
+                  <DialogDescription>
+                    Request a document for internal or external use
+                  </DialogDescription>
+                </DialogHeader>
 
-                  <form
-                    onSubmit={form.handleSubmit(handleSubmit)}
-                    className="space-y-4"
-                  >
+                <form
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                  className="space-y-4"
+                >
+
+                  <div className="grid grid-cols-2 gap-4">
                     {/* Document */}
                     <div className="space-y-2">
                       <Label htmlFor="document" className="font-medium">Select Document</Label>
@@ -560,225 +568,161 @@ function RouteComponent() {
                       </Select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* Type */}
-                      <div className="space-y-2">
-                        <Label htmlFor="type" className="font-medium">Request Type</Label>
-                        <Select
-                          value={selectedType}
-                          onValueChange={(v) => form.setValue("type", v as RequestForm["type"])}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="internal">
-                              <Building2 className="h-4 w-4 mr-2 inline" />
-                              Internal (University)
-                            </SelectItem>
-                            <SelectItem value="external">
-                              <Mail className="h-4 w-4 mr-2 inline" />
-                              External
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    {/* Type */}
+                    <div className="space-y-2">
+                      <Label htmlFor="type" className="font-medium">Request Type</Label>
+                      <Select
+                        value={selectedType}
+                        onValueChange={(v) => form.setValue("type", v as RequestForm["type"])}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="internal">
+                            <Building2 className="h-4 w-4 mr-2 inline" />
+                            Internal (University)
+                          </SelectItem>
+                          <SelectItem value="external">
+                            <Mail className="h-4 w-4 mr-2 inline" />
+                            External
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                      {/* Destination */}
-                      {selectedType === "internal" ? (
-                        <div className="space-y-2">
-                          <Label htmlFor="faculty" className="font-medium">Destination Faculty</Label>
-                          <Select
-                            value={form.watch("facultyId") || ""}
-                            onValueChange={(v) => form.setValue("facultyId", v)}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select faculty" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {faculties.map((f) => (
-                                <SelectItem key={f.id} value={String(f.id)}>
-                                  {f.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="font-medium">Recipient Email</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                            <Input
-                              type="email"
-                              className="pl-10"
-                              placeholder="recipient@example.com"
-                              {...form.register("email", { required: selectedType === "external" })}
-                            />
-                          </div>
-                        </div>
-                      )}
+                    {/* Destination */}
+                    <div className="space-y-2">
+                      <Label htmlFor="faculty" className="font-medium">Destination Faculty</Label>
+                      <Select
+                        value={form.watch("facultyId") || ""}
+                        onValueChange={(v) => form.setValue("facultyId", v)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select faculty" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {faculties.map((f) => (
+                            <SelectItem key={f.id} value={String(f.id)}>
+                              {f.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                      {/* Optional address field (for both types) */}
-                      <div className="space-y-2 col-span-2">
-                        <Label htmlFor="address" className="font-medium">Address</Label>
+                    {/* EMail */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="font-medium">Recipient Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <Input
-                          id="address"
-                          placeholder="Street, city, country..."
-                          {...form.register("address")}
+                          type="email"
+                          className="pl-10"
+                          placeholder="recipient@example.com"
+                          {...form.register("email", { required: selectedType === "external" })}
                         />
                       </div>
                     </div>
 
-                    {/* Price Display */}
-                    {form.watch("price") > 0 && (
-                      <Card className="border border-blue-100 bg-blue-50">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="space-y-1">
-                              <span className="text-sm font-medium text-blue-700">Total Amount</span>
-                              <p className="text-xs text-blue-600">
-                                Includes processing fee and service charges
-                              </p>
+                    {/* Optional address field (for both types) */}
+                    <div className="space-y-2 col-span-2">
+                      <Label htmlFor="address" className="font-medium">Address</Label>
+                      <Textarea
+                        id="address"
+                        placeholder="Type your message here."
+                        {...form.register("address")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Price Display */}
+                  {form.watch("price") > 0 && (
+                    <Card className="border border-blue-100 bg-blue-50">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <span className="text-sm font-medium text-blue-700">Total Amount</span>
+                            <p className="text-xs text-blue-600">
+                              Includes processing fee and service charges
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-gray-900">
+                              {new Intl.NumberFormat("en-US", {
+                                style: "currency",
+                                currency: "NGN",
+                                minimumFractionDigits: 0,
+                              }).format(form.watch("price"))}
                             </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-gray-900">
-                                {new Intl.NumberFormat("en-US", {
-                                  style: "currency",
-                                  currency: "NGN",
-                                  minimumFractionDigits: 0,
-                                }).format(form.watch("price"))}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                Payable via Paystack
-                              </div>
+                            <div className="text-sm text-gray-500">
+                              Payable via Paystack
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  <DialogFooter className="gap-2 pt-4">
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button" className="w-full sm:w-auto">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+
+                    {!paymentData ? (
+                      <Button
+                        type="submit"
+                        disabled={
+                          !form.watch("document") ||
+                          (selectedType === "internal"
+                            ? !form.watch("facultyId")
+                            : !form.watch("email"))
+                        }
+                        className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      >
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Proceed to Payment
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={handlePayment}
+                        className="w-full sm:w-auto bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Complete Payment
+                      </Button>
                     )}
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
 
-                    <DialogFooter className="gap-2 pt-4">
-                      <DialogClose asChild>
-                        <Button variant="outline" type="button" className="w-full sm:w-auto">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-
-                      {!paymentData ? (
-                        <Button
-                          type="submit"
-                          disabled={
-                            !form.watch("document") ||
-                            (selectedType === "internal"
-                              ? !form.watch("facultyId")
-                              : !form.watch("email"))
-                          }
-                          className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                        >
-                          <CreditCard className="mr-2 h-4 w-4" />
-                          Proceed to Payment
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          onClick={handlePayment}
-                          className="w-full sm:w-auto bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Complete Payment
-                        </Button>
-                      )}
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </Card>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="grid gap-4 p-4">
-              <p className="text-sm font-medium text-gray-600">Total Requests</p>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{totalRequests}</h3>
-              </div>
-              <p className="text-xs text-gray-500">All document requests</p>
-            </Card>
-
-            <Card className="grid gap-4 p-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-amber-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{pendingRequests}</h3>
-              </div>
-              <p className="text-xs text-gray-500">Awaiting processing</p>
-            </Card>
-
-            <Card className="grid gap-4 p-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{successfulRequests}</h3>
-              </div>
-              <p className="text-xs text-gray-500">
-                Successfully delivered
-              </p>
-            </Card>
-
-            <Card className="grid gap-4 p-4">
-              <p className="text-sm font-medium text-gray-600">Total Requests</p>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "NGN",
-                  minimumFractionDigits: 0,
-                }).format(totalAmount)}</h3>
-              </div>
-              <p className="text-xs text-gray-500">
-                {completionRate.toFixed(0)}% completion rate
-              </p>
-            </Card>
+          <div className="flex items-center gap-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+              <TabsList className="grid grid-cols-4 w-full sm:w-auto bg-white">
+                <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white"> All</TabsTrigger>
+                <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
+                <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>
+                <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Failed</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="border-b">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <CardTitle className="text-xl">Request History</CardTitle>
-                  <CardDescription>
-                    Track your document requests and their current status
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-                    <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-                      <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-                      <TabsTrigger value="pending" className="text-xs">Pending</TabsTrigger>
-                      <TabsTrigger value="completed" className="text-xs">Completed</TabsTrigger>
-                      <TabsTrigger value="failed" className="text-xs">Failed</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
-              </div>
-            </CardHeader>
             <CardContent>
-              <DataTable
-                columns={columns}
-                data={filteredRequests}
-                filterColumn="reference"
-                filterPlaceholder="Search by document name or reference…"
-              />
-              {filteredRequests.length === 0 && (
+              {filteredRequests.length > 0 ? (
+                // DATA TABLE
+                <DataTable
+                  columns={columns}
+                  data={filteredRequests}
+                  filterColumn="reference"
+                  filterPlaceholder="Search by document name or reference…"
+                />
+              ) : (
                 <div className="p-8 text-center">
                   <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -789,14 +733,6 @@ function RouteComponent() {
                       ? "You haven't made any document requests yet."
                       : `You don't have any ${activeTab} requests.`}
                   </p>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="gap-2">
-                        <PlusCircle className="h-4 w-4" />
-                        Create Your First Request
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
                 </div>
               )}
             </CardContent>

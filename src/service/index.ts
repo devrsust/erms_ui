@@ -72,6 +72,17 @@ export const logout = async (
 
 /*
 ==========================
+Stats
+==========================
+*/
+export const alumniStats = async (id: number) => {
+    const { data } = await http.get(`/dashboard/alumni/${id}`);
+    return data;
+}
+
+
+/*
+==========================
 Roles
 ==========================
 */
@@ -290,7 +301,7 @@ export const createDepartment = async (payload: {
     name: string;
     createdById: number;
 }) => {
-    const { data } = await http.post("/faculty", payload);
+    const { data } = await http.post("/department", payload);
     return data;
 }
 
@@ -473,10 +484,10 @@ export const uploadComboFile = async (id: number, file: File) => {
 };
 
 export const checkPrintStatus = async (matric: string) => {
-  const { data } = await http.get(`/combos/check`, {
-    params: { matric }
-  });
-  return data;
+    const { data } = await http.get(`/combos/check`, {
+        params: { matric }
+    });
+    return data;
 };
 
 

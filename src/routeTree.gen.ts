@@ -21,6 +21,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UserTransactionsIndexRouteImport } from './routes/user/transactions/index'
 import { Route as UserRequestsIndexRouteImport } from './routes/user/requests/index'
+import { Route as UserDocumentsIndexRouteImport } from './routes/user/documents/index'
 import { Route as DashboardVetIndexRouteImport } from './routes/dashboard/vet/index'
 import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
 import { Route as DashboardTransactionsIndexRouteImport } from './routes/dashboard/transactions/index'
@@ -97,6 +98,11 @@ const UserTransactionsIndexRoute = UserTransactionsIndexRouteImport.update({
 const UserRequestsIndexRoute = UserRequestsIndexRouteImport.update({
   id: '/requests/',
   path: '/requests/',
+  getParentRoute: () => UserRouteRoute,
+} as any)
+const UserDocumentsIndexRoute = UserDocumentsIndexRouteImport.update({
+  id: '/documents/',
+  path: '/documents/',
   getParentRoute: () => UserRouteRoute,
 } as any)
 const DashboardVetIndexRoute = DashboardVetIndexRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
   '/dashboard/users': typeof DashboardUsersIndexRoute
   '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/user/documents': typeof UserDocumentsIndexRoute
   '/user/requests': typeof UserRequestsIndexRoute
   '/user/transactions': typeof UserTransactionsIndexRoute
 }
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
   '/dashboard/users': typeof DashboardUsersIndexRoute
   '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/user/documents': typeof UserDocumentsIndexRoute
   '/user/requests': typeof UserRequestsIndexRoute
   '/user/transactions': typeof UserTransactionsIndexRoute
 }
@@ -275,6 +283,7 @@ export interface FileRoutesById {
   '/dashboard/transactions/': typeof DashboardTransactionsIndexRoute
   '/dashboard/users/': typeof DashboardUsersIndexRoute
   '/dashboard/vet/': typeof DashboardVetIndexRoute
+  '/user/documents/': typeof UserDocumentsIndexRoute
   '/user/requests/': typeof UserRequestsIndexRoute
   '/user/transactions/': typeof UserTransactionsIndexRoute
 }
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/users'
     | '/dashboard/vet'
+    | '/user/documents'
     | '/user/requests'
     | '/user/transactions'
   fileRoutesByTo: FileRoutesByTo
@@ -336,6 +346,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/users'
     | '/dashboard/vet'
+    | '/user/documents'
     | '/user/requests'
     | '/user/transactions'
   id:
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions/'
     | '/dashboard/users/'
     | '/dashboard/vet/'
+    | '/user/documents/'
     | '/user/requests/'
     | '/user/transactions/'
   fileRoutesById: FileRoutesById
@@ -465,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/requests'
       fullPath: '/user/requests'
       preLoaderRoute: typeof UserRequestsIndexRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
+    '/user/documents/': {
+      id: '/user/documents/'
+      path: '/documents'
+      fullPath: '/user/documents'
+      preLoaderRoute: typeof UserDocumentsIndexRouteImport
       parentRoute: typeof UserRouteRoute
     }
     '/dashboard/vet/': {
@@ -648,6 +667,7 @@ const FacultyRouteRouteWithChildren = FacultyRouteRoute._addFileChildren(
 interface UserRouteRouteChildren {
   UserIndexRoute: typeof UserIndexRoute
   UserRequestsIdRoute: typeof UserRequestsIdRoute
+  UserDocumentsIndexRoute: typeof UserDocumentsIndexRoute
   UserRequestsIndexRoute: typeof UserRequestsIndexRoute
   UserTransactionsIndexRoute: typeof UserTransactionsIndexRoute
 }
@@ -655,6 +675,7 @@ interface UserRouteRouteChildren {
 const UserRouteRouteChildren: UserRouteRouteChildren = {
   UserIndexRoute: UserIndexRoute,
   UserRequestsIdRoute: UserRequestsIdRoute,
+  UserDocumentsIndexRoute: UserDocumentsIndexRoute,
   UserRequestsIndexRoute: UserRequestsIndexRoute,
   UserTransactionsIndexRoute: UserTransactionsIndexRoute,
 }

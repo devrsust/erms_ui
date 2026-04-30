@@ -1,10 +1,10 @@
+import ApprovalTimeline from '@/components/approval-timeline'
 import IsPending from '@/components/Illustrations/isPending'
 import { SiteHeader } from '@/components/site-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { getRequestById } from '@/service'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -12,14 +12,11 @@ import {
   ArrowLeft,
   Copy,
   FileText,
-  User,
   Calendar,
   Building2,
   Mail,
   MapPin,
-  CheckCircle2,
-  Circle,
-  Clock,
+  Clock
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -103,7 +100,8 @@ function RouteComponent() {
     toast.success('Reference number copied')
   }
 
-  const isCurrentStep = (stepId: number) => request.currentStep?.id === stepId
+
+  console.log(request);
 
   return (
     <>
@@ -215,121 +213,15 @@ function RouteComponent() {
                     {/* <Link to={`/user/documents/${request.document.id}`}>
                       <FileText className="h-4 w-4" />
                     </Link> */}
-                      View Document
+                    View Document
                   </Button>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Approval timeline card */}
-          {request.document?.approvalChain?.steps?.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Approval Timeline</CardTitle>
-                <CardDescription>
-                  {request.document.approvalChain.name} • {request.document.approvalChain.steps.length} steps
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {request.document.approvalChain.steps.map((step: any, index: number) => {
-                    const isCurrent = isCurrentStep(step.id)
-                    const isPast = false // we don't have approval history yet, so all steps before current are unknown
 
-                    return (
-                      <div
-                        key={step.id}
-                        className={`relative pl-8 pb-4 last:pb-0 ${index < request.document.approvalChain.steps.length - 1
-                            ? 'border-l-2 border-gray-200'
-                            : ''
-                          }`}
-                      >
-                        {/* Step indicator */}
-                        <div
-                          className={`absolute left-0 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center ${isCurrent
-                              ? 'bg-green-100 border-2 border-green-600'
-                              : isPast
-                                ? 'bg-green-600 text-white'
-                                : 'bg-white border-2 border-gray-300'
-                            }`}
-                        >
-                          {isPast ? (
-                            <CheckCircle2 className="h-3 w-3 text-white" />
-                          ) : isCurrent ? (
-                            <div className="h-2 w-2 rounded-full bg-green-600 animate-pulse" />
-                          ) : (
-                            <Circle className="h-3 w-3 text-gray-400" />
-                          )}
-                        </div>
-
-                        {/* Step content */}
-                        <div
-                          className={`p-4 rounded-lg ${isCurrent ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
-                            }`}
-                        >
-                          <div className="flex flex-wrap items-start justify-between gap-2">
-                            <div>
-                              <h4 className="font-medium flex items-center gap-2">
-                                {step.name}
-                                {isCurrent && (
-                                  <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
-                                    Current Step
-                                  </Badge>
-                                )}
-                              </h4>
-                              {step.description && (
-                                <p className="text-sm text-gray-500">{step.description}</p>
-                              )}
-                            </div>
-                            <Badge variant="outline">
-                              {step.userId
-                                ? `Assigned to User #${step.userId}`
-                                : step.roleId
-                                  ? `Assigned to Role #${step.roleId}`
-                                  : 'Unassigned'}
-                            </Badge>
-                          </div>
-                          <div className="mt-2 text-sm text-gray-600 space-y-1">
-                            {step.userId && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="flex items-center gap-1 cursor-help">
-                                      <User className="h-3 w-3" />
-                                      <span>User ID: {step.userId}</span>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Assigned to a specific user</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                            {step.roleId && (
-                              <div className="flex items-center gap-1">
-                                <Building2 className="h-3 w-3" />
-                                <span>Role ID: {step.roleId}</span>
-                              </div>
-                            )}
-                            {step.canReject !== undefined && (
-                              <div className="flex items-center gap-1">
-                                <span
-                                  className={step.canReject ? 'text-amber-600' : 'text-gray-400'}
-                                >
-                                  {step.canReject ? 'Can reject' : 'Cannot reject'}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <ApprovalTimeline request={request} />
         </div>
       </main>
     </>

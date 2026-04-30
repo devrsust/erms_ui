@@ -102,7 +102,7 @@ function Dashboard() {
                 <VisitorsSummary />
               </div>
             </section>
-            <section className="col-span-1 md:col-span-2 lg:col-span-2 grid gap-4">
+            <section className="col-span-1 md:col-span-2 lg:col-span-2 grid md:grid-cols-2 lg:grid-cols-1 gap-4">
               <div className="w-full overflow-hidden">
                 <RequestSummary />
               </div>
