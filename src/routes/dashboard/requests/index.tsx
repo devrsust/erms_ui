@@ -9,9 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, Calendar, CheckCircle, FileText, User, CreditCard, Download, Eye, Filter, Clock, AlertCircle } from 'lucide-react'
+import { MoreHorizontal, Mail, FileText, User, CreditCard, Download, Eye, Filter, Trash2, CalendarDays, Copy, FileCog } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -28,6 +28,7 @@ export const Route = createFileRoute('/dashboard/requests/')({
 
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams({
     page: '1',
     limit: '10',
@@ -207,68 +208,58 @@ function RouteComponent() {
         </div>
       ),
     },
+    // {
+    //   id: "payment",
+    //   header: "Payment Status",
+    //   accessorFn: (row) => row.payments?.[0]?.status ?? "NONE",
+    //   cell: ({ getValue }) => {
+    //     const status = getValue<string>()
+
+    //     const styles: Record<string, string> = {
+    //       SUCCESSFUL: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    //       PENDING: "bg-amber-50 text-amber-700 border border-amber-200",
+    //       FAILED: "bg-red-50 text-red-700 border border-red-200",
+    //       NONE: "bg-gray-50 text-gray-600 border border-gray-200",
+    //     }
+
+    //     return (
+    //       <span
+    //         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${styles[status] ?? styles.NONE
+    //           }`}
+    //       >
+    //         {status === "NONE" ? "No Payment" : status}
+    //       </span>
+    //     )
+    //   },
+    // },
     {
-      id: "payment",
-      header: "Payment Status",
-      accessorFn: (row) => row.payments?.[0]?.status ?? "NONE",
-      cell: ({ getValue }) => {
-        const status = getValue<string>()
-
-        const styles: Record<string, string> = {
-          SUCCESSFUL: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-          PENDING: "bg-amber-50 text-amber-700 border border-amber-200",
-          FAILED: "bg-red-50 text-red-700 border border-red-200",
-          NONE: "bg-gray-50 text-gray-600 border border-gray-200",
-        }
-
+      accessorKey: "createdAt",
+      header: () => (
+        <div className="flex items-center gap-2 font-semibold">
+          <CalendarDays className="h-4 w-4" />
+          <span>Created</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
         return (
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${styles[status] ?? styles.NONE
-              }`}
-          >
-            {status === "NONE" ? "No Payment" : status}
-          </span>
+          <div className="space-y-0.5">
+            <div className="text-sm font-medium">
+              {new Intl.DateTimeFormat("en-US", {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              }).format(date)}
+            </div>
+          </div>
         )
       },
     },
     {
-      accessorKey: 'createdAt',
-      header: () => (
-        <Button
-          variant="ghost"
-          className="font-semibold hover:bg-gray-50"
-        >
-          <Calendar className="mr-2 h-4 w-4" />
-          Created
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const dateString = row.getValue('createdAt') as string;
-        const date = new Date(dateString);
-
-        return (
-          <div className="space-y-0.5">
-            <div className="text-sm font-medium">
-              {new Intl.DateTimeFormat('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              }).format(date)}
-            </div>
-            <div className="text-xs text-gray-500">
-              {new Intl.DateTimeFormat('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-              }).format(date)}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'actions',
-      enableHiding: false,
+      id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const request = row.original
 
@@ -276,9 +267,9 @@ function RouteComponent() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="ghost"
+                variant="outline"
+                size="sm"
                 className="h-8 w-8 p-0 hover:bg-gray-100 transition-colors"
-                size="icon"
               >
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
@@ -289,31 +280,44 @@ function RouteComponent() {
                 Request Actions
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+
+
+
+
               <DropdownMenuItem
                 onClick={() =>
                   navigator.clipboard.writeText(String(request.id))
                 }
                 className="cursor-pointer gap-2"
               >
+                <Copy className="h-4 w-4" />
                 Copy Request ID
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
+              <DropdownMenuItem className="cursor-pointer gap-2"
+                onClick={() => navigate({ to: `/dashboard/requests/${request.id}` })}
+              >
                 <Eye className="h-4 w-4" />
                 View Details
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                <Download className="h-4 w-4" />
-                Download Document
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-amber-600 cursor-pointer gap-2 focus:text-amber-600">
-                <AlertCircle className="h-4 w-4" />
-                Mark as Pending
+                <FileCog className="h-4 w-4" />
+                Process
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-green-600 cursor-pointer gap-2 focus:text-green-600">
-                <CheckCircle className="h-4 w-4" />
-                Mark as Completed
-              </DropdownMenuItem>
+              {request.status === "COMPLETED" && (
+                <DropdownMenuItem className="cursor-pointer gap-2 text-amber-600">
+                  <Download className="h-4 w-4" />
+                  Download Document
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {request.status === "PENDING" && (
+                <DropdownMenuItem className="text-red-600 cursor-pointer gap-2 focus:text-red-600">
+                  <Trash2 className="h-4 w-4" />
+                  Cancel Request
+                </DropdownMenuItem>
+              )}
+
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -323,10 +327,7 @@ function RouteComponent() {
 
   console.log(data);
 
-  const requests = data?.data ?? []
-  const totalRequests = requests.length
-  const pendingRequests = requests.filter(req => req.status === 'PENDING').length
-  const successfulRequests = requests.filter(req => req.status === 'SUCCESSFUL').length
+  const requests = data?.data ?? [];
 
   return (
     <>
@@ -337,9 +338,9 @@ function RouteComponent() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Request Management</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Request</h1>
                 <p className="text-gray-600">
-                  Monitor and manage all user document requests
+                  Monitor and manage all document requests
                 </p>
               </div>
               <div className="flex gap-2">
@@ -355,42 +356,12 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
-              <p className="text-sm font-medium text-gray-600">Total Requests</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                  <FileText className="h-5 w-5 text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{totalRequests}</h3>
-              </div>
-            </div>
-            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
-              <p className="text-sm font-medium text-gray-600">Pending Requests</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-                  <Clock className="h-5 w-5 text-amber-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{pendingRequests}</h3>
-              </div>
-            </div>
-            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
-              <p className="text-sm font-medium text-gray-600">Completed Requests</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold">{successfulRequests}</h3>
-              </div>
-            </div>
-          </div>
-
           <Tabs defaultValue="all" className="space-y-4">
             <TabsList className="bg-white border">
-              <TabsTrigger value="all">All Requests</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="failed">Failed</TabsTrigger>
+              <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">All Requests</TabsTrigger>
+              <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
+              <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>
+              <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Failed</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">

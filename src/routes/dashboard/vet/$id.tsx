@@ -103,6 +103,8 @@ function RouteComponent() {
         )
     }
 
+    console.log(request);
+
     const user = request.user
     const academicData = user?.data?.acaddata
     const courses = academicData?.results?.courses || []

@@ -17,8 +17,9 @@ import { CheckCircle, Clock, TrendingUp } from "lucide-react";
 
 import { useQueries } from "@tanstack/react-query";
 import axios from "axios";
-import { alumniStats } from "@/service";
+import { AlumniActivityLog, alumniStats } from "@/service";
 import { useAppSelector } from "@/store/hooks";
+import { ActivityCard } from "@/components/activity";
 
 
 
@@ -38,6 +39,12 @@ function Dashboard() {
         staleTime: 30_000,
       },
       {
+        queryKey: ["activity", user?.id],
+        queryFn: () => AlumniActivityLog(user?.id || 0),
+        enabled: !!user?.id,
+        staleTime: 30_000,
+      },
+      {
         queryKey: ["recent-requests"],
         queryFn: async () => {
           const { data } = await axios.get("/api/requests/recent");
@@ -47,14 +54,16 @@ function Dashboard() {
     ],
   });
 
-  const [statsQuery, recentQuery] = results;
+  const [statsQuery, activityQuery, recentQuery] = results;
 
-  if (statsQuery.isLoading || recentQuery.isLoading) {
+  if (statsQuery.isLoading || activityQuery.isLoading || recentQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
   const stats = statsQuery.data;
+  const activity = activityQuery.data;
 
+  console.log(stats);
   return (
     <>
       <SiteHeader title="Dashboard" />
@@ -102,11 +111,11 @@ function Dashboard() {
                 <TrendingUp className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="text-2xl font-bold">
-                {/* {new Intl.NumberFormat("en-US", {
+                {new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "NGN",
                   minimumFractionDigits: 0,
-                }).format(totalAmount)} */}
+                }).format(stats?.totalSuccessfulTransactionAmount)}
               </h3>
             </div>
             <p className="text-xs text-gray-500">
@@ -159,45 +168,9 @@ function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Request Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Current Request</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              <div className="flex gap-3">
-                <div className="w-2 h-2 mt-2 rounded-full bg-green-500" />
-                <div>
-                  <p className="text-sm font-medium">Request Submitted</p>
-                  <p className="text-xs text-muted-foreground">12 Mar 2026</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <div className="w-2 h-2 mt-2 rounded-full bg-green-500" />
-                <div>
-                  <p className="text-sm font-medium">Payment Confirmed</p>
-                  <p className="text-xs text-muted-foreground">12 Mar 2026</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <div className="w-2 h-2 mt-2 rounded-full bg-yellow-500" />
-                <div>
-                  <p className="text-sm font-medium">Processing</p>
-                  <p className="text-xs text-muted-foreground">In Progress</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 opacity-50">
-                <div className="w-2 h-2 mt-2 rounded-full bg-gray-400" />
-                <div>
-                  <p className="text-sm font-medium">Completed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="w-full overflow-hidden">
+            <ActivityCard activities={activity} maxDisplay={5} />
+          </div>
         </div>
       </div>
     </>

@@ -4,7 +4,7 @@ import * as React from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQueries } from "@tanstack/react-query"
 import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, ExternalLink } from "lucide-react"
+import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, MoreHorizontal } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { DataTable } from "@/components/table"
@@ -75,9 +75,9 @@ type RequestForm = {
     title: string
     totalAmount: number
   } | null
-  facultyId?: string
-  email?: string
-  address?: string
+  facultyId: string
+  email: string
+  address: string
 }
 
 function RouteComponent() {
@@ -306,7 +306,7 @@ function RouteComponent() {
       accessorKey: "createdAt",
       header: () => (
         <div className="flex items-center gap-2 font-semibold">
-          <CalendarDays className="h-4 w-4 text-amber-500" />
+          <CalendarDays className="h-4 w-4" />
           <span>Created</span>
         </div>
       ),
@@ -316,8 +316,11 @@ function RouteComponent() {
           <div className="space-y-0.5">
             <div className="text-sm font-medium">
               {new Intl.DateTimeFormat("en-US", {
-                month: "short",
-                day: "numeric",
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
               }).format(date)}
             </div>
           </div>
@@ -339,7 +342,7 @@ function RouteComponent() {
                 className="h-8 w-8 p-0 hover:bg-gray-100 transition-colors"
               >
                 <span className="sr-only">Open menu</span>
-                <ExternalLink className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -380,14 +383,9 @@ function RouteComponent() {
       return
     }
 
-    // Validate destination based on type
-    if (values.type === "internal" && !values.facultyId) {
-      toast.error("Please select a faculty.")
-      return
-    }
-    if (values.type === "external" && !values.email) {
-      toast.error("Please enter an email address.")
-      return
+    if (!values.facultyId) {
+      toast.error("Faculty is required");
+      return;
     }
 
     try {
@@ -395,7 +393,8 @@ function RouteComponent() {
         user,
         request: values.request,
         type: values.type,
-        destination: values.type === "internal" ? values.facultyId : values.email,
+        destination: values.facultyId,
+        email: values.email,
         address: values.address,
         price: values.price,
         processing_fee: 0,
@@ -443,9 +442,8 @@ function RouteComponent() {
             userId: user!.id,
             documentId: formValues.document!.id,
             type: formValues.type,
-            ...(formValues.type === "internal"
-              ? { facultyId: formValues.facultyId }
-              : { email: formValues.email }),
+            facultyId: formValues.facultyId,
+            email: formValues.email,
             address: formValues.address,
           };
 
@@ -593,7 +591,7 @@ function RouteComponent() {
 
                     {/* Destination */}
                     <div className="space-y-2">
-                      <Label htmlFor="faculty" className="font-medium">Destination Faculty</Label>
+                      <Label htmlFor="faculty" className="font-medium">Faculty</Label>
                       <Select
                         value={form.watch("facultyId") || ""}
                         onValueChange={(v) => form.setValue("facultyId", v)}
@@ -613,24 +611,24 @@ function RouteComponent() {
 
                     {/* EMail */}
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="font-medium">Recipient Email</Label>
+                      <Label htmlFor="email" className="font-medium">Email (official recipient)</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <Input
                           type="email"
                           className="pl-10"
-                          placeholder="recipient@example.com"
-                          {...form.register("email", { required: selectedType === "external" })}
+                          placeholder="Enter university email "
+                          {...form.register("email", { required: true })}
                         />
                       </div>
                     </div>
 
                     {/* Optional address field (for both types) */}
                     <div className="space-y-2 col-span-2">
-                      <Label htmlFor="address" className="font-medium">Address</Label>
+                      <Label htmlFor="address" className="font-medium">Address (delivery location)</Label>
                       <Textarea
                         id="address"
-                        placeholder="Type your message here."
+                        placeholder="Type the university address here."
                         {...form.register("address")}
                       />
                     </div>
@@ -676,9 +674,9 @@ function RouteComponent() {
                         type="submit"
                         disabled={
                           !form.watch("document") ||
-                          (selectedType === "internal"
-                            ? !form.watch("facultyId")
-                            : !form.watch("email"))
+                          !form.watch("facultyId") ||
+                          !form.watch("email") ||
+                          !form.watch("address")
                         }
                         className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       >
@@ -702,8 +700,8 @@ function RouteComponent() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-              <TabsList className="grid grid-cols-4 w-full sm:w-auto bg-white">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto ">
+              <TabsList className="grid grid-cols-4 w-full sm:w-auto bg-white shadow">
                 <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white"> All</TabsTrigger>
                 <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
                 <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>

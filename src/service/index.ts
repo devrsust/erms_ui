@@ -75,8 +75,23 @@ export const logout = async (
 Stats
 ==========================
 */
+export const adminStats = async () => {
+    const { data } = await http.get(`/dashboard/admin`);
+    return data;
+}
+
 export const alumniStats = async (id: number) => {
     const { data } = await http.get(`/dashboard/alumni/${id}`);
+    return data;
+}
+
+export const AlumniActivityLog = async (id: number) => {
+    const { data } = await http.get(`activity/user?entity=ALUMNI&actorId=${id}&page=1&limit=6`);
+    return data;
+}
+
+export const AdminActivityLog = async () => {
+    const { data } = await http.get(`activity?&page=1&limit=6`);
     return data;
 }
 
