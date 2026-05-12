@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-export const Route = createFileRoute('/dashboard/requests/$id')({
+export const Route = createFileRoute('/records/requests/$id')({
   component: RouteComponent,
 })
 
@@ -110,7 +110,7 @@ function RouteComponent() {
           {/* Back button */}
           <div className="flex items-center justify-between">
             <Button asChild variant="ghost" size="sm" className="gap-2">
-              <Link to="/dashboard/requests">
+              <Link to="/records/requests">
                 <ArrowLeft className="h-4 w-4" />
                 Back to requests
               </Link>

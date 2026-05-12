@@ -12,16 +12,25 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as UserRouteRouteImport } from './routes/user/route'
+import { Route as RecordsRouteRouteImport } from './routes/records/route'
+import { Route as PowerRouteRouteImport } from './routes/power/route'
 import { Route as FacultyRouteRouteImport } from './routes/faculty/route'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIndexRouteImport } from './routes/user/index'
+import { Route as RecordsIndexRouteImport } from './routes/records/index'
+import { Route as PowerIndexRouteImport } from './routes/power/index'
 import { Route as FacultyIndexRouteImport } from './routes/faculty/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardAccountRouteImport } from './routes/dashboard/account'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UserTransactionsIndexRouteImport } from './routes/user/transactions/index'
 import { Route as UserRequestsIndexRouteImport } from './routes/user/requests/index'
 import { Route as UserDocumentsIndexRouteImport } from './routes/user/documents/index'
+import { Route as RecordsVetIndexRouteImport } from './routes/records/vet/index'
+import { Route as RecordsTransactionsIndexRouteImport } from './routes/records/transactions/index'
+import { Route as RecordsRequestsIndexRouteImport } from './routes/records/requests/index'
+import { Route as RecordsApprovedIndexRouteImport } from './routes/records/approved/index'
 import { Route as DashboardVetIndexRouteImport } from './routes/dashboard/vet/index'
 import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
 import { Route as DashboardTransactionsIndexRouteImport } from './routes/dashboard/transactions/index'
@@ -35,6 +44,8 @@ import { Route as DashboardChainIndexRouteImport } from './routes/dashboard/chai
 import { Route as DashboardApprovedIndexRouteImport } from './routes/dashboard/approved/index'
 import { Route as DashboardAdminsIndexRouteImport } from './routes/dashboard/admins/index'
 import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
+import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
+import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
 import { Route as DashboardVetIdRouteImport } from './routes/dashboard/vet/$id'
 import { Route as DashboardUsersIdRouteImport } from './routes/dashboard/users/$id'
 import { Route as DashboardRequestsIdRouteImport } from './routes/dashboard/requests/$id'
@@ -54,6 +65,16 @@ const CertificateRoute = CertificateRouteImport.update({
 const UserRouteRoute = UserRouteRouteImport.update({
   id: '/user',
   path: '/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRouteRoute = RecordsRouteRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PowerRouteRoute = PowerRouteRouteImport.update({
+  id: '/power',
+  path: '/power',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FacultyRouteRoute = FacultyRouteRouteImport.update({
@@ -76,6 +97,16 @@ const UserIndexRoute = UserIndexRouteImport.update({
   path: '/',
   getParentRoute: () => UserRouteRoute,
 } as any)
+const RecordsIndexRoute = RecordsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RecordsRouteRoute,
+} as any)
+const PowerIndexRoute = PowerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
 const FacultyIndexRoute = FacultyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -84,6 +115,11 @@ const FacultyIndexRoute = FacultyIndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardAccountRoute = DashboardAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -105,6 +141,27 @@ const UserDocumentsIndexRoute = UserDocumentsIndexRouteImport.update({
   id: '/documents/',
   path: '/documents/',
   getParentRoute: () => UserRouteRoute,
+} as any)
+const RecordsVetIndexRoute = RecordsVetIndexRouteImport.update({
+  id: '/vet/',
+  path: '/vet/',
+  getParentRoute: () => RecordsRouteRoute,
+} as any)
+const RecordsTransactionsIndexRoute =
+  RecordsTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => RecordsRouteRoute,
+  } as any)
+const RecordsRequestsIndexRoute = RecordsRequestsIndexRouteImport.update({
+  id: '/requests/',
+  path: '/requests/',
+  getParentRoute: () => RecordsRouteRoute,
+} as any)
+const RecordsApprovedIndexRoute = RecordsApprovedIndexRouteImport.update({
+  id: '/approved/',
+  path: '/approved/',
+  getParentRoute: () => RecordsRouteRoute,
 } as any)
 const DashboardVetIndexRoute = DashboardVetIndexRouteImport.update({
   id: '/vet/',
@@ -173,6 +230,16 @@ const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
   path: '/requests/$id',
   getParentRoute: () => UserRouteRoute,
 } as any)
+const RecordsVetIdRoute = RecordsVetIdRouteImport.update({
+  id: '/vet/$id',
+  path: '/vet/$id',
+  getParentRoute: () => RecordsRouteRoute,
+} as any)
+const RecordsRequestsIdRoute = RecordsRequestsIdRouteImport.update({
+  id: '/requests/$id',
+  path: '/requests/$id',
+  getParentRoute: () => RecordsRouteRoute,
+} as any)
 const DashboardVetIdRoute = DashboardVetIdRouteImport.update({
   id: '/vet/$id',
   path: '/vet/$id',
@@ -203,18 +270,25 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/faculty': typeof FacultyRouteRouteWithChildren
+  '/power': typeof PowerRouteRouteWithChildren
+  '/records': typeof RecordsRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/faculty/': typeof FacultyIndexRoute
+  '/power/': typeof PowerIndexRoute
+  '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
   '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
   '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
   '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
   '/dashboard/users/$id': typeof DashboardUsersIdRoute
   '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/records/requests/$id': typeof RecordsRequestsIdRoute
+  '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins': typeof DashboardAdminsIndexRoute
   '/dashboard/approved': typeof DashboardApprovedIndexRoute
@@ -228,6 +302,10 @@ export interface FileRoutesByFullPath {
   '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
   '/dashboard/users': typeof DashboardUsersIndexRoute
   '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/records/approved': typeof RecordsApprovedIndexRoute
+  '/records/requests': typeof RecordsRequestsIndexRoute
+  '/records/transactions': typeof RecordsTransactionsIndexRoute
+  '/records/vet': typeof RecordsVetIndexRoute
   '/user/documents': typeof UserDocumentsIndexRoute
   '/user/requests': typeof UserRequestsIndexRoute
   '/user/transactions': typeof UserTransactionsIndexRoute
@@ -237,14 +315,19 @@ export interface FileRoutesByTo {
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard': typeof DashboardIndexRoute
   '/faculty': typeof FacultyIndexRoute
+  '/power': typeof PowerIndexRoute
+  '/records': typeof RecordsIndexRoute
   '/user': typeof UserIndexRoute
   '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
   '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
   '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
   '/dashboard/users/$id': typeof DashboardUsersIdRoute
   '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/records/requests/$id': typeof RecordsRequestsIdRoute
+  '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins': typeof DashboardAdminsIndexRoute
   '/dashboard/approved': typeof DashboardApprovedIndexRoute
@@ -258,6 +341,10 @@ export interface FileRoutesByTo {
   '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
   '/dashboard/users': typeof DashboardUsersIndexRoute
   '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/records/approved': typeof RecordsApprovedIndexRoute
+  '/records/requests': typeof RecordsRequestsIndexRoute
+  '/records/transactions': typeof RecordsTransactionsIndexRoute
+  '/records/vet': typeof RecordsVetIndexRoute
   '/user/documents': typeof UserDocumentsIndexRoute
   '/user/requests': typeof UserRequestsIndexRoute
   '/user/transactions': typeof UserTransactionsIndexRoute
@@ -267,18 +354,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/faculty': typeof FacultyRouteRouteWithChildren
+  '/power': typeof PowerRouteRouteWithChildren
+  '/records': typeof RecordsRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/faculty/': typeof FacultyIndexRoute
+  '/power/': typeof PowerIndexRoute
+  '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
   '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
   '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
   '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
   '/dashboard/users/$id': typeof DashboardUsersIdRoute
   '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/records/requests/$id': typeof RecordsRequestsIdRoute
+  '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
   '/dashboard/admins/': typeof DashboardAdminsIndexRoute
   '/dashboard/approved/': typeof DashboardApprovedIndexRoute
@@ -292,6 +386,10 @@ export interface FileRoutesById {
   '/dashboard/transactions/': typeof DashboardTransactionsIndexRoute
   '/dashboard/users/': typeof DashboardUsersIndexRoute
   '/dashboard/vet/': typeof DashboardVetIndexRoute
+  '/records/approved/': typeof RecordsApprovedIndexRoute
+  '/records/requests/': typeof RecordsRequestsIndexRoute
+  '/records/transactions/': typeof RecordsTransactionsIndexRoute
+  '/records/vet/': typeof RecordsVetIndexRoute
   '/user/documents/': typeof UserDocumentsIndexRoute
   '/user/requests/': typeof UserRequestsIndexRoute
   '/user/transactions/': typeof UserTransactionsIndexRoute
@@ -302,18 +400,25 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/faculty'
+    | '/power'
+    | '/records'
     | '/user'
     | '/certificate'
     | '/verify'
     | '/auth/login'
+    | '/dashboard/account'
     | '/dashboard/'
     | '/faculty/'
+    | '/power/'
+    | '/records/'
     | '/user/'
     | '/dashboard/admins/$id'
     | '/dashboard/documents/$id'
     | '/dashboard/requests/$id'
     | '/dashboard/users/$id'
     | '/dashboard/vet/$id'
+    | '/records/requests/$id'
+    | '/records/vet/$id'
     | '/user/requests/$id'
     | '/dashboard/admins'
     | '/dashboard/approved'
@@ -327,6 +432,10 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/users'
     | '/dashboard/vet'
+    | '/records/approved'
+    | '/records/requests'
+    | '/records/transactions'
+    | '/records/vet'
     | '/user/documents'
     | '/user/requests'
     | '/user/transactions'
@@ -336,14 +445,19 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/verify'
     | '/auth/login'
+    | '/dashboard/account'
     | '/dashboard'
     | '/faculty'
+    | '/power'
+    | '/records'
     | '/user'
     | '/dashboard/admins/$id'
     | '/dashboard/documents/$id'
     | '/dashboard/requests/$id'
     | '/dashboard/users/$id'
     | '/dashboard/vet/$id'
+    | '/records/requests/$id'
+    | '/records/vet/$id'
     | '/user/requests/$id'
     | '/dashboard/admins'
     | '/dashboard/approved'
@@ -357,6 +471,10 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/users'
     | '/dashboard/vet'
+    | '/records/approved'
+    | '/records/requests'
+    | '/records/transactions'
+    | '/records/vet'
     | '/user/documents'
     | '/user/requests'
     | '/user/transactions'
@@ -365,18 +483,25 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/faculty'
+    | '/power'
+    | '/records'
     | '/user'
     | '/certificate'
     | '/verify'
     | '/auth/login'
+    | '/dashboard/account'
     | '/dashboard/'
     | '/faculty/'
+    | '/power/'
+    | '/records/'
     | '/user/'
     | '/dashboard/admins/$id'
     | '/dashboard/documents/$id'
     | '/dashboard/requests/$id'
     | '/dashboard/users/$id'
     | '/dashboard/vet/$id'
+    | '/records/requests/$id'
+    | '/records/vet/$id'
     | '/user/requests/$id'
     | '/dashboard/admins/'
     | '/dashboard/approved/'
@@ -390,6 +515,10 @@ export interface FileRouteTypes {
     | '/dashboard/transactions/'
     | '/dashboard/users/'
     | '/dashboard/vet/'
+    | '/records/approved/'
+    | '/records/requests/'
+    | '/records/transactions/'
+    | '/records/vet/'
     | '/user/documents/'
     | '/user/requests/'
     | '/user/transactions/'
@@ -399,6 +528,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   FacultyRouteRoute: typeof FacultyRouteRouteWithChildren
+  PowerRouteRoute: typeof PowerRouteRouteWithChildren
+  RecordsRouteRoute: typeof RecordsRouteRouteWithChildren
   UserRouteRoute: typeof UserRouteRouteWithChildren
   CertificateRoute: typeof CertificateRoute
   VerifyRoute: typeof VerifyRoute
@@ -426,6 +557,20 @@ declare module '@tanstack/react-router' {
       path: '/user'
       fullPath: '/user'
       preLoaderRoute: typeof UserRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/power': {
+      id: '/power'
+      path: '/power'
+      fullPath: '/power'
+      preLoaderRoute: typeof PowerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faculty': {
@@ -456,6 +601,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof UserRouteRoute
     }
+    '/records/': {
+      id: '/records/'
+      path: '/'
+      fullPath: '/records/'
+      preLoaderRoute: typeof RecordsIndexRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
+    '/power/': {
+      id: '/power/'
+      path: '/'
+      fullPath: '/power/'
+      preLoaderRoute: typeof PowerIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
     '/faculty/': {
       id: '/faculty/'
       path: '/'
@@ -468,6 +627,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/account': {
+      id: '/dashboard/account'
+      path: '/account'
+      fullPath: '/dashboard/account'
+      preLoaderRoute: typeof DashboardAccountRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/auth/login': {
@@ -497,6 +663,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/user/documents'
       preLoaderRoute: typeof UserDocumentsIndexRouteImport
       parentRoute: typeof UserRouteRoute
+    }
+    '/records/vet/': {
+      id: '/records/vet/'
+      path: '/vet'
+      fullPath: '/records/vet'
+      preLoaderRoute: typeof RecordsVetIndexRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
+    '/records/transactions/': {
+      id: '/records/transactions/'
+      path: '/transactions'
+      fullPath: '/records/transactions'
+      preLoaderRoute: typeof RecordsTransactionsIndexRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
+    '/records/requests/': {
+      id: '/records/requests/'
+      path: '/requests'
+      fullPath: '/records/requests'
+      preLoaderRoute: typeof RecordsRequestsIndexRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
+    '/records/approved/': {
+      id: '/records/approved/'
+      path: '/approved'
+      fullPath: '/records/approved'
+      preLoaderRoute: typeof RecordsApprovedIndexRouteImport
+      parentRoute: typeof RecordsRouteRoute
     }
     '/dashboard/vet/': {
       id: '/dashboard/vet/'
@@ -589,6 +783,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserRequestsIdRouteImport
       parentRoute: typeof UserRouteRoute
     }
+    '/records/vet/$id': {
+      id: '/records/vet/$id'
+      path: '/vet/$id'
+      fullPath: '/records/vet/$id'
+      preLoaderRoute: typeof RecordsVetIdRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
+    '/records/requests/$id': {
+      id: '/records/requests/$id'
+      path: '/requests/$id'
+      fullPath: '/records/requests/$id'
+      preLoaderRoute: typeof RecordsRequestsIdRouteImport
+      parentRoute: typeof RecordsRouteRoute
+    }
     '/dashboard/vet/$id': {
       id: '/dashboard/vet/$id'
       path: '/vet/$id'
@@ -628,6 +836,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteRouteChildren {
+  DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAdminsIdRoute: typeof DashboardAdminsIdRoute
   DashboardDocumentsIdRoute: typeof DashboardDocumentsIdRoute
@@ -649,6 +858,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardAccountRoute: DashboardAccountRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminsIdRoute: DashboardAdminsIdRoute,
   DashboardDocumentsIdRoute: DashboardDocumentsIdRoute,
@@ -685,6 +895,42 @@ const FacultyRouteRouteWithChildren = FacultyRouteRoute._addFileChildren(
   FacultyRouteRouteChildren,
 )
 
+interface PowerRouteRouteChildren {
+  PowerIndexRoute: typeof PowerIndexRoute
+}
+
+const PowerRouteRouteChildren: PowerRouteRouteChildren = {
+  PowerIndexRoute: PowerIndexRoute,
+}
+
+const PowerRouteRouteWithChildren = PowerRouteRoute._addFileChildren(
+  PowerRouteRouteChildren,
+)
+
+interface RecordsRouteRouteChildren {
+  RecordsIndexRoute: typeof RecordsIndexRoute
+  RecordsRequestsIdRoute: typeof RecordsRequestsIdRoute
+  RecordsVetIdRoute: typeof RecordsVetIdRoute
+  RecordsApprovedIndexRoute: typeof RecordsApprovedIndexRoute
+  RecordsRequestsIndexRoute: typeof RecordsRequestsIndexRoute
+  RecordsTransactionsIndexRoute: typeof RecordsTransactionsIndexRoute
+  RecordsVetIndexRoute: typeof RecordsVetIndexRoute
+}
+
+const RecordsRouteRouteChildren: RecordsRouteRouteChildren = {
+  RecordsIndexRoute: RecordsIndexRoute,
+  RecordsRequestsIdRoute: RecordsRequestsIdRoute,
+  RecordsVetIdRoute: RecordsVetIdRoute,
+  RecordsApprovedIndexRoute: RecordsApprovedIndexRoute,
+  RecordsRequestsIndexRoute: RecordsRequestsIndexRoute,
+  RecordsTransactionsIndexRoute: RecordsTransactionsIndexRoute,
+  RecordsVetIndexRoute: RecordsVetIndexRoute,
+}
+
+const RecordsRouteRouteWithChildren = RecordsRouteRoute._addFileChildren(
+  RecordsRouteRouteChildren,
+)
+
 interface UserRouteRouteChildren {
   UserIndexRoute: typeof UserIndexRoute
   UserRequestsIdRoute: typeof UserRequestsIdRoute
@@ -709,6 +955,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   FacultyRouteRoute: FacultyRouteRouteWithChildren,
+  PowerRouteRoute: PowerRouteRouteWithChildren,
+  RecordsRouteRoute: RecordsRouteRouteWithChildren,
   UserRouteRoute: UserRouteRouteWithChildren,
   CertificateRoute: CertificateRoute,
   VerifyRoute: VerifyRoute,

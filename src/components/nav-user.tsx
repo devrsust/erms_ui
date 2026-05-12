@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { Link } from "@tanstack/react-router"
 
 export function NavUser({
   user,
@@ -34,9 +35,21 @@ export function NavUser({
     lastname: string
     email: string
     avatar: string
+    role: string
   }
 }) {
   const { isMobile } = useSidebar()
+
+  const profileRoutes: Record<string, string> = {
+    "SUPER ADMIN": "/dashboard/account",
+    ADMIN: "/dashboard/account",
+    DIRECTOR: "/dashboard/account",
+    ALUMNI: "/user/account",
+    "RECORD OFFICER": "/records/account",
+  }
+
+  const profile =
+    profileRoutes[user.role?.toUpperCase()] || "/account"
 
   return (
     <SidebarMenu>
@@ -78,13 +91,18 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <Link to={profile} className="cursor-pointer">
+                  <BadgeCheck className="mr-2 h-4 w-4" />
+                  <span>Account</span>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+
+              <DropdownMenuItem asChild>
+                <Link to="/" className="cursor-pointer">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

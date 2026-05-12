@@ -90,6 +90,11 @@ export const AlumniActivityLog = async (id: number) => {
     return data;
 }
 
+export const UserActivityLog = async (id: number) => {
+    const { data } = await http.get(`activity/user?actorId=${id}&page=1&limit=6`);
+    return data;
+}
+
 export const AdminActivityLog = async () => {
     const { data } = await http.get(`activity?&page=1&limit=6`);
     return data;

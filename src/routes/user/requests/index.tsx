@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useQueries } from "@tanstack/react-query"
+import { useQueries, useQueryClient } from "@tanstack/react-query"
 import type { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, MoreHorizontal } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -86,6 +86,7 @@ function RouteComponent() {
   const [paymentData, setPaymentData] = React.useState<any | null>(null)
   const [activeTab, setActiveTab] = React.useState("all")
   const navigate = useNavigate();
+  const queryClient = useQueryClient()
 
   const searchParams = new URLSearchParams({
     page: "1",
@@ -436,6 +437,10 @@ function RouteComponent() {
           await updatePayment(paymentId, payload);
           toast.success("Payment completed successfully");
 
+          queryClient.invalidateQueries({
+            queryKey: ["requests", user?.id],
+          })
+
           const formValues = form.getValues()
           const requestPayload = {
             paymentId: String(paymentId),
@@ -447,10 +452,12 @@ function RouteComponent() {
             address: formValues.address,
           };
 
-          console.log("REQUEST: ", requestPayload);
 
-          const res = await createRequests(requestPayload);
-          console.log("REQUEST RES: ", res);
+          await createRequests(requestPayload);
+          
+          await queryClient.invalidateQueries({
+            queryKey: ["requests", user?.id],
+          });
 
         } catch (error) {
           console.error(error);

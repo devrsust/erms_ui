@@ -2,17 +2,25 @@
 
 import * as React from "react"
 import {
-  ClipboardList,
-  FileCheckCorner,
-  Frame,
-  Layers,
   LayoutGrid,
-  MonitorCog,
-  PieChart,
-  UserCog,
-  Users,
+  ClipboardList,
   WalletMinimal,
-} from "lucide-react"
+  FileCheckCorner,
+  Users,
+  Layers,
+  MonitorCog,
+  UserCog,
+  Activity,
+  FileText,
+  Shield,
+  Building2,
+  School,
+  Link2,
+  CheckCircle,
+  PlusCircle,
+  Eye,
+  Edit,
+} from 'lucide-react';
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -24,13 +32,13 @@ import {
 } from "@/components/ui/sidebar"
 import type { AuthUser } from "@/store/slices/auth.slice"
 
-// This is sample data.
-const alumni = {
+const alumniNav = {
   user: {
-    firstname: "shadcn",
-    lastname: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    firstname: "John",
+    lastname: "Doe",
+    email: "john.doe@alumni.edu",
+    avatar: "/avatars/user.jpg",
+    role: "ALUMNI"
   },
   navMain: [
     {
@@ -43,6 +51,7 @@ const alumni = {
       title: "Requests",
       url: "/user/requests/",
       icon: ClipboardList,
+      badge: 3,
     },
     {
       title: "Transactions",
@@ -58,35 +67,19 @@ const alumni = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/user/settings",
       icon: UserCog,
     }
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
-const power = {
+const superAdminNav = {
   user: {
-    firstname: "shadcn",
-    lastname: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    firstname: "Jane",
+    lastname: "Smith",
+    email: "jane.smith@system.edu",
+    avatar: "/avatars/admin.jpg",
+    role: "SUPER ADMIN"
   },
   navMain: [
     {
@@ -99,18 +92,9 @@ const power = {
       url: "#",
       icon: Users,
       items: [
-        {
-          title: "Admins",
-          url: "/dashboard/admins",
-        },
-        {
-          title: "Users",
-          url: "/dashboard/users",
-        },
-        {
-          title: "Assign Privileges",
-          url: "#",
-        },
+        { title: "Admins", url: "/dashboard/admins", icon: Shield },
+        { title: "Users", url: "/dashboard/users", icon: Users },
+        { title: "Assign Privileges", url: "/dashboard/privileges", icon: Edit },
       ],
     },
     {
@@ -118,22 +102,71 @@ const power = {
       url: "#",
       icon: Layers,
       items: [
-        {
-          title: "Document Requests",
-          url: "/dashboard/requests",
-        },
-        {
-          title: "Vetting & Processing",
-          url: "/dashboard/vet",
-        },
-        {
-          title: "Approved Documents",
-          url: "/dashboard/approved-documents",
-        },
-        {
-          title: "Bulk Combos",
-          url: "/dashboard/combo",
-        },
+        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 12 },
+        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/dashboard/approved-documents", icon: FileCheckCorner },
+        { title: "Bulk Combos", url: "/dashboard/combo", icon: PlusCircle },
+      ],
+    },
+    {
+      title: "Transactions",
+      url: "/dashboard/transactions/",
+      icon: WalletMinimal,
+    },
+    {
+      title: "Analysis",
+      url: "/dashboard/analysis/",
+      icon: Activity,
+    },
+    {
+      title: "Logs & Activity",
+      url: "/dashboard/logs/",
+      icon: Eye,
+    },
+    {
+      title: "Config",
+      url: "#",
+      icon: MonitorCog,
+      items: [
+        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
+        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
+        { title: "Roles", url: "/dashboard/roles/", icon: Shield },
+        { title: "Faculties", url: "/dashboard/faculty/", icon: Building2 },
+        { title: "Departments", url: "/dashboard/department/", icon: School },
+      ],
+    },
+  ],
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "/dashboard/settings",
+      icon: UserCog,
+    }
+  ],
+};
+
+const directorNav = {
+  user: {
+    firstname: "Robert",
+    lastname: "Johnson",
+    email: "robert.johnson@university.edu",
+    avatar: "/avatars/director.jpg",
+    role: "DIRECTOR"
+  },
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/dashboard/",
+      icon: LayoutGrid,
+    },
+    {
+      title: "Records Management",
+      url: "#",
+      icon: Layers,
+      items: [
+        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 8 },
+        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/dashboard/approved", icon: FileCheckCorner },
       ],
     },
     {
@@ -146,63 +179,28 @@ const power = {
       url: "#",
       icon: MonitorCog,
       items: [
-        {
-          title: "Chain",
-          url: "/dashboard/chain/",
-        },
-        {
-          title: "Documents",
-          url: "/dashboard/documents/",
-        },
-        {
-          title: "Roles",
-          url: "/dashboard/roles/",
-        },
-        {
-          title: "Faculties",
-          url: "/dashboard/faculty/",
-        },
-        {
-          title: "Departments",
-          url: "/dashboard/department/",
-        },
-
-
+        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
+        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
+        { title: "Departments", url: "/dashboard/department/", icon: School },
       ],
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/settings",
       icon: UserCog,
     }
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
-const faculty = {
+const adminNav = {
   user: {
-    firstname: "shadcn",
-    lastname: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    firstname: "Sarah",
+    lastname: "Williams",
+    email: "sarah.williams@faculty.edu",
+    avatar: "/avatars/admin.jpg",
+    role: "ADMIN"
   },
   navMain: [
     {
@@ -215,18 +213,8 @@ const faculty = {
       url: "#",
       icon: Users,
       items: [
-        {
-          title: "Admins",
-          url: "/dashboard/admins",
-        },
-        {
-          title: "Users",
-          url: "/dashboard/users",
-        },
-        {
-          title: "Assign Privileges",
-          url: "#",
-        },
+        { title: "Admins", url: "/dashboard/admins", icon: Shield },
+        { title: "Users", url: "/dashboard/users", icon: Users },
       ],
     },
     {
@@ -234,112 +222,51 @@ const faculty = {
       url: "#",
       icon: Layers,
       items: [
-        {
-          title: "Document Requests",
-          url: "/dashboard/requests",
-        },
-        {
-          title: "Vetting & Processing",
-          url: "/dashboard/vet",
-        },
-        {
-          title: "Approved Documents",
-          url: "/dashboard/approved-documents",
-        },
-        {
-          title: "Bulk Combos",
-          url: "/dashboard/combos",
-        },
+        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 5 },
+        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/dashboard/approved-documents", icon: FileCheckCorner },
+        { title: "Bulk Combos", url: "/dashboard/combos", icon: PlusCircle },
       ],
     },
     {
       title: "Transactions",
       url: "/dashboard/transactions/",
       icon: WalletMinimal,
-      // items: [
-      //   {
-      //     title: "Introduction",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Get Started",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Tutorials",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Changelog",
-      //     url: "#",
-      //   },
-      // ],
     },
     {
       title: "Config",
       url: "#",
       icon: MonitorCog,
       items: [
-        {
-          title: "Documents",
-          url: "/dashboard/documents/",
-        },
-        {
-          title: "Roles",
-          url: "/dashboard/roles/",
-        },
-        {
-          title: "Faculties",
-          url: "/dashboard/faculty/",
-        },
-        {
-          title: "Departments",
-          url: "/dashboard/department/",
-        },
-        {
-          title: "Chain",
-          url: "/dashboard/chain/",
-        }
+        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
+        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
+        { title: "Roles", url: "/dashboard/roles/", icon: Shield },
+        { title: "Faculties", url: "/dashboard/faculty/", icon: Building2 },
+        { title: "Departments", url: "/dashboard/department/", icon: School },
       ],
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/settings",
       icon: UserCog,
     }
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
-const admin = {
+const recordOfficerNav = {
   user: {
-    firstname: "shadcn",
-    lastname: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    firstname: "Michael",
+    lastname: "Brown",
+    email: "michael.brown@records.edu",
+    avatar: "/avatars/record.jpg",
+    role: "RECORD OFFICER"
   },
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard/",
+      url: "/records/",
       icon: LayoutGrid,
     },
     {
@@ -347,69 +274,42 @@ const admin = {
       url: "#",
       icon: Layers,
       items: [
-        {
-          title: "Document Requests",
-          url: "/dashboard/requests",
-        },
-        {
-          title: "Vetting & Processing",
-          url: "/dashboard/vet",
-        },
-        {
-          title: "Approved Documents",
-          url: "/dashboard/approved",
-        }
+        { title: "Document Requests", url: "/records/requests", icon: FileText, badge: 15 },
+        { title: "Vetting & Processing", url: "/records/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/records/approved", icon: FileCheckCorner },
       ],
     },
     {
       title: "Transactions",
-      url: "/dashboard/transactions/",
+      url: "/records/transactions/",
       icon: WalletMinimal,
-    },
-    {
-      title: "Config",
-      url: "#",
-      icon: MonitorCog,
-      items: [
-        {
-          title: "Documents",
-          url: "/dashboard/documents/",
-        },
-        {
-          title: "Departments",
-          url: "/dashboard/department/",
-        },
-        {
-          title: "Chain",
-          url: "/dashboard/chain/",
-        }
-      ],
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/records/settings",
       icon: UserCog,
     }
   ],
-  projects: [
+};
+
+const defaultNav = {
+  user: {
+    firstname: "Guest",
+    lastname: "User",
+    email: "guest@system.com",
+    avatar: "/avatars/user.jpg",
+    role: "GUEST",
+  },
+  navMain: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      title: "Dashboard",
+      url: "/",
+      icon: LayoutGrid,
     },
   ],
+  navSecondary: [],
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -419,30 +319,34 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const base = (() => {
     switch (user?.role?.name?.toUpperCase()) {
+      case "SUPER ADMIN":
+        return superAdminNav;
+
+      case "DIRECTOR":
+        return directorNav;
+
       case "ALUMNI":
-        return alumni;
+        return alumniNav;
 
       case "ADMIN":
-        return admin;
+        return adminNav;
 
       case "RECORD OFFICER":
-        return faculty;
-
-      case "SUPER ADMIN":
-        return power;
+        return recordOfficerNav;
 
       default:
-        return admin;
+        return defaultNav;
     }
   })();
 
   const data = {
     ...base,
     user: {
-      firstname: user?.firstname ?? base.user.firstname,
-      lastname: user?.lastname ?? base.user.lastname,
-      email: user?.email ?? base.user.email,
-      avatar: base.user.avatar,
+      firstname: user?.firstname ?? base?.user.firstname,
+      lastname: user?.lastname ?? base?.user.lastname,
+      email: user?.email ?? base?.user.email,
+      avatar: base?.user.avatar,
+      role: user?.role?.name ?? base.user.role,
     },
   }
 

@@ -23,7 +23,7 @@ import { createApproval } from '@/service'
 import { useAppSelector } from '@/store/hooks'
 import { CommentComponent } from '@/components/request-comments'
 
-export const Route = createFileRoute('/dashboard/vet/$id')({
+export const Route = createFileRoute('/records/vet/$id')({
     component: RouteComponent,
 })
 
@@ -70,7 +70,7 @@ function RouteComponent() {
                             </CardHeader>
                             <CardContent>
                                 <Button asChild variant="outline">
-                                    <Link to="/dashboard/vet">Go back</Link>
+                                    <Link to="/records/vet">Go back</Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -94,7 +94,7 @@ function RouteComponent() {
                             </CardHeader>
                             <CardContent>
                                 <Button asChild variant="outline">
-                                    <Link to="/dashboard/vet">Back to vetting</Link>
+                                    <Link to="/records/vet">Back to vetting</Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -148,7 +148,7 @@ function RouteComponent() {
                         ? 'Request rejected successfully'
                         : 'Request sent back successfully'
             )
-            navigate({ to: '/dashboard/vet' })
+            navigate({ to: '/records/vet' })
         } catch (err: any) {
             toast.error(err?.message || 'Action failed')
         } finally {
@@ -165,7 +165,7 @@ function RouteComponent() {
                     {/* Back button */}
                     <div className="flex items-center justify-between">
                         <Button asChild variant="ghost" size="sm" className="gap-2">
-                            <Link to="/dashboard/vet">
+                            <Link to="/records/vet">
                                 <ArrowLeft className="h-4 w-4" />
                                 Back to vetting list
                             </Link>
