@@ -10,9 +10,6 @@ http.interceptors.request.use((config) => {
     const token = store.getState().auth.accessToken;
     const user = store.getState().auth.user;
 
-    console.log("REQ USER", user);
-    
-
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }

@@ -153,7 +153,7 @@ const directorNav = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard/",
+      url: "/director/",
       icon: LayoutGrid,
     },
     {
@@ -161,14 +161,13 @@ const directorNav = {
       url: "#",
       icon: Layers,
       items: [
-        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 8 },
-        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
-        { title: "Approved Documents", url: "/dashboard/approved", icon: FileCheckCorner },
+        { title: "Document Requests", url: "/director/requests", icon: FileText, badge: 8 },
+        { title: "Approved Documents", url: "/director/approved", icon: FileCheckCorner },
       ],
     },
     {
       title: "Transactions",
-      url: "/dashboard/transactions/",
+      url: "/director/transactions/",
       icon: WalletMinimal,
     },
     {
@@ -176,16 +175,17 @@ const directorNav = {
       url: "#",
       icon: MonitorCog,
       items: [
-        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
-        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
-        { title: "Departments", url: "/dashboard/department/", icon: School },
+        { title: "Chain", url: "/director/chain/", icon: Link2 },
+        { title: "Documents", url: "/director/documents/", icon: FileText },
+        { title: "Faculties", url: "/director/faculty/", icon: School },
+        { title: "Departments", url: "/director/department/", icon: School },
       ],
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/director/settings",
       icon: UserCog,
     }
   ],

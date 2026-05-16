@@ -1,7 +1,7 @@
 import { SiteHeader } from '@/components/site-header'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/power/approved/')({
+export const Route = createFileRoute('/director/approved/')({
   component: RouteComponent,
 })
 

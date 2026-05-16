@@ -9,6 +9,7 @@ import { DateFilterBar } from "@/components/date_range";
 import { useAppSelector } from "@/store/hooks";
 import { useQueries } from "@tanstack/react-query";
 import { AdminActivityLog, adminStats } from "@/service";
+import IsPending from "@/components/Illustrations/isPending";
 
 export const Route = createFileRoute("/director/")({
   component: Dashboard,
@@ -37,13 +38,11 @@ function Dashboard() {
   const [statsQuery, activityQuery] = results;
 
   if (statsQuery.isLoading || activityQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <IsPending page="Dashboard" />
   }
 
   const stats = statsQuery.data;
   const activity = activityQuery.data;
-
-  console.log(activity);
 
   return (
     <>

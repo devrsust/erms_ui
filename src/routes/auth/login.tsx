@@ -147,19 +147,19 @@ function RouteComponent() {
         toast.success(`Logged in as ${data.user.email}`)
 
         switch (data.user?.role?.name) {
-          case "Alumni":
+          case "ALUMNI":
             navigate({ to: '/user' });
             break;
-          case "Super Admin":
+          case "SUPER ADMIN":
             navigate({ to: '/power' });
             break;
-          case "Director":
+          case "DIRECTOR":
             navigate({ to: '/director' });
             break;
-          case "Admin":
+          case "ADMIN":
             navigate({ to: '/admin' });
             break;
-          case "Record Officer":
+          case "RECORD OFFICER":
             navigate({ to: '/records' });
             break;
           default:
