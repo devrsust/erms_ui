@@ -9,9 +9,8 @@ import { DateFilterBar } from "@/components/date_range";
 import { useAppSelector } from "@/store/hooks";
 import { useQueries } from "@tanstack/react-query";
 import { AdminActivityLog, adminStats } from "@/service";
-import IsPending from "@/components/Illustrations/isPending";
 
-export const Route = createFileRoute("/power/")({
+export const Route = createFileRoute("/director/")({
   component: Dashboard,
 });
 
@@ -22,13 +21,13 @@ function Dashboard() {
     queries: [
       {
         queryKey: ["dashboard-stats", user?.id],
-        queryFn: () => adminStats(user!.id),
+        queryFn: () => adminStats(Number(user?.id)),
         enabled: !!user?.id,
         staleTime: 30_000,
       },
       {
         queryKey: ["activity", user?.id],
-        queryFn: () => AdminActivityLog(user!.id),
+        queryFn: () => AdminActivityLog(Number(user?.id)),
         enabled: !!user?.id,
         staleTime: 30_000,
       },
@@ -38,7 +37,7 @@ function Dashboard() {
   const [statsQuery, activityQuery] = results;
 
   if (statsQuery.isLoading || activityQuery.isLoading) {
-    return <IsPending page="Dashboard" />
+    return <div>Loading...</div>;
   }
 
   const stats = statsQuery.data;

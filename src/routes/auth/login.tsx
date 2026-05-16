@@ -151,13 +151,16 @@ function RouteComponent() {
             navigate({ to: '/user' });
             break;
           case "Super Admin":
-            navigate({ to: '/dashboard' });
+            navigate({ to: '/power' });
+            break;
+          case "Director":
+            navigate({ to: '/director' });
             break;
           case "Admin":
-            navigate({ to: '/faculty' });
+            navigate({ to: '/admin' });
             break;
           case "Record Officer":
-            navigate({ to: '/faculty' });
+            navigate({ to: '/records' });
             break;
           default:
             break;
@@ -173,6 +176,7 @@ function RouteComponent() {
         toast.error(data.message);
         return
       }
+
 
       dispatch(
         setAuth({

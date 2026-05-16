@@ -10,7 +10,6 @@ import {
   Layers,
   MonitorCog,
   UserCog,
-  Activity,
   FileText,
   Shield,
   Building2,
@@ -84,7 +83,7 @@ const superAdminNav = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard/",
+      url: "/power/",
       icon: LayoutGrid,
     },
     {
@@ -92,9 +91,9 @@ const superAdminNav = {
       url: "#",
       icon: Users,
       items: [
-        { title: "Admins", url: "/dashboard/admins", icon: Shield },
-        { title: "Users", url: "/dashboard/users", icon: Users },
-        { title: "Assign Privileges", url: "/dashboard/privileges", icon: Edit },
+        { title: "Admins", url: "/power/admins", icon: Shield },
+        { title: "Users", url: "/power/users", icon: Users },
+        { title: "Assign Privileges", url: "/power/privileges", icon: Edit },
       ],
     },
     {
@@ -102,25 +101,25 @@ const superAdminNav = {
       url: "#",
       icon: Layers,
       items: [
-        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 12 },
-        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
-        { title: "Approved Documents", url: "/dashboard/approved-documents", icon: FileCheckCorner },
-        { title: "Bulk Combos", url: "/dashboard/combo", icon: PlusCircle },
+        { title: "Document Requests", url: "/power/requests", icon: FileText, badge: 12 },
+        { title: "Vetting & Processing", url: "/power/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/power/approved-documents", icon: FileCheckCorner },
+        { title: "Bulk Combos", url: "/power/combo", icon: PlusCircle },
       ],
     },
     {
       title: "Transactions",
-      url: "/dashboard/transactions/",
+      url: "/power/transactions/",
       icon: WalletMinimal,
     },
-    {
-      title: "Analysis",
-      url: "/dashboard/analysis/",
-      icon: Activity,
-    },
+    // {
+    //   title: "Analysis",
+    //   url: "/dashboard/analysis/",
+    //   icon: Activity,
+    // },
     {
       title: "Logs & Activity",
-      url: "/dashboard/logs/",
+      url: "/power/logs/",
       icon: Eye,
     },
     {
@@ -128,11 +127,11 @@ const superAdminNav = {
       url: "#",
       icon: MonitorCog,
       items: [
-        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
-        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
-        { title: "Roles", url: "/dashboard/roles/", icon: Shield },
-        { title: "Faculties", url: "/dashboard/faculty/", icon: Building2 },
-        { title: "Departments", url: "/dashboard/department/", icon: School },
+        { title: "Chain", url: "/power/chain/", icon: Link2 },
+        { title: "Documents", url: "/power/documents/", icon: FileText },
+        { title: "Roles", url: "/power/roles/", icon: Shield },
+        { title: "Faculties", url: "/power/faculty/", icon: Building2 },
+        { title: "Departments", url: "/power/department/", icon: School },
       ],
     },
   ],

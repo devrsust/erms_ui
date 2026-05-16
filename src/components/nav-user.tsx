@@ -41,9 +41,9 @@ export function NavUser({
   const { isMobile } = useSidebar()
 
   const profileRoutes: Record<string, string> = {
-    "SUPER ADMIN": "/dashboard/account",
-    ADMIN: "/dashboard/account",
-    DIRECTOR: "/dashboard/account",
+    "SUPER ADMIN": "/power/account",
+    ADMIN: "/admin/account",
+    DIRECTOR: "/director/account",
     ALUMNI: "/user/account",
     "RECORD OFFICER": "/records/account",
   }

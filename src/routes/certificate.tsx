@@ -144,10 +144,16 @@ function RouteComponent() {
                             onClick={() => {
                                 if (user?.role?.name === "ALUMNI") {
                                     navigate({ to: "/user" });
-                                } else if (["Super Admin", "Admin"].includes(user?.role?.name)) {
-                                    navigate({ to: "/dashboard" });
+                                } else if (user?.role?.name === "SUPER ADMIN") {
+                                    navigate({ to: "/power" });
+                                } else if (user?.role?.name === "DIRECTOR") {
+                                    navigate({ to: "/director" });
+                                } else if (user?.role?.name === "ADMIN") {
+                                    navigate({ to: "/admin" });
+                                } else if (user?.role?.name === "RECORDS OFFICER") {
+                                    navigate({ to: "/records" });
                                 } else {
-                                    navigate({ to: "/faculty" });
+                                    navigate({ to: "/" });
                                 }
                             }}
                         >

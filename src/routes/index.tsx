@@ -182,12 +182,16 @@ function Home() {
                                 onClick={() => {
                                     if (user?.role?.name === "ALUMNI") {
                                         navigate({ to: "/user" });
-                                    } else if (user?.role?.name === "Super Admin") {
-                                        navigate({ to: "/dashboard" });
-                                    } else if (user?.role?.name === "Admin") {
-                                        navigate({ to: "/dashboard" });
+                                    } else if (user?.role?.name === "SUPER ADMIN") {
+                                        navigate({ to: "/power" });
+                                    } else if (user?.role?.name === "DIRECTOR") {
+                                        navigate({ to: "/director" });
+                                    } else if (user?.role?.name === "ADMIN") {
+                                        navigate({ to: "/admin" });
+                                    } else if (user?.role?.name === "RECORDS OFFICER") {
+                                        navigate({ to: "/records" });
                                     } else {
-                                        navigate({ to: "/faculty" });
+                                        navigate({ to: "/" });
                                     }
                                 }}
                             >
@@ -712,9 +716,9 @@ function Home() {
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-4 gap-8">
                         <div>
-                            <h4 className="text-lg font-bold mb-4 bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">RSU ARP</h4>
+                            <h4 className="text-lg font-bold mb-4 bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">RSU ARMS</h4>
                             <p className="text-gray-400 text-sm">
-                                Rivers State University Academic Records Portal
+                                Rivers State University Academic Records Management System
                             </p>
                         </div>
                         <div>

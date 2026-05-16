@@ -5,7 +5,7 @@ import { ActivityCard } from "@/components/activity";
 import { BanknoteArrowDown, Calendar, Eye, FileText, Mail, MoreHorizontal, ShieldUser, TrendingUp, Users } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { useQueries } from "@tanstack/react-query";
-import { adminStats, getPendingRequests, UserActivityLog, type Request } from "@/service";
+import { adminStats, getPendingRequests, AdminActivityLog, type Request } from "@/service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -26,13 +26,13 @@ function Dashboard() {
     queries: [
       {
         queryKey: ["dashboard-stats", user?.id],
-        queryFn: () => adminStats(),
+        queryFn: () => adminStats(user!.id),
         enabled: !!user?.id,
         staleTime: 30_000,
       },
       {
         queryKey: ["activity", user?.id],
-        queryFn: () => UserActivityLog(user!.id),
+        queryFn: () => AdminActivityLog(user!.id),
         enabled: !!user?.id,
         staleTime: 30_000,
       },

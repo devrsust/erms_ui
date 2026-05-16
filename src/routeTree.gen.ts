@@ -14,15 +14,15 @@ import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as UserRouteRouteImport } from './routes/user/route'
 import { Route as RecordsRouteRouteImport } from './routes/records/route'
 import { Route as PowerRouteRouteImport } from './routes/power/route'
-import { Route as FacultyRouteRouteImport } from './routes/faculty/route'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as DirectorRouteRouteImport } from './routes/director/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIndexRouteImport } from './routes/user/index'
 import { Route as RecordsIndexRouteImport } from './routes/records/index'
 import { Route as PowerIndexRouteImport } from './routes/power/index'
-import { Route as FacultyIndexRouteImport } from './routes/faculty/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardAccountRouteImport } from './routes/dashboard/account'
+import { Route as DirectorIndexRouteImport } from './routes/director/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as PowerAccountRouteImport } from './routes/power/account'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UserTransactionsIndexRouteImport } from './routes/user/transactions/index'
 import { Route as UserRequestsIndexRouteImport } from './routes/user/requests/index'
@@ -31,26 +31,27 @@ import { Route as RecordsVetIndexRouteImport } from './routes/records/vet/index'
 import { Route as RecordsTransactionsIndexRouteImport } from './routes/records/transactions/index'
 import { Route as RecordsRequestsIndexRouteImport } from './routes/records/requests/index'
 import { Route as RecordsApprovedIndexRouteImport } from './routes/records/approved/index'
-import { Route as DashboardVetIndexRouteImport } from './routes/dashboard/vet/index'
-import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
-import { Route as DashboardTransactionsIndexRouteImport } from './routes/dashboard/transactions/index'
-import { Route as DashboardRolesIndexRouteImport } from './routes/dashboard/roles/index'
-import { Route as DashboardRequestsIndexRouteImport } from './routes/dashboard/requests/index'
-import { Route as DashboardFacultyIndexRouteImport } from './routes/dashboard/faculty/index'
-import { Route as DashboardDocumentsIndexRouteImport } from './routes/dashboard/documents/index'
-import { Route as DashboardDepartmentIndexRouteImport } from './routes/dashboard/department/index'
-import { Route as DashboardComboIndexRouteImport } from './routes/dashboard/combo/index'
-import { Route as DashboardChainIndexRouteImport } from './routes/dashboard/chain/index'
-import { Route as DashboardApprovedIndexRouteImport } from './routes/dashboard/approved/index'
-import { Route as DashboardAdminsIndexRouteImport } from './routes/dashboard/admins/index'
+import { Route as PowerVetIndexRouteImport } from './routes/power/vet/index'
+import { Route as PowerUsersIndexRouteImport } from './routes/power/users/index'
+import { Route as PowerTransactionsIndexRouteImport } from './routes/power/transactions/index'
+import { Route as PowerRolesIndexRouteImport } from './routes/power/roles/index'
+import { Route as PowerRequestsIndexRouteImport } from './routes/power/requests/index'
+import { Route as PowerLogsIndexRouteImport } from './routes/power/logs/index'
+import { Route as PowerFacultyIndexRouteImport } from './routes/power/faculty/index'
+import { Route as PowerDocumentsIndexRouteImport } from './routes/power/documents/index'
+import { Route as PowerDepartmentIndexRouteImport } from './routes/power/department/index'
+import { Route as PowerComboIndexRouteImport } from './routes/power/combo/index'
+import { Route as PowerChainIndexRouteImport } from './routes/power/chain/index'
+import { Route as PowerApprovedIndexRouteImport } from './routes/power/approved/index'
+import { Route as PowerAdminsIndexRouteImport } from './routes/power/admins/index'
 import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
 import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
 import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
-import { Route as DashboardVetIdRouteImport } from './routes/dashboard/vet/$id'
-import { Route as DashboardUsersIdRouteImport } from './routes/dashboard/users/$id'
-import { Route as DashboardRequestsIdRouteImport } from './routes/dashboard/requests/$id'
-import { Route as DashboardDocumentsIdRouteImport } from './routes/dashboard/documents/$id'
-import { Route as DashboardAdminsIdRouteImport } from './routes/dashboard/admins/$id'
+import { Route as PowerVetIdRouteImport } from './routes/power/vet/$id'
+import { Route as PowerUsersIdRouteImport } from './routes/power/users/$id'
+import { Route as PowerRequestsIdRouteImport } from './routes/power/requests/$id'
+import { Route as PowerDocumentsIdRouteImport } from './routes/power/documents/$id'
+import { Route as PowerAdminsIdRouteImport } from './routes/power/admins/$id'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -77,14 +78,14 @@ const PowerRouteRoute = PowerRouteRouteImport.update({
   path: '/power',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FacultyRouteRoute = FacultyRouteRouteImport.update({
-  id: '/faculty',
-  path: '/faculty',
+const DirectorRouteRoute = DirectorRouteRouteImport.update({
+  id: '/director',
+  path: '/director',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRouteRoute = DashboardRouteRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -107,20 +108,20 @@ const PowerIndexRoute = PowerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PowerRouteRoute,
 } as any)
-const FacultyIndexRoute = FacultyIndexRouteImport.update({
+const DirectorIndexRoute = DirectorIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => FacultyRouteRoute,
+  getParentRoute: () => DirectorRouteRoute,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
+const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
-const DashboardAccountRoute = DashboardAccountRouteImport.update({
+const PowerAccountRoute = PowerAccountRouteImport.update({
   id: '/account',
   path: '/account',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
@@ -163,67 +164,70 @@ const RecordsApprovedIndexRoute = RecordsApprovedIndexRouteImport.update({
   path: '/approved/',
   getParentRoute: () => RecordsRouteRoute,
 } as any)
-const DashboardVetIndexRoute = DashboardVetIndexRouteImport.update({
+const PowerVetIndexRoute = PowerVetIndexRouteImport.update({
   id: '/vet/',
   path: '/vet/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardUsersIndexRoute = DashboardUsersIndexRouteImport.update({
+const PowerUsersIndexRoute = PowerUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardTransactionsIndexRoute =
-  DashboardTransactionsIndexRouteImport.update({
-    id: '/transactions/',
-    path: '/transactions/',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any)
-const DashboardRolesIndexRoute = DashboardRolesIndexRouteImport.update({
+const PowerTransactionsIndexRoute = PowerTransactionsIndexRouteImport.update({
+  id: '/transactions/',
+  path: '/transactions/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerRolesIndexRoute = PowerRolesIndexRouteImport.update({
   id: '/roles/',
   path: '/roles/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardRequestsIndexRoute = DashboardRequestsIndexRouteImport.update({
+const PowerRequestsIndexRoute = PowerRequestsIndexRouteImport.update({
   id: '/requests/',
   path: '/requests/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardFacultyIndexRoute = DashboardFacultyIndexRouteImport.update({
+const PowerLogsIndexRoute = PowerLogsIndexRouteImport.update({
+  id: '/logs/',
+  path: '/logs/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerFacultyIndexRoute = PowerFacultyIndexRouteImport.update({
   id: '/faculty/',
   path: '/faculty/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardDocumentsIndexRoute = DashboardDocumentsIndexRouteImport.update({
+const PowerDocumentsIndexRoute = PowerDocumentsIndexRouteImport.update({
   id: '/documents/',
   path: '/documents/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardDepartmentIndexRoute =
-  DashboardDepartmentIndexRouteImport.update({
-    id: '/department/',
-    path: '/department/',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any)
-const DashboardComboIndexRoute = DashboardComboIndexRouteImport.update({
+const PowerDepartmentIndexRoute = PowerDepartmentIndexRouteImport.update({
+  id: '/department/',
+  path: '/department/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerComboIndexRoute = PowerComboIndexRouteImport.update({
   id: '/combo/',
   path: '/combo/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardChainIndexRoute = DashboardChainIndexRouteImport.update({
+const PowerChainIndexRoute = PowerChainIndexRouteImport.update({
   id: '/chain/',
   path: '/chain/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardApprovedIndexRoute = DashboardApprovedIndexRouteImport.update({
+const PowerApprovedIndexRoute = PowerApprovedIndexRouteImport.update({
   id: '/approved/',
   path: '/approved/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardAdminsIndexRoute = DashboardAdminsIndexRouteImport.update({
+const PowerAdminsIndexRoute = PowerAdminsIndexRouteImport.update({
   id: '/admins/',
   path: '/admins/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
 const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
   id: '/requests/$id',
@@ -240,68 +244,69 @@ const RecordsRequestsIdRoute = RecordsRequestsIdRouteImport.update({
   path: '/requests/$id',
   getParentRoute: () => RecordsRouteRoute,
 } as any)
-const DashboardVetIdRoute = DashboardVetIdRouteImport.update({
+const PowerVetIdRoute = PowerVetIdRouteImport.update({
   id: '/vet/$id',
   path: '/vet/$id',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardUsersIdRoute = DashboardUsersIdRouteImport.update({
+const PowerUsersIdRoute = PowerUsersIdRouteImport.update({
   id: '/users/$id',
   path: '/users/$id',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardRequestsIdRoute = DashboardRequestsIdRouteImport.update({
+const PowerRequestsIdRoute = PowerRequestsIdRouteImport.update({
   id: '/requests/$id',
   path: '/requests/$id',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardDocumentsIdRoute = DashboardDocumentsIdRouteImport.update({
+const PowerDocumentsIdRoute = PowerDocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
-const DashboardAdminsIdRoute = DashboardAdminsIdRouteImport.update({
+const PowerAdminsIdRoute = PowerAdminsIdRouteImport.update({
   id: '/admins/$id',
   path: '/admins/$id',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => PowerRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/faculty': typeof FacultyRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/director': typeof DirectorRouteRouteWithChildren
   '/power': typeof PowerRouteRouteWithChildren
   '/records': typeof RecordsRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
-  '/dashboard/account': typeof DashboardAccountRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/faculty/': typeof FacultyIndexRoute
+  '/power/account': typeof PowerAccountRoute
+  '/admin/': typeof AdminIndexRoute
+  '/director/': typeof DirectorIndexRoute
   '/power/': typeof PowerIndexRoute
   '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
-  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
-  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
-  '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
-  '/dashboard/users/$id': typeof DashboardUsersIdRoute
-  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/power/admins/$id': typeof PowerAdminsIdRoute
+  '/power/documents/$id': typeof PowerDocumentsIdRoute
+  '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/users/$id': typeof PowerUsersIdRoute
+  '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
-  '/dashboard/admins': typeof DashboardAdminsIndexRoute
-  '/dashboard/approved': typeof DashboardApprovedIndexRoute
-  '/dashboard/chain': typeof DashboardChainIndexRoute
-  '/dashboard/combo': typeof DashboardComboIndexRoute
-  '/dashboard/department': typeof DashboardDepartmentIndexRoute
-  '/dashboard/documents': typeof DashboardDocumentsIndexRoute
-  '/dashboard/faculty': typeof DashboardFacultyIndexRoute
-  '/dashboard/requests': typeof DashboardRequestsIndexRoute
-  '/dashboard/roles': typeof DashboardRolesIndexRoute
-  '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
-  '/dashboard/users': typeof DashboardUsersIndexRoute
-  '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/power/admins': typeof PowerAdminsIndexRoute
+  '/power/approved': typeof PowerApprovedIndexRoute
+  '/power/chain': typeof PowerChainIndexRoute
+  '/power/combo': typeof PowerComboIndexRoute
+  '/power/department': typeof PowerDepartmentIndexRoute
+  '/power/documents': typeof PowerDocumentsIndexRoute
+  '/power/faculty': typeof PowerFacultyIndexRoute
+  '/power/logs': typeof PowerLogsIndexRoute
+  '/power/requests': typeof PowerRequestsIndexRoute
+  '/power/roles': typeof PowerRolesIndexRoute
+  '/power/transactions': typeof PowerTransactionsIndexRoute
+  '/power/users': typeof PowerUsersIndexRoute
+  '/power/vet': typeof PowerVetIndexRoute
   '/records/approved': typeof RecordsApprovedIndexRoute
   '/records/requests': typeof RecordsRequestsIndexRoute
   '/records/transactions': typeof RecordsTransactionsIndexRoute
@@ -315,32 +320,33 @@ export interface FileRoutesByTo {
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
-  '/dashboard/account': typeof DashboardAccountRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/faculty': typeof FacultyIndexRoute
+  '/power/account': typeof PowerAccountRoute
+  '/admin': typeof AdminIndexRoute
+  '/director': typeof DirectorIndexRoute
   '/power': typeof PowerIndexRoute
   '/records': typeof RecordsIndexRoute
   '/user': typeof UserIndexRoute
-  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
-  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
-  '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
-  '/dashboard/users/$id': typeof DashboardUsersIdRoute
-  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/power/admins/$id': typeof PowerAdminsIdRoute
+  '/power/documents/$id': typeof PowerDocumentsIdRoute
+  '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/users/$id': typeof PowerUsersIdRoute
+  '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
-  '/dashboard/admins': typeof DashboardAdminsIndexRoute
-  '/dashboard/approved': typeof DashboardApprovedIndexRoute
-  '/dashboard/chain': typeof DashboardChainIndexRoute
-  '/dashboard/combo': typeof DashboardComboIndexRoute
-  '/dashboard/department': typeof DashboardDepartmentIndexRoute
-  '/dashboard/documents': typeof DashboardDocumentsIndexRoute
-  '/dashboard/faculty': typeof DashboardFacultyIndexRoute
-  '/dashboard/requests': typeof DashboardRequestsIndexRoute
-  '/dashboard/roles': typeof DashboardRolesIndexRoute
-  '/dashboard/transactions': typeof DashboardTransactionsIndexRoute
-  '/dashboard/users': typeof DashboardUsersIndexRoute
-  '/dashboard/vet': typeof DashboardVetIndexRoute
+  '/power/admins': typeof PowerAdminsIndexRoute
+  '/power/approved': typeof PowerApprovedIndexRoute
+  '/power/chain': typeof PowerChainIndexRoute
+  '/power/combo': typeof PowerComboIndexRoute
+  '/power/department': typeof PowerDepartmentIndexRoute
+  '/power/documents': typeof PowerDocumentsIndexRoute
+  '/power/faculty': typeof PowerFacultyIndexRoute
+  '/power/logs': typeof PowerLogsIndexRoute
+  '/power/requests': typeof PowerRequestsIndexRoute
+  '/power/roles': typeof PowerRolesIndexRoute
+  '/power/transactions': typeof PowerTransactionsIndexRoute
+  '/power/users': typeof PowerUsersIndexRoute
+  '/power/vet': typeof PowerVetIndexRoute
   '/records/approved': typeof RecordsApprovedIndexRoute
   '/records/requests': typeof RecordsRequestsIndexRoute
   '/records/transactions': typeof RecordsTransactionsIndexRoute
@@ -352,40 +358,41 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/faculty': typeof FacultyRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/director': typeof DirectorRouteRouteWithChildren
   '/power': typeof PowerRouteRouteWithChildren
   '/records': typeof RecordsRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
   '/auth/login': typeof AuthLoginRoute
-  '/dashboard/account': typeof DashboardAccountRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/faculty/': typeof FacultyIndexRoute
+  '/power/account': typeof PowerAccountRoute
+  '/admin/': typeof AdminIndexRoute
+  '/director/': typeof DirectorIndexRoute
   '/power/': typeof PowerIndexRoute
   '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
-  '/dashboard/admins/$id': typeof DashboardAdminsIdRoute
-  '/dashboard/documents/$id': typeof DashboardDocumentsIdRoute
-  '/dashboard/requests/$id': typeof DashboardRequestsIdRoute
-  '/dashboard/users/$id': typeof DashboardUsersIdRoute
-  '/dashboard/vet/$id': typeof DashboardVetIdRoute
+  '/power/admins/$id': typeof PowerAdminsIdRoute
+  '/power/documents/$id': typeof PowerDocumentsIdRoute
+  '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/users/$id': typeof PowerUsersIdRoute
+  '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
-  '/dashboard/admins/': typeof DashboardAdminsIndexRoute
-  '/dashboard/approved/': typeof DashboardApprovedIndexRoute
-  '/dashboard/chain/': typeof DashboardChainIndexRoute
-  '/dashboard/combo/': typeof DashboardComboIndexRoute
-  '/dashboard/department/': typeof DashboardDepartmentIndexRoute
-  '/dashboard/documents/': typeof DashboardDocumentsIndexRoute
-  '/dashboard/faculty/': typeof DashboardFacultyIndexRoute
-  '/dashboard/requests/': typeof DashboardRequestsIndexRoute
-  '/dashboard/roles/': typeof DashboardRolesIndexRoute
-  '/dashboard/transactions/': typeof DashboardTransactionsIndexRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
-  '/dashboard/vet/': typeof DashboardVetIndexRoute
+  '/power/admins/': typeof PowerAdminsIndexRoute
+  '/power/approved/': typeof PowerApprovedIndexRoute
+  '/power/chain/': typeof PowerChainIndexRoute
+  '/power/combo/': typeof PowerComboIndexRoute
+  '/power/department/': typeof PowerDepartmentIndexRoute
+  '/power/documents/': typeof PowerDocumentsIndexRoute
+  '/power/faculty/': typeof PowerFacultyIndexRoute
+  '/power/logs/': typeof PowerLogsIndexRoute
+  '/power/requests/': typeof PowerRequestsIndexRoute
+  '/power/roles/': typeof PowerRolesIndexRoute
+  '/power/transactions/': typeof PowerTransactionsIndexRoute
+  '/power/users/': typeof PowerUsersIndexRoute
+  '/power/vet/': typeof PowerVetIndexRoute
   '/records/approved/': typeof RecordsApprovedIndexRoute
   '/records/requests/': typeof RecordsRequestsIndexRoute
   '/records/transactions/': typeof RecordsTransactionsIndexRoute
@@ -398,40 +405,41 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
-    | '/faculty'
+    | '/admin'
+    | '/director'
     | '/power'
     | '/records'
     | '/user'
     | '/certificate'
     | '/verify'
     | '/auth/login'
-    | '/dashboard/account'
-    | '/dashboard/'
-    | '/faculty/'
+    | '/power/account'
+    | '/admin/'
+    | '/director/'
     | '/power/'
     | '/records/'
     | '/user/'
-    | '/dashboard/admins/$id'
-    | '/dashboard/documents/$id'
-    | '/dashboard/requests/$id'
-    | '/dashboard/users/$id'
-    | '/dashboard/vet/$id'
+    | '/power/admins/$id'
+    | '/power/documents/$id'
+    | '/power/requests/$id'
+    | '/power/users/$id'
+    | '/power/vet/$id'
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
-    | '/dashboard/admins'
-    | '/dashboard/approved'
-    | '/dashboard/chain'
-    | '/dashboard/combo'
-    | '/dashboard/department'
-    | '/dashboard/documents'
-    | '/dashboard/faculty'
-    | '/dashboard/requests'
-    | '/dashboard/roles'
-    | '/dashboard/transactions'
-    | '/dashboard/users'
-    | '/dashboard/vet'
+    | '/power/admins'
+    | '/power/approved'
+    | '/power/chain'
+    | '/power/combo'
+    | '/power/department'
+    | '/power/documents'
+    | '/power/faculty'
+    | '/power/logs'
+    | '/power/requests'
+    | '/power/roles'
+    | '/power/transactions'
+    | '/power/users'
+    | '/power/vet'
     | '/records/approved'
     | '/records/requests'
     | '/records/transactions'
@@ -445,32 +453,33 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/verify'
     | '/auth/login'
-    | '/dashboard/account'
-    | '/dashboard'
-    | '/faculty'
+    | '/power/account'
+    | '/admin'
+    | '/director'
     | '/power'
     | '/records'
     | '/user'
-    | '/dashboard/admins/$id'
-    | '/dashboard/documents/$id'
-    | '/dashboard/requests/$id'
-    | '/dashboard/users/$id'
-    | '/dashboard/vet/$id'
+    | '/power/admins/$id'
+    | '/power/documents/$id'
+    | '/power/requests/$id'
+    | '/power/users/$id'
+    | '/power/vet/$id'
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
-    | '/dashboard/admins'
-    | '/dashboard/approved'
-    | '/dashboard/chain'
-    | '/dashboard/combo'
-    | '/dashboard/department'
-    | '/dashboard/documents'
-    | '/dashboard/faculty'
-    | '/dashboard/requests'
-    | '/dashboard/roles'
-    | '/dashboard/transactions'
-    | '/dashboard/users'
-    | '/dashboard/vet'
+    | '/power/admins'
+    | '/power/approved'
+    | '/power/chain'
+    | '/power/combo'
+    | '/power/department'
+    | '/power/documents'
+    | '/power/faculty'
+    | '/power/logs'
+    | '/power/requests'
+    | '/power/roles'
+    | '/power/transactions'
+    | '/power/users'
+    | '/power/vet'
     | '/records/approved'
     | '/records/requests'
     | '/records/transactions'
@@ -481,40 +490,41 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
-    | '/faculty'
+    | '/admin'
+    | '/director'
     | '/power'
     | '/records'
     | '/user'
     | '/certificate'
     | '/verify'
     | '/auth/login'
-    | '/dashboard/account'
-    | '/dashboard/'
-    | '/faculty/'
+    | '/power/account'
+    | '/admin/'
+    | '/director/'
     | '/power/'
     | '/records/'
     | '/user/'
-    | '/dashboard/admins/$id'
-    | '/dashboard/documents/$id'
-    | '/dashboard/requests/$id'
-    | '/dashboard/users/$id'
-    | '/dashboard/vet/$id'
+    | '/power/admins/$id'
+    | '/power/documents/$id'
+    | '/power/requests/$id'
+    | '/power/users/$id'
+    | '/power/vet/$id'
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
-    | '/dashboard/admins/'
-    | '/dashboard/approved/'
-    | '/dashboard/chain/'
-    | '/dashboard/combo/'
-    | '/dashboard/department/'
-    | '/dashboard/documents/'
-    | '/dashboard/faculty/'
-    | '/dashboard/requests/'
-    | '/dashboard/roles/'
-    | '/dashboard/transactions/'
-    | '/dashboard/users/'
-    | '/dashboard/vet/'
+    | '/power/admins/'
+    | '/power/approved/'
+    | '/power/chain/'
+    | '/power/combo/'
+    | '/power/department/'
+    | '/power/documents/'
+    | '/power/faculty/'
+    | '/power/logs/'
+    | '/power/requests/'
+    | '/power/roles/'
+    | '/power/transactions/'
+    | '/power/users/'
+    | '/power/vet/'
     | '/records/approved/'
     | '/records/requests/'
     | '/records/transactions/'
@@ -526,8 +536,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  FacultyRouteRoute: typeof FacultyRouteRouteWithChildren
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  DirectorRouteRoute: typeof DirectorRouteRouteWithChildren
   PowerRouteRoute: typeof PowerRouteRouteWithChildren
   RecordsRouteRoute: typeof RecordsRouteRouteWithChildren
   UserRouteRoute: typeof UserRouteRouteWithChildren
@@ -573,18 +583,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/faculty': {
-      id: '/faculty'
-      path: '/faculty'
-      fullPath: '/faculty'
-      preLoaderRoute: typeof FacultyRouteRouteImport
+    '/director': {
+      id: '/director'
+      path: '/director'
+      fullPath: '/director'
+      preLoaderRoute: typeof DirectorRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -615,26 +625,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerIndexRouteImport
       parentRoute: typeof PowerRouteRoute
     }
-    '/faculty/': {
-      id: '/faculty/'
+    '/director/': {
+      id: '/director/'
       path: '/'
-      fullPath: '/faculty/'
-      preLoaderRoute: typeof FacultyIndexRouteImport
-      parentRoute: typeof FacultyRouteRoute
+      fullPath: '/director/'
+      preLoaderRoute: typeof DirectorIndexRouteImport
+      parentRoute: typeof DirectorRouteRoute
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/admin/': {
+      id: '/admin/'
       path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/dashboard/account': {
-      id: '/dashboard/account'
+    '/power/account': {
+      id: '/power/account'
       path: '/account'
-      fullPath: '/dashboard/account'
-      preLoaderRoute: typeof DashboardAccountRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/account'
+      preLoaderRoute: typeof PowerAccountRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
     '/auth/login': {
       id: '/auth/login'
@@ -692,89 +702,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecordsApprovedIndexRouteImport
       parentRoute: typeof RecordsRouteRoute
     }
-    '/dashboard/vet/': {
-      id: '/dashboard/vet/'
+    '/power/vet/': {
+      id: '/power/vet/'
       path: '/vet'
-      fullPath: '/dashboard/vet'
-      preLoaderRoute: typeof DashboardVetIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/vet'
+      preLoaderRoute: typeof PowerVetIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/users/': {
-      id: '/dashboard/users/'
+    '/power/users/': {
+      id: '/power/users/'
       path: '/users'
-      fullPath: '/dashboard/users'
-      preLoaderRoute: typeof DashboardUsersIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/users'
+      preLoaderRoute: typeof PowerUsersIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/transactions/': {
-      id: '/dashboard/transactions/'
+    '/power/transactions/': {
+      id: '/power/transactions/'
       path: '/transactions'
-      fullPath: '/dashboard/transactions'
-      preLoaderRoute: typeof DashboardTransactionsIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/transactions'
+      preLoaderRoute: typeof PowerTransactionsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/roles/': {
-      id: '/dashboard/roles/'
+    '/power/roles/': {
+      id: '/power/roles/'
       path: '/roles'
-      fullPath: '/dashboard/roles'
-      preLoaderRoute: typeof DashboardRolesIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/roles'
+      preLoaderRoute: typeof PowerRolesIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/requests/': {
-      id: '/dashboard/requests/'
+    '/power/requests/': {
+      id: '/power/requests/'
       path: '/requests'
-      fullPath: '/dashboard/requests'
-      preLoaderRoute: typeof DashboardRequestsIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/requests'
+      preLoaderRoute: typeof PowerRequestsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/faculty/': {
-      id: '/dashboard/faculty/'
+    '/power/logs/': {
+      id: '/power/logs/'
+      path: '/logs'
+      fullPath: '/power/logs'
+      preLoaderRoute: typeof PowerLogsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
+    '/power/faculty/': {
+      id: '/power/faculty/'
       path: '/faculty'
-      fullPath: '/dashboard/faculty'
-      preLoaderRoute: typeof DashboardFacultyIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/faculty'
+      preLoaderRoute: typeof PowerFacultyIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/documents/': {
-      id: '/dashboard/documents/'
+    '/power/documents/': {
+      id: '/power/documents/'
       path: '/documents'
-      fullPath: '/dashboard/documents'
-      preLoaderRoute: typeof DashboardDocumentsIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/documents'
+      preLoaderRoute: typeof PowerDocumentsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/department/': {
-      id: '/dashboard/department/'
+    '/power/department/': {
+      id: '/power/department/'
       path: '/department'
-      fullPath: '/dashboard/department'
-      preLoaderRoute: typeof DashboardDepartmentIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/department'
+      preLoaderRoute: typeof PowerDepartmentIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/combo/': {
-      id: '/dashboard/combo/'
+    '/power/combo/': {
+      id: '/power/combo/'
       path: '/combo'
-      fullPath: '/dashboard/combo'
-      preLoaderRoute: typeof DashboardComboIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/combo'
+      preLoaderRoute: typeof PowerComboIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/chain/': {
-      id: '/dashboard/chain/'
+    '/power/chain/': {
+      id: '/power/chain/'
       path: '/chain'
-      fullPath: '/dashboard/chain'
-      preLoaderRoute: typeof DashboardChainIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/chain'
+      preLoaderRoute: typeof PowerChainIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/approved/': {
-      id: '/dashboard/approved/'
+    '/power/approved/': {
+      id: '/power/approved/'
       path: '/approved'
-      fullPath: '/dashboard/approved'
-      preLoaderRoute: typeof DashboardApprovedIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/approved'
+      preLoaderRoute: typeof PowerApprovedIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/admins/': {
-      id: '/dashboard/admins/'
+    '/power/admins/': {
+      id: '/power/admins/'
       path: '/admins'
-      fullPath: '/dashboard/admins'
-      preLoaderRoute: typeof DashboardAdminsIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/admins'
+      preLoaderRoute: typeof PowerAdminsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
     '/user/requests/$id': {
       id: '/user/requests/$id'
@@ -797,110 +814,112 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecordsRequestsIdRouteImport
       parentRoute: typeof RecordsRouteRoute
     }
-    '/dashboard/vet/$id': {
-      id: '/dashboard/vet/$id'
+    '/power/vet/$id': {
+      id: '/power/vet/$id'
       path: '/vet/$id'
-      fullPath: '/dashboard/vet/$id'
-      preLoaderRoute: typeof DashboardVetIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/vet/$id'
+      preLoaderRoute: typeof PowerVetIdRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/users/$id': {
-      id: '/dashboard/users/$id'
+    '/power/users/$id': {
+      id: '/power/users/$id'
       path: '/users/$id'
-      fullPath: '/dashboard/users/$id'
-      preLoaderRoute: typeof DashboardUsersIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/users/$id'
+      preLoaderRoute: typeof PowerUsersIdRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/requests/$id': {
-      id: '/dashboard/requests/$id'
+    '/power/requests/$id': {
+      id: '/power/requests/$id'
       path: '/requests/$id'
-      fullPath: '/dashboard/requests/$id'
-      preLoaderRoute: typeof DashboardRequestsIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/requests/$id'
+      preLoaderRoute: typeof PowerRequestsIdRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/documents/$id': {
-      id: '/dashboard/documents/$id'
+    '/power/documents/$id': {
+      id: '/power/documents/$id'
       path: '/documents/$id'
-      fullPath: '/dashboard/documents/$id'
-      preLoaderRoute: typeof DashboardDocumentsIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/documents/$id'
+      preLoaderRoute: typeof PowerDocumentsIdRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
-    '/dashboard/admins/$id': {
-      id: '/dashboard/admins/$id'
+    '/power/admins/$id': {
+      id: '/power/admins/$id'
       path: '/admins/$id'
-      fullPath: '/dashboard/admins/$id'
-      preLoaderRoute: typeof DashboardAdminsIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/power/admins/$id'
+      preLoaderRoute: typeof PowerAdminsIdRouteImport
+      parentRoute: typeof PowerRouteRoute
     }
   }
 }
 
-interface DashboardRouteRouteChildren {
-  DashboardAccountRoute: typeof DashboardAccountRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardAdminsIdRoute: typeof DashboardAdminsIdRoute
-  DashboardDocumentsIdRoute: typeof DashboardDocumentsIdRoute
-  DashboardRequestsIdRoute: typeof DashboardRequestsIdRoute
-  DashboardUsersIdRoute: typeof DashboardUsersIdRoute
-  DashboardVetIdRoute: typeof DashboardVetIdRoute
-  DashboardAdminsIndexRoute: typeof DashboardAdminsIndexRoute
-  DashboardApprovedIndexRoute: typeof DashboardApprovedIndexRoute
-  DashboardChainIndexRoute: typeof DashboardChainIndexRoute
-  DashboardComboIndexRoute: typeof DashboardComboIndexRoute
-  DashboardDepartmentIndexRoute: typeof DashboardDepartmentIndexRoute
-  DashboardDocumentsIndexRoute: typeof DashboardDocumentsIndexRoute
-  DashboardFacultyIndexRoute: typeof DashboardFacultyIndexRoute
-  DashboardRequestsIndexRoute: typeof DashboardRequestsIndexRoute
-  DashboardRolesIndexRoute: typeof DashboardRolesIndexRoute
-  DashboardTransactionsIndexRoute: typeof DashboardTransactionsIndexRoute
-  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
-  DashboardVetIndexRoute: typeof DashboardVetIndexRoute
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
-const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardAccountRoute: DashboardAccountRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
-  DashboardAdminsIdRoute: DashboardAdminsIdRoute,
-  DashboardDocumentsIdRoute: DashboardDocumentsIdRoute,
-  DashboardRequestsIdRoute: DashboardRequestsIdRoute,
-  DashboardUsersIdRoute: DashboardUsersIdRoute,
-  DashboardVetIdRoute: DashboardVetIdRoute,
-  DashboardAdminsIndexRoute: DashboardAdminsIndexRoute,
-  DashboardApprovedIndexRoute: DashboardApprovedIndexRoute,
-  DashboardChainIndexRoute: DashboardChainIndexRoute,
-  DashboardComboIndexRoute: DashboardComboIndexRoute,
-  DashboardDepartmentIndexRoute: DashboardDepartmentIndexRoute,
-  DashboardDocumentsIndexRoute: DashboardDocumentsIndexRoute,
-  DashboardFacultyIndexRoute: DashboardFacultyIndexRoute,
-  DashboardRequestsIndexRoute: DashboardRequestsIndexRoute,
-  DashboardRolesIndexRoute: DashboardRolesIndexRoute,
-  DashboardTransactionsIndexRoute: DashboardTransactionsIndexRoute,
-  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
-  DashboardVetIndexRoute: DashboardVetIndexRoute,
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
 }
 
-const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
-  DashboardRouteRouteChildren,
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
 )
 
-interface FacultyRouteRouteChildren {
-  FacultyIndexRoute: typeof FacultyIndexRoute
+interface DirectorRouteRouteChildren {
+  DirectorIndexRoute: typeof DirectorIndexRoute
 }
 
-const FacultyRouteRouteChildren: FacultyRouteRouteChildren = {
-  FacultyIndexRoute: FacultyIndexRoute,
+const DirectorRouteRouteChildren: DirectorRouteRouteChildren = {
+  DirectorIndexRoute: DirectorIndexRoute,
 }
 
-const FacultyRouteRouteWithChildren = FacultyRouteRoute._addFileChildren(
-  FacultyRouteRouteChildren,
+const DirectorRouteRouteWithChildren = DirectorRouteRoute._addFileChildren(
+  DirectorRouteRouteChildren,
 )
 
 interface PowerRouteRouteChildren {
+  PowerAccountRoute: typeof PowerAccountRoute
   PowerIndexRoute: typeof PowerIndexRoute
+  PowerAdminsIdRoute: typeof PowerAdminsIdRoute
+  PowerDocumentsIdRoute: typeof PowerDocumentsIdRoute
+  PowerRequestsIdRoute: typeof PowerRequestsIdRoute
+  PowerUsersIdRoute: typeof PowerUsersIdRoute
+  PowerVetIdRoute: typeof PowerVetIdRoute
+  PowerAdminsIndexRoute: typeof PowerAdminsIndexRoute
+  PowerApprovedIndexRoute: typeof PowerApprovedIndexRoute
+  PowerChainIndexRoute: typeof PowerChainIndexRoute
+  PowerComboIndexRoute: typeof PowerComboIndexRoute
+  PowerDepartmentIndexRoute: typeof PowerDepartmentIndexRoute
+  PowerDocumentsIndexRoute: typeof PowerDocumentsIndexRoute
+  PowerFacultyIndexRoute: typeof PowerFacultyIndexRoute
+  PowerLogsIndexRoute: typeof PowerLogsIndexRoute
+  PowerRequestsIndexRoute: typeof PowerRequestsIndexRoute
+  PowerRolesIndexRoute: typeof PowerRolesIndexRoute
+  PowerTransactionsIndexRoute: typeof PowerTransactionsIndexRoute
+  PowerUsersIndexRoute: typeof PowerUsersIndexRoute
+  PowerVetIndexRoute: typeof PowerVetIndexRoute
 }
 
 const PowerRouteRouteChildren: PowerRouteRouteChildren = {
+  PowerAccountRoute: PowerAccountRoute,
   PowerIndexRoute: PowerIndexRoute,
+  PowerAdminsIdRoute: PowerAdminsIdRoute,
+  PowerDocumentsIdRoute: PowerDocumentsIdRoute,
+  PowerRequestsIdRoute: PowerRequestsIdRoute,
+  PowerUsersIdRoute: PowerUsersIdRoute,
+  PowerVetIdRoute: PowerVetIdRoute,
+  PowerAdminsIndexRoute: PowerAdminsIndexRoute,
+  PowerApprovedIndexRoute: PowerApprovedIndexRoute,
+  PowerChainIndexRoute: PowerChainIndexRoute,
+  PowerComboIndexRoute: PowerComboIndexRoute,
+  PowerDepartmentIndexRoute: PowerDepartmentIndexRoute,
+  PowerDocumentsIndexRoute: PowerDocumentsIndexRoute,
+  PowerFacultyIndexRoute: PowerFacultyIndexRoute,
+  PowerLogsIndexRoute: PowerLogsIndexRoute,
+  PowerRequestsIndexRoute: PowerRequestsIndexRoute,
+  PowerRolesIndexRoute: PowerRolesIndexRoute,
+  PowerTransactionsIndexRoute: PowerTransactionsIndexRoute,
+  PowerUsersIndexRoute: PowerUsersIndexRoute,
+  PowerVetIndexRoute: PowerVetIndexRoute,
 }
 
 const PowerRouteRouteWithChildren = PowerRouteRoute._addFileChildren(
@@ -953,8 +972,8 @@ const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRouteRoute: DashboardRouteRouteWithChildren,
-  FacultyRouteRoute: FacultyRouteRouteWithChildren,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  DirectorRouteRoute: DirectorRouteRouteWithChildren,
   PowerRouteRoute: PowerRouteRouteWithChildren,
   RecordsRouteRoute: RecordsRouteRouteWithChildren,
   UserRouteRoute: UserRouteRouteWithChildren,

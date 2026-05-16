@@ -69,14 +69,47 @@ export const logout = async (
     return response.data;
 };
 
+export const getProfile = async () => {
+    const response = await http.get("auth/profile");
+    return response.data;
+};
+
+type UpdateProfileDto = {
+    firstname?: string;
+    lastname?: string;
+    email?: string;
+    bio?: string;
+};
+
+export const updateProfile = async (
+    data: UpdateProfileDto,
+) => {
+    const response = await http.patch("auth/profile", data);
+
+    return response.data;
+};
+
+type ChangePasswordDto = {
+    currentPassword: string;
+    newPassword: string;
+};
+
+export const changePassword = async (
+    data: ChangePasswordDto,
+) => {
+    const response = await http.patch("auth/profile/password", data);
+
+    return response.data;
+};
+
 
 /*
 ==========================
 Stats
 ==========================
 */
-export const adminStats = async () => {
-    const { data } = await http.get(`/dashboard/admin`);
+export const adminStats = async (id: number) => {
+    const { data } = await http.get(`/dashboard/admin/${id}`);
     return data;
 }
 
@@ -86,17 +119,17 @@ export const alumniStats = async (id: number) => {
 }
 
 export const AlumniActivityLog = async (id: number) => {
-    const { data } = await http.get(`activity/user?entity=ALUMNI&actorId=${id}&page=1&limit=6`);
+    const { data } = await http.get(`activity/user?entity=ALUMNI&actorId=${id}&page=1&limit=4`);
     return data;
 }
 
-export const UserActivityLog = async (id: number) => {
-    const { data } = await http.get(`activity/user?actorId=${id}&page=1&limit=6`);
+export const AdminActivityLog = async (id: number) => {
+    const { data } = await http.get(`activity/admin?entity=USER&actorId=${id}&page=1&limit=4`);
     return data;
 }
 
-export const AdminActivityLog = async () => {
-    const { data } = await http.get(`activity?&page=1&limit=6`);
+export const AllActivityLog = async () => {
+    const { data } = await http.get(`activity?&page=1&limit=20`);
     return data;
 }
 
@@ -116,15 +149,36 @@ export interface Role {
     }
 }
 
-export const createRole = async (payload: {
-    name: string;
-}) => {
-    const { data } = await http.post("/role", payload);
+export const getRoles = async (
+    param: { page: number; limit: number }
+): Promise<PaginatedResponse<Role>> => {
+    const { data } = await http.get(`/role`, {
+        params: {
+            page: param.page,
+            limit: param.limit,
+        },
+    });
+
+    return data;
+};
+
+export const createRole = async (payload: { name: string }) => {
+    const { data } = await http.post(`/role`, payload);
     return data;
 }
 
-export const getRoles = async (params: string): Promise<PaginatedResponse<Role>> => {
-    const { data } = await http.get(`/role?${params}`);
+export const getRole = async (id: number) => {
+    const { data } = await http.get(`/role/${id}`);
+    return data;
+}
+
+export const updateRole = async (id: number, payload: { name: string }) => {
+    const { data } = await http.patch(`/role/${id}`, payload);
+    return data;
+}
+
+export const deleteRole = async (id: number) => {
+    const { data } = await http.delete(`/role/${id}`);
     return data;
 }
 
@@ -155,8 +209,13 @@ export const createUser = async (payload: {
     return data;
 }
 
-export const getAdmins = async (params: string): Promise<PaginatedResponse<Admin>> => {
-    const { data } = await http.get(`/user?${params}`);
+export const getAdmins = async (params: { page: number, limit: number }): Promise<PaginatedResponse<Admin>> => {
+    const { data } = await http.get(`/user`, {
+        params: {
+            page: params.page,
+            limit: params.limit,
+        }
+    });
     return data;
 }
 
@@ -167,7 +226,7 @@ export const updateUser = async (id: number, payload: {
     roleId: number
     isActive: boolean
 }) => {
-    const response = await http.put(`/user/${id}`, payload)
+    const response = await http.patch(`/user/${id}`, payload)
     return response.data
 }
 
@@ -670,4 +729,24 @@ export const createApproval = async (payload: {
 }) => {
     const { data } = await http.post('/approvals', payload)
     return data
+}
+
+
+/*
+==========================
+Approval
+==========================
+*/
+
+export interface Activity {
+    id: number
+    action: string
+    description: string
+    actorType: number
+    actor: string
+}
+
+export const getActivities = async (params: string): Promise<PaginatedResponse<Activity>> => {
+    const { data } = await http.get(`/activity?${params}`);
+    return data;
 }
