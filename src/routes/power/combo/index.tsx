@@ -15,11 +15,10 @@ import { MoreHorizontal, FileText, Filter, Hash, BookOpen, Calendar1 } from 'luc
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getCombos, type Combo } from '@/service'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Separator } from '@/components/ui/separator'
 import { SiteHeader } from '@/components/site-header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DropBox from '@/components/dropbox'
+import IsPending from '@/components/Illustrations/isPending'
 
 export const Route = createFileRoute('/power/combo/')({
   component: RouteComponent,
@@ -38,25 +37,7 @@ function RouteComponent() {
   })
 
   if (isPending) {
-    return (
-      <div className="space-y-6 p-6">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96" />
-        </div>
-        <Separator />
-        <div className="grid gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <IsPending page='Combo' />
   }
 
   if (isError) {

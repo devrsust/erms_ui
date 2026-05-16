@@ -36,7 +36,6 @@ import { Route as PowerUsersIndexRouteImport } from './routes/power/users/index'
 import { Route as PowerTransactionsIndexRouteImport } from './routes/power/transactions/index'
 import { Route as PowerRolesIndexRouteImport } from './routes/power/roles/index'
 import { Route as PowerRequestsIndexRouteImport } from './routes/power/requests/index'
-import { Route as PowerLogsIndexRouteImport } from './routes/power/logs/index'
 import { Route as PowerFacultyIndexRouteImport } from './routes/power/faculty/index'
 import { Route as PowerDocumentsIndexRouteImport } from './routes/power/documents/index'
 import { Route as PowerDepartmentIndexRouteImport } from './routes/power/department/index'
@@ -44,6 +43,7 @@ import { Route as PowerComboIndexRouteImport } from './routes/power/combo/index'
 import { Route as PowerChainIndexRouteImport } from './routes/power/chain/index'
 import { Route as PowerApprovedIndexRouteImport } from './routes/power/approved/index'
 import { Route as PowerAdminsIndexRouteImport } from './routes/power/admins/index'
+import { Route as PowerActivityIndexRouteImport } from './routes/power/activity/index'
 import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
 import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
 import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
@@ -189,11 +189,6 @@ const PowerRequestsIndexRoute = PowerRequestsIndexRouteImport.update({
   path: '/requests/',
   getParentRoute: () => PowerRouteRoute,
 } as any)
-const PowerLogsIndexRoute = PowerLogsIndexRouteImport.update({
-  id: '/logs/',
-  path: '/logs/',
-  getParentRoute: () => PowerRouteRoute,
-} as any)
 const PowerFacultyIndexRoute = PowerFacultyIndexRouteImport.update({
   id: '/faculty/',
   path: '/faculty/',
@@ -227,6 +222,11 @@ const PowerApprovedIndexRoute = PowerApprovedIndexRouteImport.update({
 const PowerAdminsIndexRoute = PowerAdminsIndexRouteImport.update({
   id: '/admins/',
   path: '/admins/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerActivityIndexRoute = PowerActivityIndexRouteImport.update({
+  id: '/activity/',
+  path: '/activity/',
   getParentRoute: () => PowerRouteRoute,
 } as any)
 const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
@@ -294,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
   '/power/approved': typeof PowerApprovedIndexRoute
   '/power/chain': typeof PowerChainIndexRoute
@@ -301,7 +302,6 @@ export interface FileRoutesByFullPath {
   '/power/department': typeof PowerDepartmentIndexRoute
   '/power/documents': typeof PowerDocumentsIndexRoute
   '/power/faculty': typeof PowerFacultyIndexRoute
-  '/power/logs': typeof PowerLogsIndexRoute
   '/power/requests': typeof PowerRequestsIndexRoute
   '/power/roles': typeof PowerRolesIndexRoute
   '/power/transactions': typeof PowerTransactionsIndexRoute
@@ -334,6 +334,7 @@ export interface FileRoutesByTo {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
   '/power/approved': typeof PowerApprovedIndexRoute
   '/power/chain': typeof PowerChainIndexRoute
@@ -341,7 +342,6 @@ export interface FileRoutesByTo {
   '/power/department': typeof PowerDepartmentIndexRoute
   '/power/documents': typeof PowerDocumentsIndexRoute
   '/power/faculty': typeof PowerFacultyIndexRoute
-  '/power/logs': typeof PowerLogsIndexRoute
   '/power/requests': typeof PowerRequestsIndexRoute
   '/power/roles': typeof PowerRolesIndexRoute
   '/power/transactions': typeof PowerTransactionsIndexRoute
@@ -380,6 +380,7 @@ export interface FileRoutesById {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/power/activity/': typeof PowerActivityIndexRoute
   '/power/admins/': typeof PowerAdminsIndexRoute
   '/power/approved/': typeof PowerApprovedIndexRoute
   '/power/chain/': typeof PowerChainIndexRoute
@@ -387,7 +388,6 @@ export interface FileRoutesById {
   '/power/department/': typeof PowerDepartmentIndexRoute
   '/power/documents/': typeof PowerDocumentsIndexRoute
   '/power/faculty/': typeof PowerFacultyIndexRoute
-  '/power/logs/': typeof PowerLogsIndexRoute
   '/power/requests/': typeof PowerRequestsIndexRoute
   '/power/roles/': typeof PowerRolesIndexRoute
   '/power/transactions/': typeof PowerTransactionsIndexRoute
@@ -427,6 +427,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/power/activity'
     | '/power/admins'
     | '/power/approved'
     | '/power/chain'
@@ -434,7 +435,6 @@ export interface FileRouteTypes {
     | '/power/department'
     | '/power/documents'
     | '/power/faculty'
-    | '/power/logs'
     | '/power/requests'
     | '/power/roles'
     | '/power/transactions'
@@ -467,6 +467,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/power/activity'
     | '/power/admins'
     | '/power/approved'
     | '/power/chain'
@@ -474,7 +475,6 @@ export interface FileRouteTypes {
     | '/power/department'
     | '/power/documents'
     | '/power/faculty'
-    | '/power/logs'
     | '/power/requests'
     | '/power/roles'
     | '/power/transactions'
@@ -512,6 +512,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/power/activity/'
     | '/power/admins/'
     | '/power/approved/'
     | '/power/chain/'
@@ -519,7 +520,6 @@ export interface FileRouteTypes {
     | '/power/department/'
     | '/power/documents/'
     | '/power/faculty/'
-    | '/power/logs/'
     | '/power/requests/'
     | '/power/roles/'
     | '/power/transactions/'
@@ -737,13 +737,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerRequestsIndexRouteImport
       parentRoute: typeof PowerRouteRoute
     }
-    '/power/logs/': {
-      id: '/power/logs/'
-      path: '/logs'
-      fullPath: '/power/logs'
-      preLoaderRoute: typeof PowerLogsIndexRouteImport
-      parentRoute: typeof PowerRouteRoute
-    }
     '/power/faculty/': {
       id: '/power/faculty/'
       path: '/faculty'
@@ -791,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/admins'
       fullPath: '/power/admins'
       preLoaderRoute: typeof PowerAdminsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
+    '/power/activity/': {
+      id: '/power/activity/'
+      path: '/activity'
+      fullPath: '/power/activity'
+      preLoaderRoute: typeof PowerActivityIndexRouteImport
       parentRoute: typeof PowerRouteRoute
     }
     '/user/requests/$id': {
@@ -884,6 +884,7 @@ interface PowerRouteRouteChildren {
   PowerRequestsIdRoute: typeof PowerRequestsIdRoute
   PowerUsersIdRoute: typeof PowerUsersIdRoute
   PowerVetIdRoute: typeof PowerVetIdRoute
+  PowerActivityIndexRoute: typeof PowerActivityIndexRoute
   PowerAdminsIndexRoute: typeof PowerAdminsIndexRoute
   PowerApprovedIndexRoute: typeof PowerApprovedIndexRoute
   PowerChainIndexRoute: typeof PowerChainIndexRoute
@@ -891,7 +892,6 @@ interface PowerRouteRouteChildren {
   PowerDepartmentIndexRoute: typeof PowerDepartmentIndexRoute
   PowerDocumentsIndexRoute: typeof PowerDocumentsIndexRoute
   PowerFacultyIndexRoute: typeof PowerFacultyIndexRoute
-  PowerLogsIndexRoute: typeof PowerLogsIndexRoute
   PowerRequestsIndexRoute: typeof PowerRequestsIndexRoute
   PowerRolesIndexRoute: typeof PowerRolesIndexRoute
   PowerTransactionsIndexRoute: typeof PowerTransactionsIndexRoute
@@ -907,6 +907,7 @@ const PowerRouteRouteChildren: PowerRouteRouteChildren = {
   PowerRequestsIdRoute: PowerRequestsIdRoute,
   PowerUsersIdRoute: PowerUsersIdRoute,
   PowerVetIdRoute: PowerVetIdRoute,
+  PowerActivityIndexRoute: PowerActivityIndexRoute,
   PowerAdminsIndexRoute: PowerAdminsIndexRoute,
   PowerApprovedIndexRoute: PowerApprovedIndexRoute,
   PowerChainIndexRoute: PowerChainIndexRoute,
@@ -914,7 +915,6 @@ const PowerRouteRouteChildren: PowerRouteRouteChildren = {
   PowerDepartmentIndexRoute: PowerDepartmentIndexRoute,
   PowerDocumentsIndexRoute: PowerDocumentsIndexRoute,
   PowerFacultyIndexRoute: PowerFacultyIndexRoute,
-  PowerLogsIndexRoute: PowerLogsIndexRoute,
   PowerRequestsIndexRoute: PowerRequestsIndexRoute,
   PowerRolesIndexRoute: PowerRolesIndexRoute,
   PowerTransactionsIndexRoute: PowerTransactionsIndexRoute,

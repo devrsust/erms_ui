@@ -1,3 +1,4 @@
+import { SiteHeader } from '@/components/site-header'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/power/approved/')({
@@ -5,5 +6,13 @@ export const Route = createFileRoute('/power/approved/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/dashboard/approved/"!</div>
+  return (
+    <>
+      <SiteHeader title="Combo Management" />
+
+      <main>
+
+      </main>
+    </>
+  )
 }

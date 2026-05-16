@@ -93,7 +93,6 @@ const superAdminNav = {
       items: [
         { title: "Admins", url: "/power/admins", icon: Shield },
         { title: "Users", url: "/power/users", icon: Users },
-        { title: "Assign Privileges", url: "/power/privileges", icon: Edit },
       ],
     },
     {
@@ -103,7 +102,7 @@ const superAdminNav = {
       items: [
         { title: "Document Requests", url: "/power/requests", icon: FileText, badge: 12 },
         { title: "Vetting & Processing", url: "/power/vet", icon: CheckCircle },
-        { title: "Approved Documents", url: "/power/approved-documents", icon: FileCheckCorner },
+        { title: "Approved Documents", url: "/power/approved", icon: FileCheckCorner },
         { title: "Bulk Combos", url: "/power/combo", icon: PlusCircle },
       ],
     },
@@ -119,7 +118,7 @@ const superAdminNav = {
     // },
     {
       title: "Logs & Activity",
-      url: "/power/logs/",
+      url: "/power/activity/",
       icon: Eye,
     },
     {
