@@ -17,8 +17,7 @@ import {
   Link2,
   CheckCircle,
   PlusCircle,
-  Eye,
-  Edit,
+  Eye
 } from 'lucide-react';
 
 import { NavMain } from "@/components/nav-main"
