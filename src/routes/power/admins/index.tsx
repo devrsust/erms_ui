@@ -391,14 +391,6 @@ function RouteComponent() {
                           : 'Fill in the details to create a new administrator account.'}
                       </DialogDescription>
                     </DialogHeader>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
-                      onClick={handleCloseForm}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
                   </div>
 
                   <form onSubmit={createUserForm.handleSubmit(onSubmit)} className="p-6">

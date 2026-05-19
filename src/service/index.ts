@@ -450,7 +450,7 @@ export const createRequests = async (payload: {
     return data;
 }
 
-export const getRequests = async (params: string): Promise<PaginatedResponse<Request>> => {
+export const getRequests = async (params: {page?: number, limit?: number}): Promise<PaginatedResponse<Request>> => {
     const { data } = await http.get(`/request?${params}`);
     return data;
 }

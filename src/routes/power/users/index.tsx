@@ -258,7 +258,7 @@ function RouteComponent() {
                 Copy ID
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/dashboard/users/${user.id}` })}
+                onClick={() => navigate({ to: `/power/users/${user.id}` })}
                 className="cursor-pointer gap-2"
               >
                 View Profile

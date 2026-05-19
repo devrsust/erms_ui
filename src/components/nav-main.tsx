@@ -36,7 +36,7 @@ export function NavMain({
   // Check if a route is active using TanStack Router's matchRoute
   const isActivePath = (url: string) => {
     // Use exact: true for exact matching
-    return !!matchRoute({ to: url})
+    return !!matchRoute({ to: url })
   }
 
   // Check if we're on a child route of a parent
@@ -51,15 +51,41 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => {
           const isItemActive = isActivePath(item.url)
-          const hasActiveChild = item.items?.some((sub) => isActivePath(sub.url))
-          const isParentOfCurrent = isChildOfPath(item.url) && !isItemActive
+          const hasChildren = !!item.items?.length
 
-          // Parent should be "active" (for collapsible) if:
-          // 1. It's exactly the current path, OR
-          // 2. Any of its children are active, OR
-          // 3. We're on a child route
-          const shouldParentBeActive = isItemActive || hasActiveChild || isParentOfCurrent
+          const hasActiveChild = item.items?.some((sub) =>
+            isActivePath(sub.url)
+          )
 
+          const isParentOfCurrent =
+            isChildOfPath(item.url) && !isItemActive
+
+          const shouldParentBeActive =
+            isItemActive || hasActiveChild || isParentOfCurrent
+
+          // NORMAL MENU ITEM (NO COLLAPSIBLE)
+          if (!hasChildren) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isItemActive}
+                  tooltip={item.title}
+                >
+                  <Link
+                    to={item.url}
+                    activeProps={{ className: "active-link" }}
+                    inactiveProps={{ className: "inactive-link" }}
+                  >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          }
+
+          // COLLAPSIBLE MENU ITEM
           return (
             <Collapsible
               key={item.title}
@@ -70,34 +96,36 @@ export function NavMain({
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
-                    isActive={isItemActive}  // Only true if exact match to item.url
+                    isActive={isItemActive}
                     tooltip={item.title}
                   >
                     {item.icon && <item.icon />}
-                    <Link
-                      to={item.url}
-                      // Add active props for styling if needed
-                      activeProps={{ className: "active-link" }}
-                      inactiveProps={{ className: "inactive-link" }}
-                    >
-                      <span>{item.title}</span>
-                    </Link>
-                    {item.items && (
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    )}
+
+                    <span>{item.title}</span>
+
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
+
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => {
                       const isSubActive = isActivePath(subItem.url)
+
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild isActive={isSubActive}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isSubActive}
+                          >
                             <Link
                               to={subItem.url}
-                              activeProps={{ className: "active-sub-link" }}
-                              inactiveProps={{ className: "inactive-sub-link" }}
+                              activeProps={{
+                                className: "active-sub-link",
+                              }}
+                              inactiveProps={{
+                                className: "inactive-sub-link",
+                              }}
                             >
                               <span>{subItem.title}</span>
                             </Link>

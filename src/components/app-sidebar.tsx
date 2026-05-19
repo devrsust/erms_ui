@@ -100,7 +100,6 @@ const superAdminNav = {
       icon: Layers,
       items: [
         { title: "Document Requests", url: "/power/requests", icon: FileText, badge: 12 },
-        { title: "Vetting & Processing", url: "/power/vet", icon: CheckCircle },
         { title: "Approved Documents", url: "/power/approved", icon: FileCheckCorner },
         { title: "Bulk Combos", url: "/power/combo", icon: PlusCircle },
       ],

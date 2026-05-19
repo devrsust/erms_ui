@@ -29,14 +29,10 @@ export const Route = createFileRoute('/director/requests/')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams({
-    page: '1',
-    limit: '10',
-  }).toString()
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['admins', searchParams],
-    queryFn: () => getRequests(searchParams),
+    queryKey: ['requests'],
+    queryFn: () => getRequests({page: 1, limit: 10}),
     staleTime: 30_000,
   })
 
