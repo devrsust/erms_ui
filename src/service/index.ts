@@ -668,7 +668,6 @@ export const createChain = async (payload: {
         description?: string
         roleId?: number
         userId?: number
-        canReject: boolean
     }[]
 }) => {
     const { data } = await http.post('/approval-chains', payload)
@@ -685,10 +684,9 @@ export const updateChain = async (id: number, payload: {
         description?: string
         roleId?: number
         userId?: number
-        canReject: boolean
     }[]
 }) => {
-    const response = await http.put(`/chains/${id}`, payload)
+    const response = await http.patch(`/approval-chains/${id}`, payload)
     return response.data
 }
 

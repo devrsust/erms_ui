@@ -17,7 +17,8 @@ import {
   Link2,
   CheckCircle,
   PlusCircle,
-  Eye
+  Eye,
+  Stamp
 } from 'lucide-react';
 
 import { NavMain } from "@/components/nav-main"
@@ -179,6 +180,11 @@ const directorNav = {
         { title: "Faculties", url: "/director/faculty/", icon: School },
         { title: "Departments", url: "/director/department/", icon: School },
       ],
+    },
+    {
+      title: "Signature/Stamp",
+      url: "/director/stamp/",
+      icon: Stamp,
     },
   ],
   navSecondary: [

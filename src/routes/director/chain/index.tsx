@@ -1,6 +1,5 @@
 import { DataTable } from '@/components/table'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,7 +51,6 @@ type CreateChainForm = {
     description?: string
     roleId?: number
     userId?: number
-    canReject: boolean
   }[]
 }
 
@@ -112,7 +110,6 @@ function RouteComponent() {
         {
           stepOrder: 1,
           name: '',
-          canReject: true,
         },
       ],
     }
@@ -181,7 +178,6 @@ function RouteComponent() {
         description: step.description,
         roleId: step.roleId,
         userId: step.userId,
-        canReject: step.canReject,
       })),
     })
     setEditOpen(true)
@@ -534,7 +530,6 @@ function ChainForm({ form, stepsField, onSubmit, onCancel, roles, users, isPendi
                   description: '',
                   roleId: undefined,
                   userId: undefined,
-                  canReject: true,
                 })
               }
               className="border-green-600 text-green-600 hover:bg-green-50"
@@ -627,20 +622,6 @@ function ChainForm({ form, stepsField, onSubmit, onCancel, roles, users, isPendi
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  <div className="flex items-center gap-2 col-span-1 md:col-span-2">
-                    <Checkbox
-                      id={`canReject-${index}`}
-                      checked={field.canReject}
-                      onCheckedChange={(checked) =>
-                        form.setValue(`steps.${index}.canReject`, checked as boolean)
-                      }
-                      className="border-2 border-gray-300 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
-                    />
-                    <Label htmlFor={`canReject-${index}`} className="text-sm font-medium text-gray-700">
-                      Can reject and send back
-                    </Label>
                   </div>
                 </div>
               </div>

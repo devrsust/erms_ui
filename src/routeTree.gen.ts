@@ -45,6 +45,7 @@ import { Route as PowerApprovedIndexRouteImport } from './routes/power/approved/
 import { Route as PowerAdminsIndexRouteImport } from './routes/power/admins/index'
 import { Route as PowerActivityIndexRouteImport } from './routes/power/activity/index'
 import { Route as DirectorTransactionsIndexRouteImport } from './routes/director/transactions/index'
+import { Route as DirectorStampIndexRouteImport } from './routes/director/stamp/index'
 import { Route as DirectorRequestsIndexRouteImport } from './routes/director/requests/index'
 import { Route as DirectorFacultyIndexRouteImport } from './routes/director/faculty/index'
 import { Route as DirectorDocumentsIndexRouteImport } from './routes/director/documents/index'
@@ -244,6 +245,11 @@ const DirectorTransactionsIndexRoute =
     path: '/transactions/',
     getParentRoute: () => DirectorRouteRoute,
   } as any)
+const DirectorStampIndexRoute = DirectorStampIndexRouteImport.update({
+  id: '/stamp/',
+  path: '/stamp/',
+  getParentRoute: () => DirectorRouteRoute,
+} as any)
 const DirectorRequestsIndexRoute = DirectorRequestsIndexRouteImport.update({
   id: '/requests/',
   path: '/requests/',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/director/documents': typeof DirectorDocumentsIndexRoute
   '/director/faculty': typeof DirectorFacultyIndexRoute
   '/director/requests': typeof DirectorRequestsIndexRoute
+  '/director/stamp': typeof DirectorStampIndexRoute
   '/director/transactions': typeof DirectorTransactionsIndexRoute
   '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/director/documents': typeof DirectorDocumentsIndexRoute
   '/director/faculty': typeof DirectorFacultyIndexRoute
   '/director/requests': typeof DirectorRequestsIndexRoute
+  '/director/stamp': typeof DirectorStampIndexRoute
   '/director/transactions': typeof DirectorTransactionsIndexRoute
   '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
@@ -461,6 +469,7 @@ export interface FileRoutesById {
   '/director/documents/': typeof DirectorDocumentsIndexRoute
   '/director/faculty/': typeof DirectorFacultyIndexRoute
   '/director/requests/': typeof DirectorRequestsIndexRoute
+  '/director/stamp/': typeof DirectorStampIndexRoute
   '/director/transactions/': typeof DirectorTransactionsIndexRoute
   '/power/activity/': typeof PowerActivityIndexRoute
   '/power/admins/': typeof PowerAdminsIndexRoute
@@ -517,6 +526,7 @@ export interface FileRouteTypes {
     | '/director/documents'
     | '/director/faculty'
     | '/director/requests'
+    | '/director/stamp'
     | '/director/transactions'
     | '/power/activity'
     | '/power/admins'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/director/documents'
     | '/director/faculty'
     | '/director/requests'
+    | '/director/stamp'
     | '/director/transactions'
     | '/power/activity'
     | '/power/admins'
@@ -620,6 +631,7 @@ export interface FileRouteTypes {
     | '/director/documents/'
     | '/director/faculty/'
     | '/director/requests/'
+    | '/director/stamp/'
     | '/director/transactions/'
     | '/power/activity/'
     | '/power/admins/'
@@ -909,6 +921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DirectorTransactionsIndexRouteImport
       parentRoute: typeof DirectorRouteRoute
     }
+    '/director/stamp/': {
+      id: '/director/stamp/'
+      path: '/stamp'
+      fullPath: '/director/stamp'
+      preLoaderRoute: typeof DirectorStampIndexRouteImport
+      parentRoute: typeof DirectorRouteRoute
+    }
     '/director/requests/': {
       id: '/director/requests/'
       path: '/requests'
@@ -1046,6 +1065,7 @@ interface DirectorRouteRouteChildren {
   DirectorDocumentsIndexRoute: typeof DirectorDocumentsIndexRoute
   DirectorFacultyIndexRoute: typeof DirectorFacultyIndexRoute
   DirectorRequestsIndexRoute: typeof DirectorRequestsIndexRoute
+  DirectorStampIndexRoute: typeof DirectorStampIndexRoute
   DirectorTransactionsIndexRoute: typeof DirectorTransactionsIndexRoute
 }
 
@@ -1059,6 +1079,7 @@ const DirectorRouteRouteChildren: DirectorRouteRouteChildren = {
   DirectorDocumentsIndexRoute: DirectorDocumentsIndexRoute,
   DirectorFacultyIndexRoute: DirectorFacultyIndexRoute,
   DirectorRequestsIndexRoute: DirectorRequestsIndexRoute,
+  DirectorStampIndexRoute: DirectorStampIndexRoute,
   DirectorTransactionsIndexRoute: DirectorTransactionsIndexRoute,
 }
 
