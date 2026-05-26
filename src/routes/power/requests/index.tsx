@@ -291,7 +291,7 @@ function RouteComponent() {
                 Copy Request ID
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/dashboard/requests/${request.id}` })}
+                onClick={() => navigate({ to: `/power/requests/${request.id}` })}
               >
                 <Eye className="h-4 w-4" />
                 View Details

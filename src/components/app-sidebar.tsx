@@ -110,11 +110,6 @@ const superAdminNav = {
       url: "/power/transactions/",
       icon: WalletMinimal,
     },
-    // {
-    //   title: "Analysis",
-    //   url: "/dashboard/analysis/",
-    //   icon: Activity,
-    // },
     {
       title: "Logs & Activity",
       url: "/power/activity/",
@@ -136,7 +131,7 @@ const superAdminNav = {
   navSecondary: [
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/power/settings",
       icon: UserCog,
     }
   ],
@@ -161,7 +156,8 @@ const directorNav = {
       url: "#",
       icon: Layers,
       items: [
-        { title: "Document Requests", url: "/director/requests", icon: FileText, badge: 8 },
+        { title: "Document Requests", url: "/director/requests", icon: FileText},
+        { title: "Vetting & Processing", url: "/director/vet", icon: CheckCircle },
         { title: "Approved Documents", url: "/director/approved", icon: FileCheckCorner },
       ],
     },
@@ -207,7 +203,7 @@ const adminNav = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard/",
+      url: "/admin/",
       icon: LayoutGrid,
     },
     {
@@ -215,8 +211,8 @@ const adminNav = {
       url: "#",
       icon: Users,
       items: [
-        { title: "Admins", url: "/dashboard/admins", icon: Shield },
-        { title: "Users", url: "/dashboard/users", icon: Users },
+        { title: "Admins", url: "/admin/admins", icon: Shield },
+        { title: "Users", url: "/admin/users", icon: Users },
       ],
     },
     {
@@ -224,15 +220,15 @@ const adminNav = {
       url: "#",
       icon: Layers,
       items: [
-        { title: "Document Requests", url: "/dashboard/requests", icon: FileText, badge: 5 },
-        { title: "Vetting & Processing", url: "/dashboard/vet", icon: CheckCircle },
-        { title: "Approved Documents", url: "/dashboard/approved-documents", icon: FileCheckCorner },
-        { title: "Bulk Combos", url: "/dashboard/combos", icon: PlusCircle },
+        { title: "Document Requests", url: "/admin/requests", icon: FileText, badge: 5 },
+        { title: "Vetting & Processing", url: "/admin/vet", icon: CheckCircle },
+        { title: "Approved Documents", url: "/admin/approved", icon: FileCheckCorner },
+        { title: "Bulk Combos", url: "/admin/combo", icon: PlusCircle },
       ],
     },
     {
       title: "Transactions",
-      url: "/dashboard/transactions/",
+      url: "/admin/transactions/",
       icon: WalletMinimal,
     },
     {
@@ -240,18 +236,18 @@ const adminNav = {
       url: "#",
       icon: MonitorCog,
       items: [
-        { title: "Chain", url: "/dashboard/chain/", icon: Link2 },
-        { title: "Documents", url: "/dashboard/documents/", icon: FileText },
-        { title: "Roles", url: "/dashboard/roles/", icon: Shield },
-        { title: "Faculties", url: "/dashboard/faculty/", icon: Building2 },
-        { title: "Departments", url: "/dashboard/department/", icon: School },
+        { title: "Chain", url: "/admin/chain/", icon: Link2 },
+        { title: "Documents", url: "/admin/documents/", icon: FileText },
+        { title: "Roles", url: "/admin/roles/", icon: Shield },
+        { title: "Faculties", url: "/admin/faculty/", icon: Building2 },
+        { title: "Departments", url: "/admin/department/", icon: School },
       ],
     },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/admin/settings",
       icon: UserCog,
     }
   ],
@@ -276,7 +272,6 @@ const recordOfficerNav = {
       url: "#",
       icon: Layers,
       items: [
-        { title: "Document Requests", url: "/records/requests", icon: FileText, badge: 15 },
         { title: "Vetting & Processing", url: "/records/vet", icon: CheckCircle },
         { title: "Approved Documents", url: "/records/approved", icon: FileCheckCorner },
       ],

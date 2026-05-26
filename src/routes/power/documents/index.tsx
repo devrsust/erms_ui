@@ -294,7 +294,7 @@ function RouteComponent() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/dashboard/documents/${document.id}` })}
+                onClick={() => navigate({ to: `/power/documents/${document.id}` })}
               >
                 View
               </DropdownMenuItem>

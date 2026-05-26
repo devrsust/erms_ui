@@ -238,7 +238,7 @@ function Dashboard() {
                 Copy Request ID
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/dashboard/vet/${request.id}` })}
+                onClick={() => navigate({ to: `/records/vet/${request.id}` })}
               >
                 <Eye className="h-4 w-4" />
                 View Details
@@ -261,7 +261,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 p-4">
             <section className="col-span-1 md:col-span-2 lg:col-span-4 space-y-4">
               {/* Top Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
                 <Card className="grid gap-4 p-4">
                   <p className="text-sm font-medium text-gray-600">Total Requests</p>
                   <div className="flex items-center gap-4">

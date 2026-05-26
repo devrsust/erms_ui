@@ -24,6 +24,7 @@ import { Route as DirectorIndexRouteImport } from './routes/director/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PowerAccountRouteImport } from './routes/power/account'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AdminAccountRouteImport } from './routes/admin/account'
 import { Route as UserTransactionsIndexRouteImport } from './routes/user/transactions/index'
 import { Route as UserRequestsIndexRouteImport } from './routes/user/requests/index'
 import { Route as UserDocumentsIndexRouteImport } from './routes/user/documents/index'
@@ -44,6 +45,7 @@ import { Route as PowerChainIndexRouteImport } from './routes/power/chain/index'
 import { Route as PowerApprovedIndexRouteImport } from './routes/power/approved/index'
 import { Route as PowerAdminsIndexRouteImport } from './routes/power/admins/index'
 import { Route as PowerActivityIndexRouteImport } from './routes/power/activity/index'
+import { Route as DirectorVetIndexRouteImport } from './routes/director/vet/index'
 import { Route as DirectorTransactionsIndexRouteImport } from './routes/director/transactions/index'
 import { Route as DirectorStampIndexRouteImport } from './routes/director/stamp/index'
 import { Route as DirectorRequestsIndexRouteImport } from './routes/director/requests/index'
@@ -52,6 +54,18 @@ import { Route as DirectorDocumentsIndexRouteImport } from './routes/director/do
 import { Route as DirectorDepartmentIndexRouteImport } from './routes/director/department/index'
 import { Route as DirectorChainIndexRouteImport } from './routes/director/chain/index'
 import { Route as DirectorApprovedIndexRouteImport } from './routes/director/approved/index'
+import { Route as AdminVetIndexRouteImport } from './routes/admin/vet/index'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
+import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
+import { Route as AdminRolesIndexRouteImport } from './routes/admin/roles/index'
+import { Route as AdminRequestsIndexRouteImport } from './routes/admin/requests/index'
+import { Route as AdminFacultyIndexRouteImport } from './routes/admin/faculty/index'
+import { Route as AdminDocumentsIndexRouteImport } from './routes/admin/documents/index'
+import { Route as AdminDepartmentIndexRouteImport } from './routes/admin/department/index'
+import { Route as AdminComboIndexRouteImport } from './routes/admin/combo/index'
+import { Route as AdminChainIndexRouteImport } from './routes/admin/chain/index'
+import { Route as AdminApprovedIndexRouteImport } from './routes/admin/approved/index'
+import { Route as AdminAdminsIndexRouteImport } from './routes/admin/admins/index'
 import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
 import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
 import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
@@ -60,8 +74,14 @@ import { Route as PowerUsersIdRouteImport } from './routes/power/users/$id'
 import { Route as PowerRequestsIdRouteImport } from './routes/power/requests/$id'
 import { Route as PowerDocumentsIdRouteImport } from './routes/power/documents/$id'
 import { Route as PowerAdminsIdRouteImport } from './routes/power/admins/$id'
+import { Route as DirectorVetIdRouteImport } from './routes/director/vet/$id'
 import { Route as DirectorRequestsIdRouteImport } from './routes/director/requests/$id'
 import { Route as DirectorDocumentsIdRouteImport } from './routes/director/documents/$id'
+import { Route as AdminVetIdRouteImport } from './routes/admin/vet/$id'
+import { Route as AdminUsersIdRouteImport } from './routes/admin/users/$id'
+import { Route as AdminRequestsIdRouteImport } from './routes/admin/requests/$id'
+import { Route as AdminDocumentsIdRouteImport } from './routes/admin/documents/$id'
+import { Route as AdminAdminsIdRouteImport } from './routes/admin/admins/$id'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -137,6 +157,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAccountRoute = AdminAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const UserTransactionsIndexRoute = UserTransactionsIndexRouteImport.update({
   id: '/transactions/',
@@ -239,6 +264,11 @@ const PowerActivityIndexRoute = PowerActivityIndexRouteImport.update({
   path: '/activity/',
   getParentRoute: () => PowerRouteRoute,
 } as any)
+const DirectorVetIndexRoute = DirectorVetIndexRouteImport.update({
+  id: '/vet/',
+  path: '/vet/',
+  getParentRoute: () => DirectorRouteRoute,
+} as any)
 const DirectorTransactionsIndexRoute =
   DirectorTransactionsIndexRouteImport.update({
     id: '/transactions/',
@@ -280,6 +310,66 @@ const DirectorApprovedIndexRoute = DirectorApprovedIndexRouteImport.update({
   path: '/approved/',
   getParentRoute: () => DirectorRouteRoute,
 } as any)
+const AdminVetIndexRoute = AdminVetIndexRouteImport.update({
+  id: '/vet/',
+  path: '/vet/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTransactionsIndexRoute = AdminTransactionsIndexRouteImport.update({
+  id: '/transactions/',
+  path: '/transactions/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminRolesIndexRoute = AdminRolesIndexRouteImport.update({
+  id: '/roles/',
+  path: '/roles/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminRequestsIndexRoute = AdminRequestsIndexRouteImport.update({
+  id: '/requests/',
+  path: '/requests/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminFacultyIndexRoute = AdminFacultyIndexRouteImport.update({
+  id: '/faculty/',
+  path: '/faculty/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDocumentsIndexRoute = AdminDocumentsIndexRouteImport.update({
+  id: '/documents/',
+  path: '/documents/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDepartmentIndexRoute = AdminDepartmentIndexRouteImport.update({
+  id: '/department/',
+  path: '/department/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminComboIndexRoute = AdminComboIndexRouteImport.update({
+  id: '/combo/',
+  path: '/combo/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminChainIndexRoute = AdminChainIndexRouteImport.update({
+  id: '/chain/',
+  path: '/chain/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminApprovedIndexRoute = AdminApprovedIndexRouteImport.update({
+  id: '/approved/',
+  path: '/approved/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminsIndexRoute = AdminAdminsIndexRouteImport.update({
+  id: '/admins/',
+  path: '/admins/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
   id: '/requests/$id',
   path: '/requests/$id',
@@ -320,6 +410,11 @@ const PowerAdminsIdRoute = PowerAdminsIdRouteImport.update({
   path: '/admins/$id',
   getParentRoute: () => PowerRouteRoute,
 } as any)
+const DirectorVetIdRoute = DirectorVetIdRouteImport.update({
+  id: '/vet/$id',
+  path: '/vet/$id',
+  getParentRoute: () => DirectorRouteRoute,
+} as any)
 const DirectorRequestsIdRoute = DirectorRequestsIdRouteImport.update({
   id: '/requests/$id',
   path: '/requests/$id',
@@ -329,6 +424,31 @@ const DirectorDocumentsIdRoute = DirectorDocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
   getParentRoute: () => DirectorRouteRoute,
+} as any)
+const AdminVetIdRoute = AdminVetIdRouteImport.update({
+  id: '/vet/$id',
+  path: '/vet/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
+  id: '/users/$id',
+  path: '/users/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminRequestsIdRoute = AdminRequestsIdRouteImport.update({
+  id: '/requests/$id',
+  path: '/requests/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDocumentsIdRoute = AdminDocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminsIdRoute = AdminAdminsIdRouteImport.update({
+  id: '/admins/$id',
+  path: '/admins/$id',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -340,6 +460,7 @@ export interface FileRoutesByFullPath {
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
+  '/admin/account': typeof AdminAccountRoute
   '/auth/login': typeof AuthLoginRoute
   '/power/account': typeof PowerAccountRoute
   '/admin/': typeof AdminIndexRoute
@@ -347,8 +468,14 @@ export interface FileRoutesByFullPath {
   '/power/': typeof PowerIndexRoute
   '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
+  '/admin/admins/$id': typeof AdminAdminsIdRoute
+  '/admin/documents/$id': typeof AdminDocumentsIdRoute
+  '/admin/requests/$id': typeof AdminRequestsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vet/$id': typeof AdminVetIdRoute
   '/director/documents/$id': typeof DirectorDocumentsIdRoute
   '/director/requests/$id': typeof DirectorRequestsIdRoute
+  '/director/vet/$id': typeof DirectorVetIdRoute
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
@@ -357,6 +484,18 @@ export interface FileRoutesByFullPath {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/admin/admins': typeof AdminAdminsIndexRoute
+  '/admin/approved': typeof AdminApprovedIndexRoute
+  '/admin/chain': typeof AdminChainIndexRoute
+  '/admin/combo': typeof AdminComboIndexRoute
+  '/admin/department': typeof AdminDepartmentIndexRoute
+  '/admin/documents': typeof AdminDocumentsIndexRoute
+  '/admin/faculty': typeof AdminFacultyIndexRoute
+  '/admin/requests': typeof AdminRequestsIndexRoute
+  '/admin/roles': typeof AdminRolesIndexRoute
+  '/admin/transactions': typeof AdminTransactionsIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/vet': typeof AdminVetIndexRoute
   '/director/approved': typeof DirectorApprovedIndexRoute
   '/director/chain': typeof DirectorChainIndexRoute
   '/director/department': typeof DirectorDepartmentIndexRoute
@@ -365,6 +504,7 @@ export interface FileRoutesByFullPath {
   '/director/requests': typeof DirectorRequestsIndexRoute
   '/director/stamp': typeof DirectorStampIndexRoute
   '/director/transactions': typeof DirectorTransactionsIndexRoute
+  '/director/vet': typeof DirectorVetIndexRoute
   '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
   '/power/approved': typeof PowerApprovedIndexRoute
@@ -390,6 +530,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
+  '/admin/account': typeof AdminAccountRoute
   '/auth/login': typeof AuthLoginRoute
   '/power/account': typeof PowerAccountRoute
   '/admin': typeof AdminIndexRoute
@@ -397,8 +538,14 @@ export interface FileRoutesByTo {
   '/power': typeof PowerIndexRoute
   '/records': typeof RecordsIndexRoute
   '/user': typeof UserIndexRoute
+  '/admin/admins/$id': typeof AdminAdminsIdRoute
+  '/admin/documents/$id': typeof AdminDocumentsIdRoute
+  '/admin/requests/$id': typeof AdminRequestsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vet/$id': typeof AdminVetIdRoute
   '/director/documents/$id': typeof DirectorDocumentsIdRoute
   '/director/requests/$id': typeof DirectorRequestsIdRoute
+  '/director/vet/$id': typeof DirectorVetIdRoute
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
@@ -407,6 +554,18 @@ export interface FileRoutesByTo {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/admin/admins': typeof AdminAdminsIndexRoute
+  '/admin/approved': typeof AdminApprovedIndexRoute
+  '/admin/chain': typeof AdminChainIndexRoute
+  '/admin/combo': typeof AdminComboIndexRoute
+  '/admin/department': typeof AdminDepartmentIndexRoute
+  '/admin/documents': typeof AdminDocumentsIndexRoute
+  '/admin/faculty': typeof AdminFacultyIndexRoute
+  '/admin/requests': typeof AdminRequestsIndexRoute
+  '/admin/roles': typeof AdminRolesIndexRoute
+  '/admin/transactions': typeof AdminTransactionsIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/vet': typeof AdminVetIndexRoute
   '/director/approved': typeof DirectorApprovedIndexRoute
   '/director/chain': typeof DirectorChainIndexRoute
   '/director/department': typeof DirectorDepartmentIndexRoute
@@ -415,6 +574,7 @@ export interface FileRoutesByTo {
   '/director/requests': typeof DirectorRequestsIndexRoute
   '/director/stamp': typeof DirectorStampIndexRoute
   '/director/transactions': typeof DirectorTransactionsIndexRoute
+  '/director/vet': typeof DirectorVetIndexRoute
   '/power/activity': typeof PowerActivityIndexRoute
   '/power/admins': typeof PowerAdminsIndexRoute
   '/power/approved': typeof PowerApprovedIndexRoute
@@ -446,6 +606,7 @@ export interface FileRoutesById {
   '/user': typeof UserRouteRouteWithChildren
   '/certificate': typeof CertificateRoute
   '/verify': typeof VerifyRoute
+  '/admin/account': typeof AdminAccountRoute
   '/auth/login': typeof AuthLoginRoute
   '/power/account': typeof PowerAccountRoute
   '/admin/': typeof AdminIndexRoute
@@ -453,8 +614,14 @@ export interface FileRoutesById {
   '/power/': typeof PowerIndexRoute
   '/records/': typeof RecordsIndexRoute
   '/user/': typeof UserIndexRoute
+  '/admin/admins/$id': typeof AdminAdminsIdRoute
+  '/admin/documents/$id': typeof AdminDocumentsIdRoute
+  '/admin/requests/$id': typeof AdminRequestsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/vet/$id': typeof AdminVetIdRoute
   '/director/documents/$id': typeof DirectorDocumentsIdRoute
   '/director/requests/$id': typeof DirectorRequestsIdRoute
+  '/director/vet/$id': typeof DirectorVetIdRoute
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
@@ -463,6 +630,18 @@ export interface FileRoutesById {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/admin/admins/': typeof AdminAdminsIndexRoute
+  '/admin/approved/': typeof AdminApprovedIndexRoute
+  '/admin/chain/': typeof AdminChainIndexRoute
+  '/admin/combo/': typeof AdminComboIndexRoute
+  '/admin/department/': typeof AdminDepartmentIndexRoute
+  '/admin/documents/': typeof AdminDocumentsIndexRoute
+  '/admin/faculty/': typeof AdminFacultyIndexRoute
+  '/admin/requests/': typeof AdminRequestsIndexRoute
+  '/admin/roles/': typeof AdminRolesIndexRoute
+  '/admin/transactions/': typeof AdminTransactionsIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/vet/': typeof AdminVetIndexRoute
   '/director/approved/': typeof DirectorApprovedIndexRoute
   '/director/chain/': typeof DirectorChainIndexRoute
   '/director/department/': typeof DirectorDepartmentIndexRoute
@@ -471,6 +650,7 @@ export interface FileRoutesById {
   '/director/requests/': typeof DirectorRequestsIndexRoute
   '/director/stamp/': typeof DirectorStampIndexRoute
   '/director/transactions/': typeof DirectorTransactionsIndexRoute
+  '/director/vet/': typeof DirectorVetIndexRoute
   '/power/activity/': typeof PowerActivityIndexRoute
   '/power/admins/': typeof PowerAdminsIndexRoute
   '/power/approved/': typeof PowerApprovedIndexRoute
@@ -503,6 +683,7 @@ export interface FileRouteTypes {
     | '/user'
     | '/certificate'
     | '/verify'
+    | '/admin/account'
     | '/auth/login'
     | '/power/account'
     | '/admin/'
@@ -510,8 +691,14 @@ export interface FileRouteTypes {
     | '/power/'
     | '/records/'
     | '/user/'
+    | '/admin/admins/$id'
+    | '/admin/documents/$id'
+    | '/admin/requests/$id'
+    | '/admin/users/$id'
+    | '/admin/vet/$id'
     | '/director/documents/$id'
     | '/director/requests/$id'
+    | '/director/vet/$id'
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
@@ -520,6 +707,18 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/admin/admins'
+    | '/admin/approved'
+    | '/admin/chain'
+    | '/admin/combo'
+    | '/admin/department'
+    | '/admin/documents'
+    | '/admin/faculty'
+    | '/admin/requests'
+    | '/admin/roles'
+    | '/admin/transactions'
+    | '/admin/users'
+    | '/admin/vet'
     | '/director/approved'
     | '/director/chain'
     | '/director/department'
@@ -528,6 +727,7 @@ export interface FileRouteTypes {
     | '/director/requests'
     | '/director/stamp'
     | '/director/transactions'
+    | '/director/vet'
     | '/power/activity'
     | '/power/admins'
     | '/power/approved'
@@ -553,6 +753,7 @@ export interface FileRouteTypes {
     | '/'
     | '/certificate'
     | '/verify'
+    | '/admin/account'
     | '/auth/login'
     | '/power/account'
     | '/admin'
@@ -560,8 +761,14 @@ export interface FileRouteTypes {
     | '/power'
     | '/records'
     | '/user'
+    | '/admin/admins/$id'
+    | '/admin/documents/$id'
+    | '/admin/requests/$id'
+    | '/admin/users/$id'
+    | '/admin/vet/$id'
     | '/director/documents/$id'
     | '/director/requests/$id'
+    | '/director/vet/$id'
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
@@ -570,6 +777,18 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/admin/admins'
+    | '/admin/approved'
+    | '/admin/chain'
+    | '/admin/combo'
+    | '/admin/department'
+    | '/admin/documents'
+    | '/admin/faculty'
+    | '/admin/requests'
+    | '/admin/roles'
+    | '/admin/transactions'
+    | '/admin/users'
+    | '/admin/vet'
     | '/director/approved'
     | '/director/chain'
     | '/director/department'
@@ -578,6 +797,7 @@ export interface FileRouteTypes {
     | '/director/requests'
     | '/director/stamp'
     | '/director/transactions'
+    | '/director/vet'
     | '/power/activity'
     | '/power/admins'
     | '/power/approved'
@@ -608,6 +828,7 @@ export interface FileRouteTypes {
     | '/user'
     | '/certificate'
     | '/verify'
+    | '/admin/account'
     | '/auth/login'
     | '/power/account'
     | '/admin/'
@@ -615,8 +836,14 @@ export interface FileRouteTypes {
     | '/power/'
     | '/records/'
     | '/user/'
+    | '/admin/admins/$id'
+    | '/admin/documents/$id'
+    | '/admin/requests/$id'
+    | '/admin/users/$id'
+    | '/admin/vet/$id'
     | '/director/documents/$id'
     | '/director/requests/$id'
+    | '/director/vet/$id'
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
@@ -625,6 +852,18 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/admin/admins/'
+    | '/admin/approved/'
+    | '/admin/chain/'
+    | '/admin/combo/'
+    | '/admin/department/'
+    | '/admin/documents/'
+    | '/admin/faculty/'
+    | '/admin/requests/'
+    | '/admin/roles/'
+    | '/admin/transactions/'
+    | '/admin/users/'
+    | '/admin/vet/'
     | '/director/approved/'
     | '/director/chain/'
     | '/director/department/'
@@ -633,6 +872,7 @@ export interface FileRouteTypes {
     | '/director/requests/'
     | '/director/stamp/'
     | '/director/transactions/'
+    | '/director/vet/'
     | '/power/activity/'
     | '/power/admins/'
     | '/power/approved/'
@@ -774,6 +1014,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/account': {
+      id: '/admin/account'
+      path: '/account'
+      fullPath: '/admin/account'
+      preLoaderRoute: typeof AdminAccountRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/user/transactions/': {
       id: '/user/transactions/'
       path: '/transactions'
@@ -914,6 +1161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerActivityIndexRouteImport
       parentRoute: typeof PowerRouteRoute
     }
+    '/director/vet/': {
+      id: '/director/vet/'
+      path: '/vet'
+      fullPath: '/director/vet'
+      preLoaderRoute: typeof DirectorVetIndexRouteImport
+      parentRoute: typeof DirectorRouteRoute
+    }
     '/director/transactions/': {
       id: '/director/transactions/'
       path: '/transactions'
@@ -969,6 +1223,90 @@ declare module '@tanstack/react-router' {
       fullPath: '/director/approved'
       preLoaderRoute: typeof DirectorApprovedIndexRouteImport
       parentRoute: typeof DirectorRouteRoute
+    }
+    '/admin/vet/': {
+      id: '/admin/vet/'
+      path: '/vet'
+      fullPath: '/admin/vet'
+      preLoaderRoute: typeof AdminVetIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/transactions/': {
+      id: '/admin/transactions/'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/roles/': {
+      id: '/admin/roles/'
+      path: '/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/requests/': {
+      id: '/admin/requests/'
+      path: '/requests'
+      fullPath: '/admin/requests'
+      preLoaderRoute: typeof AdminRequestsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/faculty/': {
+      id: '/admin/faculty/'
+      path: '/faculty'
+      fullPath: '/admin/faculty'
+      preLoaderRoute: typeof AdminFacultyIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/documents/': {
+      id: '/admin/documents/'
+      path: '/documents'
+      fullPath: '/admin/documents'
+      preLoaderRoute: typeof AdminDocumentsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/department/': {
+      id: '/admin/department/'
+      path: '/department'
+      fullPath: '/admin/department'
+      preLoaderRoute: typeof AdminDepartmentIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/combo/': {
+      id: '/admin/combo/'
+      path: '/combo'
+      fullPath: '/admin/combo'
+      preLoaderRoute: typeof AdminComboIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/chain/': {
+      id: '/admin/chain/'
+      path: '/chain'
+      fullPath: '/admin/chain'
+      preLoaderRoute: typeof AdminChainIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/approved/': {
+      id: '/admin/approved/'
+      path: '/approved'
+      fullPath: '/admin/approved'
+      preLoaderRoute: typeof AdminApprovedIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/admins/': {
+      id: '/admin/admins/'
+      path: '/admins'
+      fullPath: '/admin/admins'
+      preLoaderRoute: typeof AdminAdminsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/user/requests/$id': {
       id: '/user/requests/$id'
@@ -1026,6 +1364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerAdminsIdRouteImport
       parentRoute: typeof PowerRouteRoute
     }
+    '/director/vet/$id': {
+      id: '/director/vet/$id'
+      path: '/vet/$id'
+      fullPath: '/director/vet/$id'
+      preLoaderRoute: typeof DirectorVetIdRouteImport
+      parentRoute: typeof DirectorRouteRoute
+    }
     '/director/requests/$id': {
       id: '/director/requests/$id'
       path: '/requests/$id'
@@ -1040,15 +1385,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DirectorDocumentsIdRouteImport
       parentRoute: typeof DirectorRouteRoute
     }
+    '/admin/vet/$id': {
+      id: '/admin/vet/$id'
+      path: '/vet/$id'
+      fullPath: '/admin/vet/$id'
+      preLoaderRoute: typeof AdminVetIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/users/$id': {
+      id: '/admin/users/$id'
+      path: '/users/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminUsersIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/requests/$id': {
+      id: '/admin/requests/$id'
+      path: '/requests/$id'
+      fullPath: '/admin/requests/$id'
+      preLoaderRoute: typeof AdminRequestsIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/documents/$id': {
+      id: '/admin/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/admin/documents/$id'
+      preLoaderRoute: typeof AdminDocumentsIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/admins/$id': {
+      id: '/admin/admins/$id'
+      path: '/admins/$id'
+      fullPath: '/admin/admins/$id'
+      preLoaderRoute: typeof AdminAdminsIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
+  AdminAccountRoute: typeof AdminAccountRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminAdminsIdRoute: typeof AdminAdminsIdRoute
+  AdminDocumentsIdRoute: typeof AdminDocumentsIdRoute
+  AdminRequestsIdRoute: typeof AdminRequestsIdRoute
+  AdminUsersIdRoute: typeof AdminUsersIdRoute
+  AdminVetIdRoute: typeof AdminVetIdRoute
+  AdminAdminsIndexRoute: typeof AdminAdminsIndexRoute
+  AdminApprovedIndexRoute: typeof AdminApprovedIndexRoute
+  AdminChainIndexRoute: typeof AdminChainIndexRoute
+  AdminComboIndexRoute: typeof AdminComboIndexRoute
+  AdminDepartmentIndexRoute: typeof AdminDepartmentIndexRoute
+  AdminDocumentsIndexRoute: typeof AdminDocumentsIndexRoute
+  AdminFacultyIndexRoute: typeof AdminFacultyIndexRoute
+  AdminRequestsIndexRoute: typeof AdminRequestsIndexRoute
+  AdminRolesIndexRoute: typeof AdminRolesIndexRoute
+  AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminVetIndexRoute: typeof AdminVetIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAccountRoute: AdminAccountRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminAdminsIdRoute: AdminAdminsIdRoute,
+  AdminDocumentsIdRoute: AdminDocumentsIdRoute,
+  AdminRequestsIdRoute: AdminRequestsIdRoute,
+  AdminUsersIdRoute: AdminUsersIdRoute,
+  AdminVetIdRoute: AdminVetIdRoute,
+  AdminAdminsIndexRoute: AdminAdminsIndexRoute,
+  AdminApprovedIndexRoute: AdminApprovedIndexRoute,
+  AdminChainIndexRoute: AdminChainIndexRoute,
+  AdminComboIndexRoute: AdminComboIndexRoute,
+  AdminDepartmentIndexRoute: AdminDepartmentIndexRoute,
+  AdminDocumentsIndexRoute: AdminDocumentsIndexRoute,
+  AdminFacultyIndexRoute: AdminFacultyIndexRoute,
+  AdminRequestsIndexRoute: AdminRequestsIndexRoute,
+  AdminRolesIndexRoute: AdminRolesIndexRoute,
+  AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminVetIndexRoute: AdminVetIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -1059,6 +1475,7 @@ interface DirectorRouteRouteChildren {
   DirectorIndexRoute: typeof DirectorIndexRoute
   DirectorDocumentsIdRoute: typeof DirectorDocumentsIdRoute
   DirectorRequestsIdRoute: typeof DirectorRequestsIdRoute
+  DirectorVetIdRoute: typeof DirectorVetIdRoute
   DirectorApprovedIndexRoute: typeof DirectorApprovedIndexRoute
   DirectorChainIndexRoute: typeof DirectorChainIndexRoute
   DirectorDepartmentIndexRoute: typeof DirectorDepartmentIndexRoute
@@ -1067,12 +1484,14 @@ interface DirectorRouteRouteChildren {
   DirectorRequestsIndexRoute: typeof DirectorRequestsIndexRoute
   DirectorStampIndexRoute: typeof DirectorStampIndexRoute
   DirectorTransactionsIndexRoute: typeof DirectorTransactionsIndexRoute
+  DirectorVetIndexRoute: typeof DirectorVetIndexRoute
 }
 
 const DirectorRouteRouteChildren: DirectorRouteRouteChildren = {
   DirectorIndexRoute: DirectorIndexRoute,
   DirectorDocumentsIdRoute: DirectorDocumentsIdRoute,
   DirectorRequestsIdRoute: DirectorRequestsIdRoute,
+  DirectorVetIdRoute: DirectorVetIdRoute,
   DirectorApprovedIndexRoute: DirectorApprovedIndexRoute,
   DirectorChainIndexRoute: DirectorChainIndexRoute,
   DirectorDepartmentIndexRoute: DirectorDepartmentIndexRoute,
@@ -1081,6 +1500,7 @@ const DirectorRouteRouteChildren: DirectorRouteRouteChildren = {
   DirectorRequestsIndexRoute: DirectorRequestsIndexRoute,
   DirectorStampIndexRoute: DirectorStampIndexRoute,
   DirectorTransactionsIndexRoute: DirectorTransactionsIndexRoute,
+  DirectorVetIndexRoute: DirectorVetIndexRoute,
 }
 
 const DirectorRouteRouteWithChildren = DirectorRouteRoute._addFileChildren(

@@ -38,7 +38,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNavigate } from '@tanstack/react-router'
 import IsPending from '@/components/Illustrations/isPending'
 
-export const Route = createFileRoute('/director/documents/')({
+export const Route = createFileRoute('/admin/documents/')({
   component: RouteComponent,
 })
 
@@ -294,7 +294,7 @@ function RouteComponent() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/director/documents/${document.id}` })}
+                onClick={() => navigate({ to: `/admin/documents/${document.id}` })}
               >
                 View
               </DropdownMenuItem>

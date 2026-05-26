@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, Calendar, FileText, User, Eye } from 'lucide-react'
+import { MoreHorizontal, Mail, Calendar, CheckCircle, FileText, User, Download, Eye, Filter, Clock } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -19,11 +19,12 @@ import { getPendingRequests, type Request, } from '@/service'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { SiteHeader } from '@/components/site-header'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAppSelector } from '@/store/hooks'
 import { useNavigate } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/records/vet/')({
+export const Route = createFileRoute('/admin/admins/vet/')({
   component: RouteComponent,
 })
 
@@ -268,7 +269,7 @@ function RouteComponent() {
                 Copy Request ID
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/records/vet/${request.id}` })}
+                onClick={() => navigate({ to: `/dashboard/vet/${request.id}` })}
               >
                 <Eye className="h-4 w-4" />
                 View Details
@@ -280,7 +281,12 @@ function RouteComponent() {
     },
   ]
 
-  const requests = data?.data ?? [];
+  console.log(data);
+
+  const requests = data?.data ?? []
+  const totalRequests = requests.length
+  const pendingRequests = requests.filter(req => req.status === 'PENDING').length
+  const successfulRequests = requests.filter(req => req.status === 'SUCCESSFUL').length
 
   return (
     <>
@@ -296,19 +302,133 @@ function RouteComponent() {
                   Process and manage all document requests
                 </p>
               </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filter
+                </Button>
+              </div>
             </div>
           </div>
 
-          <Card className="border border-gray-200 shadow-sm overflow-hidden">
-            <CardContent>
-              <DataTable
-                columns={columns}
-                data={requests}
-                filterColumn="email"
-                filterPlaceholder="Search by email, user, or document…"
-              />
-            </CardContent>
-          </Card>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
+              <p className="text-sm font-medium text-gray-600">Total Requests</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{totalRequests}</h3>
+              </div>
+            </div>
+            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
+              <p className="text-sm font-medium text-gray-600">Pending Requests</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+                  <Clock className="h-5 w-5 text-amber-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{pendingRequests}</h3>
+              </div>
+            </div>
+            <div className='grid gap-4 p-4 shadow rounded-2xl bg-white'>
+              <p className="text-sm font-medium text-gray-600">Completed Requests</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                </div>
+                <h3 className="text-2xl font-bold">{successfulRequests}</h3>
+              </div>
+            </div>
+          </div>
+
+          <Tabs defaultValue="all" className="space-y-4">
+            <TabsList className="bg-white border">
+              <TabsTrigger value="all">All Requests</TabsTrigger>
+              <TabsTrigger value="pending">Pending</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="failed">Failed</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="space-y-4">
+              <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                <CardHeader className="bg-white">
+                  <CardTitle className="text-xl">All Requests</CardTitle>
+                  <CardDescription>
+                    View and manage all document requests
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={columns}
+                    data={requests}
+                    filterColumn="email"
+                    filterPlaceholder="Search by email, user, or document…"
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="pending">
+              <Card className="border border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Pending Requests</CardTitle>
+                  <CardDescription>
+                    Requests awaiting processing or payment
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={columns}
+                    data={requests.filter(req => req.status === 'PENDING')}
+                    filterColumn="email"
+                    filterPlaceholder="Search pending requests…"
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="completed">
+              <Card className="border border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Completed Requests</CardTitle>
+                  <CardDescription>
+                    Successfully processed requests
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={columns}
+                    data={requests.filter(req => req.status === 'SUCCESSFUL')}
+                    filterColumn="email"
+                    filterPlaceholder="Search completed requests…"
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="failed">
+              <Card className="border border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Failed Requests</CardTitle>
+                  <CardDescription>
+                    Requests that encountered issues
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={columns}
+                    data={requests.filter(req => req.status === 'FAILED')}
+                    filterColumn="email"
+                    filterPlaceholder="Search failed requests…"
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </>

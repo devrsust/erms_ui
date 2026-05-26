@@ -105,6 +105,83 @@ export const changePassword = async (
 
 /*
 ==========================
+UPLOAD - SIGNATURE
+==========================
+*/
+
+export const postSignature = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const { data } = await http.post(
+        '/upload/signature',
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        },
+    )
+
+    return data
+}
+
+export const getSignature = async (id: number) => {
+    const { data } = await http.get(
+        `/upload/signature/${id}`,
+    )
+    return data
+}
+
+
+export const deleteSignature = async (id: number) => {
+    const { data } = await http.delete(
+        `/upload/signature/${id}`,
+    )
+    return data
+}
+
+/*
+==========================
+UPLOAD - STAMP
+==========================
+*/
+
+export const postStamp = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const { data } = await http.post(
+        '/upload/stamp',
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        },
+    )
+
+    return data
+}
+
+export const getStamp = async (id: number) => {
+    const { data } = await http.get(
+        `/upload/stamp/${id}`,
+    )
+    return data
+}
+
+
+export const deleteStamp = async (id: number) => {
+    const { data } = await http.delete(
+        `/upload/stamp/${id}`,
+    )
+    return data
+}
+
+
+/*
+==========================
 Stats
 ==========================
 */
@@ -450,7 +527,7 @@ export const createRequests = async (payload: {
     return data;
 }
 
-export const getRequests = async (params: {page?: number, limit?: number}): Promise<PaginatedResponse<Request>> => {
+export const getRequests = async (params: { page?: number, limit?: number }): Promise<PaginatedResponse<Request>> => {
     const { data } = await http.get(`/request?${params}`);
     return data;
 }

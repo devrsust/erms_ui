@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, Calendar, FileText, User, Eye } from 'lucide-react'
+import { MoreHorizontal, Mail, Calendar, FileText, User, Eye} from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -23,7 +23,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useAppSelector } from '@/store/hooks'
 import { useNavigate } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/records/vet/')({
+export const Route = createFileRoute('/director/vet/')({
   component: RouteComponent,
 })
 
@@ -268,7 +268,7 @@ function RouteComponent() {
                 Copy Request ID
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/records/vet/${request.id}` })}
+                onClick={() => navigate({ to: `/director/vet/${request.id}` })}
               >
                 <Eye className="h-4 w-4" />
                 View Details

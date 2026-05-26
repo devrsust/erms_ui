@@ -22,7 +22,7 @@ import { SiteHeader } from '@/components/site-header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-export const Route = createFileRoute('/director/requests/')({
+export const Route = createFileRoute('/admin/requests/')({
   component: RouteComponent,
 })
 
@@ -30,9 +30,10 @@ export const Route = createFileRoute('/director/requests/')({
 function RouteComponent() {
   const navigate = useNavigate();
 
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['requests'],
-    queryFn: () => getRequests({page: 1, limit: 10}),
+    queryFn: () => getRequests({ page: 1, limit: 10 }),
     staleTime: 30_000,
   })
 
@@ -290,7 +291,7 @@ function RouteComponent() {
                 Copy Request ID
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/director/requests/${request.id}` })}
+                onClick={() => navigate({ to: `/admin/requests/${request.id}` })}
               >
                 <Eye className="h-4 w-4" />
                 View Details
@@ -356,7 +357,7 @@ function RouteComponent() {
             <TabsList className="bg-white border">
               <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">All Requests</TabsTrigger>
               <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
-              <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>
+              <TabsTrigger value="approved" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Approved</TabsTrigger>
               <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Failed</TabsTrigger>
             </TabsList>
 
@@ -398,7 +399,7 @@ function RouteComponent() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="completed">
+            <TabsContent value="approved">
               <Card className="border border-gray-200 shadow-sm">
                 <CardHeader>
                   <CardTitle>Completed Requests</CardTitle>
@@ -409,7 +410,7 @@ function RouteComponent() {
                 <CardContent>
                   <DataTable
                     columns={columns}
-                    data={requests.filter(req => req.status === 'SUCCESSFUL')}
+                    data={requests.filter(req => req.status === 'APPROVED')}
                     filterColumn="email"
                     filterPlaceholder="Search completed requests…"
                   />

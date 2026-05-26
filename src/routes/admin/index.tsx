@@ -5,7 +5,6 @@ import { ActivityCard } from "@/components/activity";
 import RequestSummary from "@/components/charts/request_summary";
 import { BanknoteArrowDown, ShieldUser, TrendingUp, Users } from "lucide-react";
 import VisitorsSummary from "@/components/charts/visitors_summry";
-import { DateFilterBar } from "@/components/date_range";
 import { useAppSelector } from "@/store/hooks";
 import { useQueries } from "@tanstack/react-query";
 import { AdminActivityLog, adminStats } from "@/service";
@@ -51,13 +50,10 @@ function Dashboard() {
 
       <div className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col gap-2">
-          <div>
-            <DateFilterBar />
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 p-4">
             <section className="col-span-1 md:col-span-2 lg:col-span-4 space-y-4">
               {/* Top Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
                 <Card className="grid gap-4 p-4">
                   <p className="text-sm font-medium text-gray-600">Total Requests</p>
                   <div className="flex items-center gap-4">

@@ -20,7 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import DropBox from '@/components/dropbox'
 import IsPending from '@/components/Illustrations/isPending'
 
-export const Route = createFileRoute('/power/combo/')({
+export const Route = createFileRoute('/admin/combo/')({
   component: RouteComponent,
 })
 
@@ -208,7 +208,7 @@ function RouteComponent() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => window.open(`/power/combo/${combo.id}`, '_blank')}
+                onClick={() => window.open(`/admin/combo/${combo.id}`, '_blank')}
                 className="cursor-pointer gap-2"
               >
                 View Details
