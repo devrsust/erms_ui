@@ -105,6 +105,29 @@ export const changePassword = async (
 
 /*
 ==========================
+UPLOAD transcript
+==========================
+*/
+export const uploadTranscript = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const { data } = await http.post(
+        '/upload/transcript',
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        },
+    )
+
+    return data
+}
+
+
+/*
+==========================
 UPLOAD - SIGNATURE
 ==========================
 */
@@ -130,7 +153,7 @@ export const getSignature = async (id: number) => {
     const { data } = await http.get(
         `/upload/signature/${id}`,
     )
-    return data
+    return data?.data;
 }
 
 
@@ -138,7 +161,7 @@ export const deleteSignature = async (id: number) => {
     const { data } = await http.delete(
         `/upload/signature/${id}`,
     )
-    return data
+    return data;
 }
 
 /*
@@ -168,7 +191,7 @@ export const getStamp = async (id: number) => {
     const { data } = await http.get(
         `/upload/stamp/${id}`,
     )
-    return data
+    return data?.data;
 }
 
 
@@ -823,5 +846,68 @@ export interface Activity {
 
 export const getActivities = async (params: string): Promise<PaginatedResponse<Activity>> => {
     const { data } = await http.get(`/activity?${params}`);
+    return data;
+}
+
+export interface Template {
+    id: number
+    name: string
+    content?: string
+    logo?: string
+
+    createdBy: number
+
+    creator: {
+        id: number
+        firstname: string
+        lastname: string
+        email: string
+    }
+
+    users?: {
+        id: number
+        firstname: string
+        lastname: string
+        email: string
+    }[]
+
+    createdAt: string
+    updatedAt: string
+}
+
+export const createTemplate = async (payload: {
+    name: string
+    content?: string
+    logo?: string
+    createdBy: number
+}) => {
+    const { data } = await http.post('/template', payload)
+    return data
+}
+
+export const getTemplates = async (
+    param?: { page?: number; limit?: number }
+): Promise<PaginatedResponse<Template>> => {
+    const { data } = await http.get('/template', {
+        params: {
+            page: param?.page,
+            limit: param?.limit,
+        },
+    });
+
+    return data;
+};
+
+export const updateTemplate = async (id: number, payload: {
+    name?: string
+    content?: string
+    logo?: string
+}) => {
+    const { data } = await http.patch(`/template/${id}`, payload)
+    return data
+}
+
+export const deleteTemplate = async (id: number) => {
+    const { data } = await http.delete(`/template/${id}`);
     return data;
 }

@@ -1,30 +1,20 @@
-import IsPending from '@/components/Illustrations/isPending'
+import ApprovalTimeline from '@/components/approval-timeline'
 import { SiteHeader } from '@/components/site-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-import { getRequestByAdmin } from '@/service'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Calendar, CheckCircle, FileText, Mail, MapPin, Stamp, TriangleAlert, User, XCircle } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-
-import { createApproval } from '@/service'
+import { getRequestByAdmin, getSignature, getStamp, getTemplates, createApproval, uploadTranscript } from '@/service'
 import { useAppSelector } from '@/store/hooks'
 import { useQueries } from '@tanstack/react-query'
-import { getSignature, getStamp } from '@/service'
-
-import { CommentComponent } from '@/components/request-comments'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft, Calendar, FileText, Mail, MapPin, User, Download, X } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { toast } from 'sonner'
+import domtoimage from 'dom-to-image-more';
+import jsPDF from 'jspdf';
 
 export const Route = createFileRoute('/director/vet/$id')({
     component: RouteComponent,
@@ -34,13 +24,28 @@ function RouteComponent() {
     const { id } = Route.useParams()
     const navigate = useNavigate()
     const { user: currentUser } = useAppSelector((state) => state.auth)
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+    const [action, setAction] = useState<'approve' | 'reject' | 'return' | null>(null)
     const [comment, setComment] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [signedSignature, setSignedSignature] = useState<string | null>(null)
-    const [signedStamp, setSignedStamp] = useState<string | null>(null)
+    const [isProcessing, setIsProcessing] = useState(false)
+    const [showPreview, setShowPreview] = useState(false)
+    const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null)
+    const previewRef = useRef<HTMLDivElement>(null)
 
     const results = useQueries({
         queries: [
+            {
+                queryKey: ['request', id],
+                queryFn: () => getRequestByAdmin(Number(id)),
+                enabled: !!id,
+                staleTime: 30_000,
+            },
+            {
+                queryKey: ['template'],
+                queryFn: () => getTemplates(),
+                enabled: !!id,
+                staleTime: 30_000,
+            },
             {
                 queryKey: ['signature', currentUser?.id],
                 queryFn: () => getSignature(currentUser!.id),
@@ -51,143 +56,289 @@ function RouteComponent() {
                 queryFn: () => getStamp(currentUser!.id),
                 enabled: !!currentUser?.id,
             },
-            {
-                queryKey: ['request', currentUser?.id],
-                queryFn: () => getRequestByAdmin(Number(id)),
-                enabled: !!id,
-                staleTime: 30_000,
-            },
         ],
     })
 
-    const [signatureResult, stampResult, requestResult] = results
+    const [requestResult, templateResult, signatureResult, stampResult] = results;
+    const request = requestResult?.data?.data;
+    const template = templateResult?.data?.data;
 
-    if (signatureResult.isPending || stampResult.isPending || requestResult.isPending) {
-        return <IsPending page="Vetting Request" />
-    }
+    const selectedTemplate = template?.find(
+        (t: any) => String(t.id) === selectedTemplateId
+    );
 
-    if (signatureResult.isError || stampResult.isError || requestResult.isError) {
-        return (
-            <>
-                <SiteHeader title="Vetting Request" />
-                <main className="min-h-screen bg-gray-50 p-4 lg:p-6">
-                    <div className="mx-auto max-w-7xl">
-                        <Card className="border-destructive">
-                            <CardHeader>
-                                <CardTitle className="text-destructive">Error loading request</CardTitle>
-                                <CardDescription>
-                                    Failed to load the request details. Please try again.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button asChild variant="outline">
-                                    <Link to="/director/vet">Go back</Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
-            </>
-        )
-    }
-
-    const request = requestResult?.data?.data
-
-    if (!request) {
-        return (
-            <>
-                <SiteHeader title="Vetting Request" />
-                <main className="min-h-screen bg-gray-50 p-4 lg:p-6">
-                    <div className="mx-auto max-w-7xl">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Request not found</CardTitle>
-                                <CardDescription>The requested request could not be found.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button asChild variant="outline">
-                                    <Link to="/director/vet">Back to vetting</Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
-            </>
-        )
-    }
-
-    const user = request.user
-    const academicData = user?.data?.acaddata
+    const academicData = request?.user?.data?.acaddata
     const courses = academicData?.results?.courses || []
-    const finalClassification = academicData?.finalclassification || {}
-    const currentStep = request.currentStep
 
-    const formatDate = (dateString?: string) =>
-        dateString
-            ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(dateString))
-            : 'N/A'
+    const generatePDF = async (element: HTMLElement | null): Promise<Blob> => {
+        if (!element) throw new Error('No element to generate PDF from');
 
-    const handleAction = async (action: 'APPROVE' | 'REJECT' | 'RETURN') => {
-        if (!comment.trim() && (action === 'REJECT' || action === 'RETURN')) {
-            toast.error('Please provide a reason')
-            return
-        }
-
-        if (!currentUser?.id) {
-            toast.error('You must be logged in')
-            return
-        }
-        setIsSubmitting(true)
         try {
-            const payload: any = {
-                adminId: currentUser.id,
-                requestId: request.id,
-                stepId: currentStep.id,
-                action,
-            }
-            if (comment.trim()) {
-                payload.comment = comment.trim()
-            }
-            await createApproval(payload)
+            // Find the actual content container you want to print
+            const targetElement = element.querySelector('#template_content_to_save') as HTMLElement || element;
 
-            toast.success(
-                action === 'APPROVE'
-                    ? 'Request approved successfully'
-                    : action === 'REJECT'
-                        ? 'Request rejected successfully'
-                        : 'Request sent back successfully'
-            )
-            navigate({ to: '/director/vet' })
-        } catch (err: any) {
-            toast.error(err?.message || 'Action failed')
-        } finally {
-            setIsSubmitting(false)
+            // 1. Convert the DOM node to a high-quality PNG using the browser's native engine
+            const dataUrl = await domtoimage.toPng(targetElement, {
+                quality: 1,
+                scale: 2, // Higher scale for better text resolution in the PDF
+                bgcolor: '#ffffff',
+                style: {
+                    margin: '0',
+                    padding: '20px', // Add some padding if needed
+                }
+            });
+
+            // 2. Initialize jsPDF
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // 3. Calculate dimensions to fit A4 page
+            const imgProps = pdf.getImageProperties(dataUrl);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // 4. Add image to PDF and export
+            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+            return pdf.output('blob');
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            throw new Error('Failed to generate PDF');
+        }
+    };
+
+    const uploadToCloudinary = async (pdfBlob: Blob): Promise<string> => {
+        const pdfFile = new File([pdfBlob], 'document.pdf', { type: 'application/pdf' });
+
+        const response = await uploadTranscript(pdfFile);
+        return response.data.url;
+    }
+
+    const showPdfPreview = (pdfBlob: Blob) => {
+        const url = URL.createObjectURL(pdfBlob);
+        setPdfPreviewUrl(url);
+        setShowPreview(true);
+    }
+
+    const getStepId = () => {
+        // Find the current step from approval timeline
+        const currentStep = request?.approvalSteps?.find((step: any) => step.adminId === currentUser?.id)
+        return currentStep?.id || null
+    }
+
+    const handleApprove = async () => {
+        setIsProcessing(true)
+        try {
+            const templateElement = document.querySelector('.template-builder') as HTMLElement
+            let pdfUrl = ''
+
+            if (templateElement) {
+                const pdfBlob = await generatePDF(templateElement)
+                showPdfPreview(pdfBlob)
+                pdfUrl = await uploadToCloudinary(pdfBlob)
+            }
+
+            setPdfPreviewUrl(pdfUrl)
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to generate PDF')
+            setIsProcessing(false)
         }
     }
 
-    const handleStamp = async () => {
-        const stamp = stampResult?.data?.data
-        const signature = signatureResult?.data?.data
+    const handleConfirmApprove = async () => {
+        try {
+            await createApproval({
+                adminId: currentUser!.id,
+                requestId: Number(id),
+                stepId: getStepId(),
+                action: 'APPROVED',
+                comment: comment
+            })
+            toast.success('Request approved successfully')
+            navigate({ to: '/director/vet' })
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to approve request')
+        } finally {
+            setIsProcessing(false)
+            setShowPreview(false)
+            if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
+            setPdfPreviewUrl(null)
+        }
+    }
 
-        if (!stamp || !signature) {
-            toast.error('Stamp or signature not found')
+    const handleReject = async () => {
+        if (!comment) {
+            toast.error('Comment required for rejection')
             return
         }
-
-        setSignedSignature(signature.url)
-        setSignedStamp(stamp.url)
-
-        toast.success('Signature and stamp added successfully')
+        setIsProcessing(true)
+        try {
+            await createApproval({
+                adminId: currentUser!.id,
+                requestId: Number(id),
+                stepId: getStepId(),
+                action: 'REJECTED',
+                comment: comment
+            })
+            toast.success('Request rejected')
+            navigate({ to: '/director/vet' })
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to reject request')
+        } finally {
+            setIsProcessing(false)
+        }
     }
 
+    const handleReturn = async () => {
+        if (!comment) {
+            toast.error('Comment required to return')
+            return
+        }
+        setIsProcessing(true)
+        try {
+            await createApproval({
+                adminId: currentUser!.id,
+                requestId: Number(id),
+                stepId: getStepId(),
+                action: 'RETURNED',
+                comment: comment
+            })
+            toast.success('Request returned')
+            navigate({ to: '/director/vet' })
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to return request')
+        } finally {
+            setIsProcessing(false)
+        }
+    }
+
+    const getProcessedTemplateContent = (content: string) => {
+        if (!content) return '';
+
+        const signatureHtml = signatureResult?.data?.url
+            ? `<img src="${signatureResult.data.url}" style="width: 120px; height: auto; object-fit: contain;" />`
+            : '';
+        const stampHtml = stampResult?.data?.url
+            ? `<img src="${stampResult.data.url}" style="width: 100px; height: auto; object-fit: contain;" />`
+            : '';
+
+        let processedContent = content;
+
+        processedContent = processedContent.replace(
+            /<div[^>]*id="signature"[^>]*>.*?<\/div>/,
+            `<div id="signature" class="signature-line">${signatureHtml}</div>`
+        );
+
+        processedContent = processedContent.replace(
+            /<div[^>]*id="stamp"[^>]*>.*?<\/div>/,
+            `<div id="stamp" class="signature-line">${stampHtml}</div>`
+        );
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = processedContent;
+
+        const generateAcademicRecords = () => {
+            if (!courses.length) return '<p>No academic records available</p>';
+
+            let html = `<div class="academic-records"><div class="records-header"></div>`;
+
+            const grouped: Record<string, Record<string, any[]>> = {};
+
+            courses.forEach((course: any) => {
+                const { session, semester } = course;
+                if (!grouped[session]) grouped[session] = {};
+                if (!grouped[session][semester]) grouped[session][semester] = [];
+                grouped[session][semester].push(course);
+            });
+
+            for (const [session, semesters] of Object.entries(grouped)) {
+                html += `
+                    <div class="session-group">
+                        <h3 style="margin-top: 20px; font-weight: bold; font-size: 25px;">${session}</h3>
+                `;
+
+                for (const [semester, semesterCourses] of Object.entries(semesters)) {
+                    html += `
+                        <div class="semester-group">
+                            <h4>Semester ${semester}</h4>
+                            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                                <thead>
+                                    <tr style="background-color: #f3f4f6;">
+                                        <th style="text-align: left; padding: 8px;">Course Code</th>
+                                        <th style="text-align: left; padding: 8px;">Title</th>
+                                        <th style="text-align: left; padding: 8px;">Units</th>
+                                        <th style="text-align: left; padding: 8px;">Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    semesterCourses.forEach((course: any) => {
+                        html += `
+                            <tr>
+                                <td style="padding: 8px; border-top: 1px solid #e5e7eb;">${course.course}</td>
+                                <td style="padding: 8px; border-top: 1px solid #e5e7eb;">${course.title}</td>
+                                <td style="padding: 8px; border-top: 1px solid #e5e7eb; text-align: center;">${course.units}</td>
+                                <td style="padding: 8px; border-top: 1px solid #e5e7eb; text-align: center;">
+                                    <span style="${course.grade === 'F' ? 'color: #dc2626; font-weight: bold;' : 'color: #000;'}">${course.grade}</span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        };
+
+        const contentElement = tempDiv.querySelector('#content');
+        if (contentElement) {
+            contentElement.innerHTML = generateAcademicRecords();
+        }
+
+        const studentNameElement = tempDiv.querySelector('#student_name');
+        if (studentNameElement) {
+            studentNameElement.textContent = request?.user?.data?.biodata?.fullname || '[Student Name]';
+        }
+
+        const genderElement = tempDiv.querySelector('#student_gender');
+        if (genderElement) {
+            const gender = request?.user?.gender?.toUpperCase();
+            let pronoun = 'his';
+            if (gender === 'FEMALE') {
+                pronoun = 'her';
+            } else if (gender === 'MALE') {
+                pronoun = 'his';
+            }
+            genderElement.textContent = pronoun;
+        }
+
+        const pronounElement = tempDiv.querySelector('#pronoun');
+        if (pronounElement) {
+            pronounElement.textContent = request?.pronoun || 'him/her';
+        }
+
+        return tempDiv.innerHTML;
+    };
 
     return (
         <>
-            <SiteHeader title={`Vetting: ${request.reference_number}`} />
+            <SiteHeader title={`Vetting: ${request?.document?.title || ''} / ${request?.reference_number || ''}`} />
 
             <main className="min-h-screen bg-gray-50 p-4 lg:p-6">
                 <div className="mx-auto max-w-7xl space-y-6">
-                    {/* Back button */}
                     <div className="flex items-center justify-between">
                         <Button asChild variant="ghost" size="sm" className="gap-2">
                             <Link to="/director/vet">
@@ -195,317 +346,224 @@ function RouteComponent() {
                                 Back to vetting list
                             </Link>
                         </Button>
-                        <Badge variant={request.status === 'PENDING' ? 'secondary' : 'default'}>
-                            {request.status}
+                        <Badge variant={request?.status === 'PENDING' ? 'secondary' : 'default'}>
+                            {request?.status}
                         </Badge>
                     </div>
 
-                    {/* Request details */}
+                    <ApprovalTimeline request={request} />
+
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-xl">Request Details</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Reference</p>
-                                        <p className="font-mono text-sm">{request.reference_number}</p>
+                                        <p className="font-mono text-sm">{request?.reference_number}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <User className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Type</p>
-                                        <p className="font-medium capitalize">{request.type}</p>
+                                        <p className="font-medium capitalize">{request?.type}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Faculty</p>
-                                        <p className="font-medium">{request.faculty?.name || '—'}</p>
+                                        <p className="font-medium">{request?.faculty?.name || '—'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <Mail className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Email</p>
-                                        <p className="font-medium">{request.email || '—'}</p>
+                                        <p className="font-medium">{request?.email || '—'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Address</p>
-                                        <p className="font-medium">{request.address || '—'}</p>
+                                        <p className="font-medium">{request?.address || '—'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                                     <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                                     <div>
                                         <p className="text-sm text-gray-500">Created</p>
-                                        <p className="font-medium">{formatDate(request.createdAt)}</p>
                                     </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <div id="document" className="grid gap-4 bg-white rounded-xl shadow-sm">
-                        {/* User bio */}
-                        {user && (
-                            <Card className="border-0 shadow-none">
-                                <CardHeader className="border-b">
-                                    <CardTitle className="text-xl">Applicant Bio</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <User className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Full Name</p>
-                                                <p className="font-medium">{`${user.firstname} ${user.middlename || ''} ${user.lastname}`}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <Mail className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Email</p>
-                                                <p className="font-medium">{user.email}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Matric Number</p>
-                                                <p className="font-medium">{user.matric_number}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <User className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Gender</p>
-                                                <p className="font-medium">{user.gender}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Date of Birth</p>
-                                                <p className="font-medium">{new Date(user.date_of_birth).toLocaleDateString()}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                            <Mail className="h-5 w-5 text-gray-500 mt-0.5" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Phone</p>
-                                                <p className="font-medium">{user.phone_number}</p>
-                                            </div>
-                                        </div>
-                                        {user.address && (
-                                            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                                                <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Address</p>
-                                                    <p className="font-medium">{user.address}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Academic data - grouped by session and semester */}
-                        {courses.length > 0 && (
-                            <Card className="border-0 shadow-none">
-                                <CardHeader className="border-b">
-                                    <CardTitle className="text-xl">Academic Records</CardTitle>
-                                    <CardDescription>
-                                        CGPA: {academicData?.cgpa || 'N/A'} | Graduation: {academicData?.graduation_date || 'N/A'}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    {(() => {
-                                        type Course = any
-                                        type GroupedCourses = Record<string, Record<string, Course[]>>
-
-                                        const grouped: GroupedCourses = courses.reduce((acc: GroupedCourses, course: Course) => {
-                                            const { session, semester } = course
-                                            if (!acc[session]) acc[session] = {}
-                                            if (!acc[session][semester]) acc[session][semester] = []
-                                            acc[session][semester].push(course)
-                                            return acc
-                                        }, {} as GroupedCourses)
-
-                                        return Object.entries(grouped).map(([session, semesters]) => (
-                                            <div key={session} className="mb-8 last:mb-0">
-                                                <h3 className="text-lg font-semibold mb-3 border-b pb-1">{session}</h3>
-                                                {Object.entries(semesters).map(([semester, courses]) => (
-                                                    <div key={`${session}-${semester}`} className="mb-6 last:mb-0">
-                                                        <h4 className="font-medium text-gray-700 mb-2">Semester {semester}</h4>
-                                                        <div className="overflow-x-auto">
-                                                            <Table>
-                                                                <TableHeader>
-                                                                    <TableRow>
-                                                                        <TableHead>Course Code</TableHead>
-                                                                        <TableHead>Title</TableHead>
-                                                                        <TableHead>Units</TableHead>
-                                                                        <TableHead>Grade</TableHead>
-                                                                    </TableRow>
-                                                                </TableHeader>
-                                                                <TableBody>
-                                                                    {courses.map((course, idx) => (
-                                                                        <TableRow key={idx}>
-                                                                            <TableCell>{course.course}</TableCell>
-                                                                            <TableCell className="max-w-xs truncate">{course.title}</TableCell>
-                                                                            <TableCell>{course.units}</TableCell>
-                                                                            <TableCell>
-                                                                                <Badge variant={course.grade === 'F' ? 'destructive' : 'outline'}>
-                                                                                    {course.grade}
-                                                                                </Badge>
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ))
-                                    })()}
-
-                                    {/* Yearly CGPA breakdown */}
-                                    {Object.keys(finalClassification).length > 0 && (
-                                        <div className="mt-6 pt-4 border-t">
-                                            <h3 className="text-lg font-semibold mb-3">Year‑by‑Year GPA</h3>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                                                {Object.entries(finalClassification).map(([year, semesters]: [string, any]) => (
-                                                    <div key={year} className="bg-gray-50 p-3 rounded text-sm">
-                                                        <p className="font-semibold">{year}</p>
-                                                        {Object.entries(semesters).map(([sem, data]: [string, any]) => (
-                                                            <p key={sem} className="text-gray-600">
-                                                                Sem {sem}: GPA {data.gpa} (Units {data.units})
-                                                            </p>
-                                                        ))}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-
-                                {/* Signature and Stamp Section */}
-                                <CardContent className="flex flex-col md:flex-row items-center justify-between gap-6 border-t pt-6">
-                                    {/* Signature */}
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="h-40 w-60 border-2 border-green-700 border-dashed rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
-                                            {signedSignature ? (
-                                                <img
-                                                    src={signedSignature}
-                                                    alt="Signature"
-                                                    className="max-h-full max-w-full object-contain"
-                                                />
-                                            ) : (
-                                                <span className="text-sm text-gray-500">
-                                                    No Signature Added
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-sm font-medium">{currentUser?.firstname} {currentUser?.lastname}</p>
-                                        <p className="text-xs text-gray-500">Registrar's Signature</p>
-                                    </div>
-
-                                    {/* Stamp */}
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="h-40 w-40 border-2 border-green-700 border-dashed rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
-                                            {signedStamp ? (
-                                                <img
-                                                    src={signedStamp}
-                                                    alt="Stamp"
-                                                    className="max-h-full max-w-full object-contain"
-                                                />
-                                            ) : (
-                                                <span className="text-sm text-gray-500">
-                                                    No Stamp Added
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-xs text-gray-500">Official University Stamp</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-3 justify-end p-3">
-                        <Button
-                            onClick={handleStamp}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                            disabled={!!(signedSignature && signedStamp)}
-                        >
-                            <Stamp className="mr-2 h-4 w-4" />
-                            {signedSignature && signedStamp ? 'Stamp & Signature Added' : 'Add Stamp & Signature'}
-                        </Button>
-                    </div>
-
-                    {/* Comment and actions */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-xl">Your Decision</CardTitle>
-                            <CardDescription>
-                                Add a comment (required for rejection or send back) and choose an action.
-                            </CardDescription>
+                            <div className="grid gap-2">
+                                <Label>Select Template</Label>
+                                <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Choose a template" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {template?.map((item: any) => (
+                                            <SelectItem key={item.id} value={String(item.id)}>
+                                                {item.name || `Template ${item.id}`}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="comment">Comment</Label>
-                                <Textarea
-                                    id="comment"
-                                    placeholder="Enter your comment here..."
-                                    value={comment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                    rows={4}
-                                />
-                            </div>
-                            <div className="flex flex-col sm:flex-row gap-3 justify-end">
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 border-yellow-300 hover:bg-yellow-50 text-yellow-600"
-                                    onClick={() => handleAction('RETURN')}
-                                    disabled={isSubmitting}
-                                >
-                                    <TriangleAlert className="h-4 w-4" />
-                                    Send Back
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 border-red-300 hover:bg-red-50 text-red-600"
-                                    onClick={() => handleAction('REJECT')}
-                                    disabled={isSubmitting}
-                                >
-                                    <XCircle className="h-4 w-4" />
-                                    Reject
-                                </Button>
-                                <Button
-                                    className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-                                    onClick={() => handleAction('APPROVE')}
-                                    disabled={isSubmitting}
-                                >
-                                    <CheckCircle className="h-4 w-4" />
-                                    Approve
-                                </Button>
-                            </div>
+                        <CardContent className='flex items-center justify-center'>
+                            {selectedTemplate ? (
+                                <div className="template-builder">
+                                    <div
+                                        className="no-tailwind"
+                                        style={{ all: 'initial' }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: getProcessedTemplateContent(selectedTemplate?.content || ''),
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground">
+                                    Select a template to preview
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
 
-                    <CommentComponent comments={request?.comments} />
+                    <Card>
+                        <CardContent className="space-y-4">
+                            <div>
+                                <Label htmlFor="action">Action</Label>
+                                <Select
+                                    value={action || undefined}
+                                    onValueChange={(value) => setAction(value as 'approve' | 'reject' | 'return')}
+                                >
+                                    <SelectTrigger id="action">
+                                        <SelectValue placeholder="Select action..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="approve" className="text-green-600">
+                                            ✅ Approve
+                                        </SelectItem>
+                                        <SelectItem value="reject" className="text-red-600">
+                                            ❌ Reject
+                                        </SelectItem>
+                                        <SelectItem value="return" className="text-yellow-600">
+                                            🔄 Send Back
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {action && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="comment">
+                                        Comment {action !== 'approve' && <span className="text-red-500">*</span>}
+                                    </Label>
+                                    <Textarea
+                                        id="comment"
+                                        placeholder={
+                                            action === 'approve'
+                                                ? "Enter your comment here... (optional)"
+                                                : "Please provide reason for this action..."
+                                        }
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        rows={4}
+                                    />
+                                </div>
+                            )}
+
+                            {action && (
+                                <Button
+                                    className="w-full"
+                                    variant={
+                                        action === 'approve' ? 'default' :
+                                            action === 'reject' ? 'destructive' :
+                                                'outline'
+                                    }
+                                    onClick={() => {
+                                        if (action === 'approve') handleApprove()
+                                        if (action === 'reject') handleReject()
+                                        if (action === 'return') handleReturn()
+                                    }}
+                                    disabled={
+                                        (action !== 'approve' && !comment) ||
+                                        isProcessing
+                                    }
+                                >
+                                    {isProcessing ? 'Processing...' :
+                                        action === 'approve' ? 'Approve & Generate' :
+                                            action === 'reject' ? 'Reject Request' :
+                                                'Send Back'
+                                    }
+                                </Button>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </main>
+
+            {/* PDF Preview Modal */}
+            {showPreview && pdfPreviewUrl && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b">
+                            <h2 className="text-xl font-semibold">PDF Preview</h2>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                    setShowPreview(false)
+                                    if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
+                                    setPdfPreviewUrl(null)
+                                    setIsProcessing(false)
+                                }}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <div className="p-4 overflow-auto max-h-[70vh]">
+                            <iframe
+                                src={pdfPreviewUrl}
+                                className="w-full h-[60vh] border-0"
+                                title="PDF Preview"
+                            />
+                        </div>
+                        <div className="flex justify-end gap-3 p-4 border-t">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setShowPreview(false)
+                                    if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
+                                    setPdfPreviewUrl(null)
+                                    setIsProcessing(false)
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleConfirmApprove}
+                                className="bg-green-600 hover:bg-green-700"
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                Confirm & Upload
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
