@@ -104,6 +104,9 @@ function RouteComponent() {
 
   const [documentsQuery, chainQuery] = results
 
+  console.log(documentsQuery?.data?.data);
+  
+
   const documents = documentsQuery.data?.data ?? []
   const chains = chainQuery.data?.data ?? []
 

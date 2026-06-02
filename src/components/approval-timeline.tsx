@@ -36,8 +36,8 @@ type Props = {
 };
 
 const ApprovalTimeline = ({ request }: Props) => {
-    const steps = request.document.approvalChain.steps || [];
-    const currentStepOrder = request.currentStep?.stepOrder ?? 0;
+    const steps = request?.document?.approvalChain.steps || [];
+    const currentStepOrder = request?.currentStep?.stepOrder ?? 0;
 
     const getStepState = (order: number) => {
         if (order < currentStepOrder) return "completed";
@@ -70,9 +70,9 @@ const ApprovalTimeline = ({ request }: Props) => {
             <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
                     <span className="px-2 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600">
-                        {request.status}
+                        {request?.status}
                     </span>
-                    {request.document.title} Approval Timeline
+                    {request?.document.title} Approval Timeline
                 </CardTitle>
             </CardHeader>
 

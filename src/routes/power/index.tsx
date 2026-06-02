@@ -57,6 +57,8 @@ function Dashboard() {
   const activity = activityQuery.data;
   const requests = requestQuery?.data?.data;
 
+  console.log(requests);
+
 
 
   const columns: ColumnDef<Request>[] = [

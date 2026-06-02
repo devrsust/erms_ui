@@ -35,6 +35,7 @@ import { Route as RecordsApprovedIndexRouteImport } from './routes/records/appro
 import { Route as PowerVetIndexRouteImport } from './routes/power/vet/index'
 import { Route as PowerUsersIndexRouteImport } from './routes/power/users/index'
 import { Route as PowerTransactionsIndexRouteImport } from './routes/power/transactions/index'
+import { Route as PowerTemplateIndexRouteImport } from './routes/power/template/index'
 import { Route as PowerRolesIndexRouteImport } from './routes/power/roles/index'
 import { Route as PowerRequestsIndexRouteImport } from './routes/power/requests/index'
 import { Route as PowerFacultyIndexRouteImport } from './routes/power/faculty/index'
@@ -71,6 +72,8 @@ import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
 import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
 import { Route as PowerVetIdRouteImport } from './routes/power/vet/$id'
 import { Route as PowerUsersIdRouteImport } from './routes/power/users/$id'
+import { Route as PowerTemplateFormRouteImport } from './routes/power/template/form'
+import { Route as PowerTemplateIdRouteImport } from './routes/power/template/$id'
 import { Route as PowerRequestsIdRouteImport } from './routes/power/requests/$id'
 import { Route as PowerDocumentsIdRouteImport } from './routes/power/documents/$id'
 import { Route as PowerAdminsIdRouteImport } from './routes/power/admins/$id'
@@ -212,6 +215,11 @@ const PowerUsersIndexRoute = PowerUsersIndexRouteImport.update({
 const PowerTransactionsIndexRoute = PowerTransactionsIndexRouteImport.update({
   id: '/transactions/',
   path: '/transactions/',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerTemplateIndexRoute = PowerTemplateIndexRouteImport.update({
+  id: '/template/',
+  path: '/template/',
   getParentRoute: () => PowerRouteRoute,
 } as any)
 const PowerRolesIndexRoute = PowerRolesIndexRouteImport.update({
@@ -395,6 +403,16 @@ const PowerUsersIdRoute = PowerUsersIdRouteImport.update({
   path: '/users/$id',
   getParentRoute: () => PowerRouteRoute,
 } as any)
+const PowerTemplateFormRoute = PowerTemplateFormRouteImport.update({
+  id: '/template/form',
+  path: '/template/form',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
+const PowerTemplateIdRoute = PowerTemplateIdRouteImport.update({
+  id: '/template/$id',
+  path: '/template/$id',
+  getParentRoute: () => PowerRouteRoute,
+} as any)
 const PowerRequestsIdRoute = PowerRequestsIdRouteImport.update({
   id: '/requests/$id',
   path: '/requests/$id',
@@ -479,6 +497,8 @@ export interface FileRoutesByFullPath {
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/template/$id': typeof PowerTemplateIdRoute
+  '/power/template/form': typeof PowerTemplateFormRoute
   '/power/users/$id': typeof PowerUsersIdRoute
   '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
@@ -515,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/power/faculty': typeof PowerFacultyIndexRoute
   '/power/requests': typeof PowerRequestsIndexRoute
   '/power/roles': typeof PowerRolesIndexRoute
+  '/power/template': typeof PowerTemplateIndexRoute
   '/power/transactions': typeof PowerTransactionsIndexRoute
   '/power/users': typeof PowerUsersIndexRoute
   '/power/vet': typeof PowerVetIndexRoute
@@ -549,6 +570,8 @@ export interface FileRoutesByTo {
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/template/$id': typeof PowerTemplateIdRoute
+  '/power/template/form': typeof PowerTemplateFormRoute
   '/power/users/$id': typeof PowerUsersIdRoute
   '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
@@ -585,6 +608,7 @@ export interface FileRoutesByTo {
   '/power/faculty': typeof PowerFacultyIndexRoute
   '/power/requests': typeof PowerRequestsIndexRoute
   '/power/roles': typeof PowerRolesIndexRoute
+  '/power/template': typeof PowerTemplateIndexRoute
   '/power/transactions': typeof PowerTransactionsIndexRoute
   '/power/users': typeof PowerUsersIndexRoute
   '/power/vet': typeof PowerVetIndexRoute
@@ -625,6 +649,8 @@ export interface FileRoutesById {
   '/power/admins/$id': typeof PowerAdminsIdRoute
   '/power/documents/$id': typeof PowerDocumentsIdRoute
   '/power/requests/$id': typeof PowerRequestsIdRoute
+  '/power/template/$id': typeof PowerTemplateIdRoute
+  '/power/template/form': typeof PowerTemplateFormRoute
   '/power/users/$id': typeof PowerUsersIdRoute
   '/power/vet/$id': typeof PowerVetIdRoute
   '/records/requests/$id': typeof RecordsRequestsIdRoute
@@ -661,6 +687,7 @@ export interface FileRoutesById {
   '/power/faculty/': typeof PowerFacultyIndexRoute
   '/power/requests/': typeof PowerRequestsIndexRoute
   '/power/roles/': typeof PowerRolesIndexRoute
+  '/power/template/': typeof PowerTemplateIndexRoute
   '/power/transactions/': typeof PowerTransactionsIndexRoute
   '/power/users/': typeof PowerUsersIndexRoute
   '/power/vet/': typeof PowerVetIndexRoute
@@ -702,6 +729,8 @@ export interface FileRouteTypes {
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
+    | '/power/template/$id'
+    | '/power/template/form'
     | '/power/users/$id'
     | '/power/vet/$id'
     | '/records/requests/$id'
@@ -738,6 +767,7 @@ export interface FileRouteTypes {
     | '/power/faculty'
     | '/power/requests'
     | '/power/roles'
+    | '/power/template'
     | '/power/transactions'
     | '/power/users'
     | '/power/vet'
@@ -772,6 +802,8 @@ export interface FileRouteTypes {
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
+    | '/power/template/$id'
+    | '/power/template/form'
     | '/power/users/$id'
     | '/power/vet/$id'
     | '/records/requests/$id'
@@ -808,6 +840,7 @@ export interface FileRouteTypes {
     | '/power/faculty'
     | '/power/requests'
     | '/power/roles'
+    | '/power/template'
     | '/power/transactions'
     | '/power/users'
     | '/power/vet'
@@ -847,6 +880,8 @@ export interface FileRouteTypes {
     | '/power/admins/$id'
     | '/power/documents/$id'
     | '/power/requests/$id'
+    | '/power/template/$id'
+    | '/power/template/form'
     | '/power/users/$id'
     | '/power/vet/$id'
     | '/records/requests/$id'
@@ -883,6 +918,7 @@ export interface FileRouteTypes {
     | '/power/faculty/'
     | '/power/requests/'
     | '/power/roles/'
+    | '/power/template/'
     | '/power/transactions/'
     | '/power/users/'
     | '/power/vet/'
@@ -1089,6 +1125,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions'
       fullPath: '/power/transactions'
       preLoaderRoute: typeof PowerTransactionsIndexRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
+    '/power/template/': {
+      id: '/power/template/'
+      path: '/template'
+      fullPath: '/power/template'
+      preLoaderRoute: typeof PowerTemplateIndexRouteImport
       parentRoute: typeof PowerRouteRoute
     }
     '/power/roles/': {
@@ -1343,6 +1386,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowerUsersIdRouteImport
       parentRoute: typeof PowerRouteRoute
     }
+    '/power/template/form': {
+      id: '/power/template/form'
+      path: '/template/form'
+      fullPath: '/power/template/form'
+      preLoaderRoute: typeof PowerTemplateFormRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
+    '/power/template/$id': {
+      id: '/power/template/$id'
+      path: '/template/$id'
+      fullPath: '/power/template/$id'
+      preLoaderRoute: typeof PowerTemplateIdRouteImport
+      parentRoute: typeof PowerRouteRoute
+    }
     '/power/requests/$id': {
       id: '/power/requests/$id'
       path: '/requests/$id'
@@ -1513,6 +1570,8 @@ interface PowerRouteRouteChildren {
   PowerAdminsIdRoute: typeof PowerAdminsIdRoute
   PowerDocumentsIdRoute: typeof PowerDocumentsIdRoute
   PowerRequestsIdRoute: typeof PowerRequestsIdRoute
+  PowerTemplateIdRoute: typeof PowerTemplateIdRoute
+  PowerTemplateFormRoute: typeof PowerTemplateFormRoute
   PowerUsersIdRoute: typeof PowerUsersIdRoute
   PowerVetIdRoute: typeof PowerVetIdRoute
   PowerActivityIndexRoute: typeof PowerActivityIndexRoute
@@ -1525,6 +1584,7 @@ interface PowerRouteRouteChildren {
   PowerFacultyIndexRoute: typeof PowerFacultyIndexRoute
   PowerRequestsIndexRoute: typeof PowerRequestsIndexRoute
   PowerRolesIndexRoute: typeof PowerRolesIndexRoute
+  PowerTemplateIndexRoute: typeof PowerTemplateIndexRoute
   PowerTransactionsIndexRoute: typeof PowerTransactionsIndexRoute
   PowerUsersIndexRoute: typeof PowerUsersIndexRoute
   PowerVetIndexRoute: typeof PowerVetIndexRoute
@@ -1536,6 +1596,8 @@ const PowerRouteRouteChildren: PowerRouteRouteChildren = {
   PowerAdminsIdRoute: PowerAdminsIdRoute,
   PowerDocumentsIdRoute: PowerDocumentsIdRoute,
   PowerRequestsIdRoute: PowerRequestsIdRoute,
+  PowerTemplateIdRoute: PowerTemplateIdRoute,
+  PowerTemplateFormRoute: PowerTemplateFormRoute,
   PowerUsersIdRoute: PowerUsersIdRoute,
   PowerVetIdRoute: PowerVetIdRoute,
   PowerActivityIndexRoute: PowerActivityIndexRoute,
@@ -1548,6 +1610,7 @@ const PowerRouteRouteChildren: PowerRouteRouteChildren = {
   PowerFacultyIndexRoute: PowerFacultyIndexRoute,
   PowerRequestsIndexRoute: PowerRequestsIndexRoute,
   PowerRolesIndexRoute: PowerRolesIndexRoute,
+  PowerTemplateIndexRoute: PowerTemplateIndexRoute,
   PowerTransactionsIndexRoute: PowerTransactionsIndexRoute,
   PowerUsersIndexRoute: PowerUsersIndexRoute,
   PowerVetIndexRoute: PowerVetIndexRoute,

@@ -122,6 +122,7 @@ const superAdminNav = {
       items: [
         { title: "Chain", url: "/power/chain/", icon: Link2 },
         { title: "Documents", url: "/power/documents/", icon: FileText },
+        { title: "Template", url: "/power/template/", icon: FileText },
         { title: "Roles", url: "/power/roles/", icon: Shield },
         { title: "Faculties", url: "/power/faculty/", icon: Building2 },
         { title: "Departments", url: "/power/department/", icon: School },
