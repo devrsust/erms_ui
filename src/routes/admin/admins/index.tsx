@@ -579,7 +579,9 @@ function RouteComponent() {
               columns={columns}
               data={admins ?? []}
               filterColumn="email"
-              filterPlaceholder="Search by email or name…"
+              filterPlaceholder="Search by email…"
+              recordName='ADMINISTRATORS'
+              recordIcon={<UserCog className="h-20 w-20" />}
             />
           </div>
         </div>

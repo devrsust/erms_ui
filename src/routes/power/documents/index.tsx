@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, FilePlusCorner, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, FileCog, FilePlusCorner, MoreHorizontal } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -105,7 +105,7 @@ function RouteComponent() {
   const [documentsQuery, chainQuery] = results
 
   console.log(documentsQuery?.data?.data);
-  
+
 
   const documents = documentsQuery.data?.data ?? []
   const chains = chainQuery.data?.data ?? []
@@ -334,7 +334,7 @@ function RouteComponent() {
 
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+                  <Button variant="outline" className="gap-2 bg-green-700 hover:bg-green-800 text-white shadow-lg hover:shadow-xl transition-all duration-200">
                     <FilePlusCorner className="h-4 w-4" />
                     Add Document
                   </Button>
@@ -424,6 +424,8 @@ function RouteComponent() {
               data={documents}
               filterColumn="title"
               filterPlaceholder="Filter by title…"
+              recordName='DOCUMENT'
+              recordIcon={<FileCog className="h-20 w-20" />}
             />
           </Card>
 

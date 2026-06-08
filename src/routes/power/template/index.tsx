@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Eye, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Eye, LayoutPanelTop, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
 
-import { deleteRole, deleteTemplate, getTemplates, type Template } from '@/service'
+import { deleteTemplate, getTemplates, type Template } from '@/service'
 import { SiteHeader } from '@/components/site-header'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from '@/components/ui/dialog'
 
@@ -238,6 +238,8 @@ function RouteComponent() {
                 data={data?.data ?? []}
                 filterColumn="name"
                 filterPlaceholder="Filter by name…"
+                recordName='TEMPLATE'
+                recordIcon={<LayoutPanelTop className="h-20 w-20" />}
               />
             </CardContent>
           </Card>

@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, FileText, Filter, Hash, BookOpen, Calendar1 } from 'lucide-react'
+import { MoreHorizontal, FileText, Filter, Hash, BookOpen, Calendar1, Archive } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getCombos, type Combo } from '@/service'
@@ -279,6 +279,8 @@ function RouteComponent() {
                 data={combos}
                 filterColumn="matric_number"
                 filterPlaceholder="Search by matric number…"
+                recordName='TEMPLATE'
+                recordIcon={<Archive className="h-20 w-20" />}
               />
             </CardContent>
           </Card>

@@ -11,12 +11,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Mail, Calendar, CheckCircle, XCircle, Users } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Mail, Calendar, CheckCircle, XCircle, Users, User2 } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
 
-import { getUsers, deleteUser, type User } from '@/service'
+import { getUsers, deleteUser, type User  } from '@/service'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -325,6 +325,8 @@ function RouteComponent() {
               data={users}
               filterColumn="email"
               filterPlaceholder="Search by email or name…"
+              recordIcon={<User2 className="h-20 w-20" />}
+              recordName="USER"
             />
           </div>
         </div>

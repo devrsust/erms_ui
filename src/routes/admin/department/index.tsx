@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Copy, Edit, MoreHorizontal, Plus, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Copy, Edit, MoreHorizontal, Plus, School, Trash2 } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -379,6 +379,8 @@ function RouteComponent() {
               data={departments}
               filterColumn="name"
               filterPlaceholder="Filter by name…"
+              recordName='DEPARTMENT'
+              recordIcon={<School className="h-20 w-20" />}
             />
           </Card>
         </div>

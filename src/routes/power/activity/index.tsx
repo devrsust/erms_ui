@@ -42,6 +42,7 @@ import {
     Trash2,
     LogIn,
     LogOut,
+    SquareActivity,
 } from 'lucide-react'
 import { useState } from 'react'
 import { DataTable } from '@/components/table'
@@ -527,6 +528,8 @@ function RouteComponent() {
                             columns={columns}
                             data={activities ?? []}
                             filterColumn=""
+                            recordName='ACTIVITY'
+                            recordIcon={<SquareActivity className="h-20 w-20" />}
                         />
                     </div>
                 </div>

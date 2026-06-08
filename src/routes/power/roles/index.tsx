@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Pencil, Plus, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Pencil, Plus, Trash2, UserLock } from 'lucide-react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -308,6 +308,8 @@ function RouteComponent() {
             data={data?.data ?? []}
             filterColumn="name"
             filterPlaceholder="Filter by name…"
+            recordName='ROLE'
+            recordIcon={<UserLock className="h-20 w-20" />}
           />
         </div>
       </main>

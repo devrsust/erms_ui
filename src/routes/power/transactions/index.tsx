@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, CreditCard, Calendar, DollarSign, CheckCircle, Filter, Download, Eye, Receipt, AlertCircle, User } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, CreditCard, Calendar, DollarSign, CheckCircle, Filter, Download, Eye, Receipt, AlertCircle, User, Wallet } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -385,6 +385,8 @@ function RouteComponent() {
                     data={transactions}
                     filterColumn="transaction"
                     filterPlaceholder="Search by transaction ID or amount…"
+                    recordName='TRANSACTION'
+                    recordIcon={<Wallet className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -404,6 +406,8 @@ function RouteComponent() {
                     data={transactions.filter(t => t.status === 'SUCCESSFUL')}
                     filterColumn="transaction"
                     filterPlaceholder="Search successful transactions…"
+                    recordName='TRANSACTION'
+                    recordIcon={<Wallet className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -423,6 +427,8 @@ function RouteComponent() {
                     data={transactions.filter(t => t.status === 'PENDING')}
                     filterColumn="transaction"
                     filterPlaceholder="Search pending transactions…"
+                    recordName='TRANSACTION'
+                    recordIcon={<Wallet className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -442,6 +448,8 @@ function RouteComponent() {
                     data={transactions.filter(t => t.status === 'FAILED')}
                     filterColumn="transaction"
                     filterPlaceholder="Search failed transactions…"
+                    recordName='TRANSACTION'
+                    recordIcon={<Wallet className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>

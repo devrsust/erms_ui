@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, FileText, User, CreditCard, Download, Eye, Filter, Trash2, CalendarDays, Copy, FileCog } from 'lucide-react'
+import { MoreHorizontal, Mail, FileText, User, CreditCard, Download, Eye, Trash2, CalendarDays, Copy, FileCog } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -340,25 +340,15 @@ function RouteComponent() {
                   Monitor and manage all document requests
                 </p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Download className="h-4 w-4" />
-                  Export
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filter
-                </Button>
-              </div>
             </div>
           </div>
 
           <Tabs defaultValue="all" className="space-y-4">
-            <TabsList className="bg-white border">
-              <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">All Requests</TabsTrigger>
-              <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
-              <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>
-              <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Failed</TabsTrigger>
+            <TabsList className="bg-white border px-4">
+              <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white px-4">All Requests</TabsTrigger>
+              <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white px-4">Pending</TabsTrigger>
+              <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white px-4">Completed</TabsTrigger>
+              <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white px-4">Failed</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">
@@ -375,6 +365,8 @@ function RouteComponent() {
                     data={requests}
                     filterColumn="email"
                     filterPlaceholder="Search by email, user, or document…"
+                    recordIcon={<FileText className="h-20 w-20" />}
+                    recordName="REQUEST"
                   />
                 </CardContent>
               </Card>

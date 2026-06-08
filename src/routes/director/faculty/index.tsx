@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Copy, Edit, MoreHorizontal, Plus, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Copy, Edit, MoreHorizontal, Plus, School, Trash2 } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -82,7 +82,7 @@ function RouteComponent() {
     // Update mutation
     const updateMutation = useMutation({
         mutationFn: ({ id, data }: { id: number; data: CreateFacultyForm }) => updateFaculty(id, data),
-        onSuccess: () => { 
+        onSuccess: () => {
             toast.success('Faculty updated.', {
                 style: { background: '#10b981', color: 'white', border: 'none' },
             })
@@ -341,6 +341,8 @@ function RouteComponent() {
                             data={faculties}
                             filterColumn="name"
                             filterPlaceholder="Filter by name…"
+                            recordName='FACULTY'
+                            recordIcon={<School className="h-20 w-20" />}
                         />
                     </Card>
                 </div>

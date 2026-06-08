@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, Calendar, FileText, User, Eye} from 'lucide-react'
+import { MoreHorizontal, Mail, Calendar, FileText, User, Eye } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -306,6 +306,8 @@ function RouteComponent() {
                 data={requests}
                 filterColumn="email"
                 filterPlaceholder="Search by email, user, or document…"
+                recordName='REQUEST'
+                recordIcon={<FileText className="h-20 w-20" />}
               />
             </CardContent>
           </Card>

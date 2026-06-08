@@ -898,6 +898,13 @@ export const getTemplates = async (
     return data;
 };
 
+export const getTemplate = async (
+    id: number
+) => {
+    const { data } = await http.get(`/template/${id}`);
+    return data;
+};
+
 export const updateTemplate = async (id: number, payload: {
     name?: string
     content?: string

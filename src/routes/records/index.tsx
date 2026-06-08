@@ -344,6 +344,8 @@ function Dashboard() {
                           data={pending!}
                           filterColumn="email"
                           filterPlaceholder="Search pending requests…"
+                          recordName='REQUEST'
+                          recordIcon={<FileText className="h-20 w-20" />}
                         />
                       )
                     }

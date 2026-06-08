@@ -32,7 +32,7 @@ function RouteComponent() {
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['requests'],
-    queryFn: () => getRequests({page: 1, limit: 10}),
+    queryFn: () => getRequests({ page: 1, limit: 10 }),
     staleTime: 30_000,
   })
 
@@ -374,6 +374,8 @@ function RouteComponent() {
                     data={requests}
                     filterColumn="email"
                     filterPlaceholder="Search by email, user, or document…"
+                    recordName='REQUEST'
+                    recordIcon={<FileText className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -393,6 +395,8 @@ function RouteComponent() {
                     data={requests.filter(req => req.status === 'PENDING')}
                     filterColumn="email"
                     filterPlaceholder="Search pending requests…"
+                    recordName='REQUEST'
+                    recordIcon={<FileText className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -412,6 +416,8 @@ function RouteComponent() {
                     data={requests.filter(req => req.status === 'SUCCESSFUL')}
                     filterColumn="email"
                     filterPlaceholder="Search completed requests…"
+                    recordName='REQUEST'
+                    recordIcon={<FileText className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>
@@ -431,6 +437,8 @@ function RouteComponent() {
                     data={requests.filter(req => req.status === 'FAILED')}
                     filterColumn="email"
                     filterPlaceholder="Search failed requests…"
+                    recordName='REQUEST'
+                    recordIcon={<FileText className="h-20 w-20" />}
                   />
                 </CardContent>
               </Card>

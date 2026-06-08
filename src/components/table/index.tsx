@@ -38,6 +38,8 @@ interface DataTableProps<TData, TValue> {
     filterColumn?: string
     filterPlaceholder?: string
     toolbarAction?: React.ReactNode
+    recordIcon?: React.ReactNode
+    recordName?: string
 }
 
 
@@ -47,6 +49,8 @@ export function DataTable<TData, TValue>({
     filterColumn,
     filterPlaceholder = "Filter...",
     toolbarAction,
+    recordIcon,
+    recordName
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] =
@@ -167,7 +171,10 @@ export function DataTable<TData, TValue>({
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No results.
+                                    <div className="flex flex-col items-center gap-3 py-10">
+                                        {recordIcon}
+                                        <span className="font-bold text-lg">NO {recordName} FOUND.</span>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}

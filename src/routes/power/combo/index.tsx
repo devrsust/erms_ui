@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, FileText, Filter, Hash, BookOpen, Calendar1 } from 'lucide-react'
+import { MoreHorizontal, FileText, Hash, BookOpen, Calendar1, Archive, Download } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getCombos, type Combo } from '@/service'
@@ -228,7 +228,7 @@ function RouteComponent() {
     <>
       <SiteHeader title="Combo Management" />
 
-      <main className="min-h-screen p-4 lg:p-6">
+      <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -241,11 +241,13 @@ function RouteComponent() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <DropBox />
                 <Button variant="outline" size="sm" className="gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filter
+                  <Download className="h-4 w-4" />
+                  Template
                 </Button>
+
+                <DropBox />
+                
               </div>
             </div>
           </div>
@@ -279,6 +281,8 @@ function RouteComponent() {
                 data={combos}
                 filterColumn="matric_number"
                 filterPlaceholder="Search by matric number…"
+                recordName='COMBO'
+                recordIcon={<Archive className="h-20 w-20" />}
               />
             </CardContent>
           </Card>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, CreditCard, Calendar, DollarSign, CheckCircle, XCircle, TrendingUp, Filter, Download, Eye, Receipt, AlertCircle, Clock, ExternalLink } from 'lucide-react'
+import { ArrowUpDown, CreditCard, Calendar, DollarSign, CheckCircle, XCircle, TrendingUp, Filter, Download, Eye, Receipt, AlertCircle, Clock, ExternalLink, Wallet } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -317,7 +317,7 @@ function RouteComponent() {
   return (
     <>
       <SiteHeader title="Transactions" />
-      
+
       <main className="min-h-screen p-4 lg:p-6">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -432,6 +432,8 @@ function RouteComponent() {
                 data={filteredTransactions}
                 filterColumn="transaction"
                 filterPlaceholder="Search by transaction ID or amount…"
+                recordName='TRANSACTION'
+                recordIcon={<Wallet className="h-20 w-20" />}
               />
               {filteredTransactions.length === 0 && (
                 <div className="p-8 text-center">

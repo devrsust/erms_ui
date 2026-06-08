@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, FilePlusCorner, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, FilePlusCorner, FileText, MoreHorizontal } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -421,6 +421,8 @@ function RouteComponent() {
               data={documents}
               filterColumn="title"
               filterPlaceholder="Filter by title…"
+              recordName='REQUEST'
+              recordIcon={<FileText className="h-20 w-20" />}
             />
           </Card>
 

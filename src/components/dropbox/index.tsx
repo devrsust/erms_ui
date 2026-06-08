@@ -71,7 +71,7 @@ export default function DropBox() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 bg-green-700 text-white">
                     <Upload className="h-4 w-4" />
                     Bulk Upload
                 </Button>

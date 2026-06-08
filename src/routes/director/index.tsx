@@ -236,6 +236,8 @@ function Dashboard() {
                   data={requests!}
                   filterColumn="email"
                   filterPlaceholder="Search by email, user, or document…"
+                  recordName='REQUEST'
+                  recordIcon={<FileText className="h-20 w-20" />}
                 />
               </div>
             </section>

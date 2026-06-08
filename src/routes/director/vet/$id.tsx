@@ -11,7 +11,7 @@ import { useAppSelector } from '@/store/hooks'
 import { useQueries } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Calendar, FileText, Mail, MapPin, User, Download, X } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import domtoimage from 'dom-to-image-more';
 import jsPDF from 'jspdf';
@@ -30,7 +30,6 @@ function RouteComponent() {
     const [isProcessing, setIsProcessing] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null)
-    const previewRef = useRef<HTMLDivElement>(null)
 
     const results = useQueries({
         queries: [
@@ -74,34 +73,160 @@ function RouteComponent() {
         if (!element) throw new Error('No element to generate PDF from');
 
         try {
-            // Find the actual content container you want to print
-            const targetElement = element.querySelector('#template_content_to_save') as HTMLElement || element;
+            // Clone the entire template-builder element
+            const originalElement = element;
+            const clone = originalElement.cloneNode(true) as HTMLElement;
 
-            // 1. Convert the DOM node to a high-quality PNG using the browser's native engine
-            const dataUrl = await domtoimage.toPng(targetElement, {
-                quality: 1,
-                scale: 2, // Higher scale for better text resolution in the PDF
-                bgcolor: '#ffffff',
-                style: {
-                    margin: '0',
-                    padding: '20px', // Add some padding if needed
+            // Find the style tag in the clone and remove the problematic CSS
+            const styleTag = clone.querySelector('style');
+            if (styleTag) {
+                let styleContent = styleTag.innerHTML;
+                styleContent = styleContent.replace(/\.no-tailwind\s*\{[^}]*\}/g, '');
+                styleTag.innerHTML = styleContent;
+            }
+
+            // === ENHANCEMENT: Clean shadows, center content, & preserve academic spacing ===
+            const cleanUpStyles = document.createElement('style');
+            cleanUpStyles.innerHTML = `
+                /* Remove all box and text shadows */
+                * { 
+                    box-shadow: none !important; 
+                    text-shadow: none !important; 
                 }
+                
+                /* Target non-table elements and strip their borders (gray lines) */
+                :not(table):not(thead):not(tbody):not(tfoot):not(tr):not(th):not(td) {
+                    border-color: transparent !important;
+                }
+                
+                /* Hide standalone horizontal dividers outside of tables */
+                hr { 
+                    display: none !important; 
+                }
+
+                /* REMOVE BLUE BORDER/OUTLINE AROUND LOGO AND LINKS */
+                img, a, .logo, [class*="logo"], [id*="logo"] {
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    text-decoration: none !important;
+                }
+
+                /* MOVE THINGS CLOSER TO THE CENTER */
+                #template_content_to_save {
+                    max-width: 100% !important; 
+                    margin: 0 auto !important;  
+                    padding: 20px 30px !important; 
+                    box-sizing: border-box !important;
+                }
+
+                /* ========================================================== */
+                /* FORCE & MAINTAIN ACADEMIC RECORD SPACING IN GENERATED PDF  */
+                /* ========================================================== */
+                
+                /* Prevent layout collapsing on session wrappers */
+                .session-group {
+                    display: block !important;
+                    margin-top: 25px !important;
+                }
+
+                /* Force distinct visual spacing between semesters */
+                .semester-group {
+                    display: block !important;
+                    padding-top: 25px !important; /* Using padding guarantees domtoimage honors the gap */
+                    margin-bottom: 5px !important;
+                }
+
+                /* Ensure the semester heading never overlaps its table */
+                .semester-group h4 {
+                    display: block !important;
+                    margin: 0 0 12px 0 !important;
+                    padding: 0 !important;
+                }
+
+                /* Ensure tables don't collapse into headers */
+                .semester-group table {
+                    margin-top: 0px !important;
+                    display: table !important;
+                }
+
+                /* HELP WITH PAGE BREAKS */
+                #template_content_to_save > div, 
+                #template_content_to_save section {
+                    page-break-inside: avoid !important;
+                    margin-bottom: 25px !important;
+                }
+            `;
+            clone.appendChild(cleanUpStyles);
+
+            // Ensure the clone has proper dimensions and visibility
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '794px'; // A4 width
+            clone.style.backgroundColor = 'white';
+
+            // Append clone to body temporarily
+            document.body.appendChild(clone);
+
+            // Find the content to capture
+            const targetElement = clone.querySelector('#template_content_to_save') as HTMLElement || clone;
+
+            // Get dimensions
+            const width = targetElement.scrollWidth;
+            const height = targetElement.scrollHeight;
+
+            // Convert to JPEG & Compress
+            const dataUrl = await domtoimage.toJpeg(targetElement, {
+                quality: 0.92,
+                scale: 1,
+                bgcolor: '#ffffff',
+                width: width,
+                height: height,
             });
 
-            // 2. Initialize jsPDF
+            // Clean up the clone
+            document.body.removeChild(clone);
+
+            // Create PDF
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
                 format: 'a4'
             });
 
-            // 3. Calculate dimensions to fit A4 page
-            const imgProps = pdf.getImageProperties(dataUrl);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            // === ENHANCEMENT: PAGE MARGINS & CALCULATIONS ===
+            const MARGIN = 15;
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
 
-            // 4. Add image to PDF and export
-            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            // Calculate the actual target printable dimensions inside the margins
+            const printableWidth = pageWidth - (MARGIN * 2);
+            const printableHeight = pageHeight - (MARGIN * 2);
+
+            const imgProps = pdf.getImageProperties(dataUrl);
+            const pdfHeight = (imgProps.height * printableWidth) / imgProps.width;
+
+            let heightLeft = pdfHeight;
+            let imageYPosition = MARGIN;
+
+            while (heightLeft > 0) {
+                // 1. Render the image section within the page's horizontal margins
+                pdf.addImage(dataUrl, 'JPEG', MARGIN, imageYPosition, printableWidth, pdfHeight, undefined, 'FAST');
+
+                // 2. MASKING GUARANTEE: Draw solid white rectangles over the header/footer margins.
+                pdf.setFillColor(255, 255, 255);
+                pdf.rect(0, 0, pageWidth, MARGIN, 'F'); // Top Margin Mask
+                pdf.rect(0, pageHeight - MARGIN, pageWidth, MARGIN, 'F'); // Bottom Margin Mask
+
+                heightLeft -= printableHeight;
+
+                // If there's still content left, prepare the next page
+                if (heightLeft > 0) {
+                    pdf.addPage();
+                    imageYPosition -= printableHeight;
+                }
+            }
 
             return pdf.output('blob');
         } catch (error) {
@@ -133,15 +258,15 @@ function RouteComponent() {
         setIsProcessing(true)
         try {
             const templateElement = document.querySelector('.template-builder') as HTMLElement
-            let pdfUrl = ''
 
             if (templateElement) {
                 const pdfBlob = await generatePDF(templateElement)
                 showPdfPreview(pdfBlob)
-                pdfUrl = await uploadToCloudinary(pdfBlob)
+                const pdfUrl = await uploadToCloudinary(pdfBlob)
+                console.log(pdfUrl);
             }
 
-            setPdfPreviewUrl(pdfUrl)
+            setIsProcessing(false)
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'Failed to generate PDF')
             setIsProcessing(false)
@@ -256,44 +381,50 @@ function RouteComponent() {
 
             for (const [session, semesters] of Object.entries(grouped)) {
                 html += `
-                    <div class="session-group">
-                        <h3 style="margin-top: 20px; font-weight: bold; font-size: 25px;">${session}</h3>
-                `;
+            <div class="session-group" style="margin-bottom: 10px;">
+                <h3 style="margin-top: 25px; margin-bottom: 12px; font-weight: bold; font-size: 24px; color: #111827; letter-spacing: -0.5px;">
+                    ${session}
+                </h3>
+        `;
 
                 for (const [semester, semesterCourses] of Object.entries(semesters)) {
                     html += `
-                        <div class="semester-group">
-                            <h4>Semester ${semester}</h4>
-                            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-                                <thead>
-                                    <tr style="background-color: #f3f4f6;">
-                                        <th style="text-align: left; padding: 8px;">Course Code</th>
-                                        <th style="text-align: left; padding: 8px;">Title</th>
-                                        <th style="text-align: left; padding: 8px;">Units</th>
-                                        <th style="text-align: left; padding: 8px;">Grade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
+                <div class="semester-group" style="margin-top: 25px; margin-bottom: 10px;">
+                    
+                    <h4 style="margin: 0 0 10px 0; padding: 0; font-size: 16px; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Semester ${semester}
+                    </h4>
+                    
+                    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-top: 0px;">
+                        <thead>
+                            <tr style="background-color: #f3f4f6;">
+                                <th style="text-align: left; padding: 10px 8px; font-size: 13px; font-weight: 600; color: #374151;">Course Code</th>
+                                <th style="text-align: left; padding: 10px 8px; font-size: 13px; font-weight: 600; color: #374151;">Title</th>
+                                <th style="text-align: left; padding: 10px 8px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">Units</th>
+                                <th style="text-align: left; padding: 10px 8px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
 
                     semesterCourses.forEach((course: any) => {
                         html += `
-                            <tr>
-                                <td style="padding: 8px; border-top: 1px solid #e5e7eb;">${course.course}</td>
-                                <td style="padding: 8px; border-top: 1px solid #e5e7eb;">${course.title}</td>
-                                <td style="padding: 8px; border-top: 1px solid #e5e7eb; text-align: center;">${course.units}</td>
-                                <td style="padding: 8px; border-top: 1px solid #e5e7eb; text-align: center;">
-                                    <span style="${course.grade === 'F' ? 'color: #dc2626; font-weight: bold;' : 'color: #000;'}">${course.grade}</span>
-                                </td>
-                            </tr>
-                        `;
+                    <tr>
+                        <td style="padding: 10px 8px; border-top: 1px solid #e5e7eb; font-size: 13px; color: #1f2937;">${course.course}</td>
+                        <td style="padding: 10px 8px; border-top: 1px solid #e5e7eb; font-size: 13px; color: #1f2937;">${course.title}</td>
+                        <td style="padding: 10px 8px; border-top: 1px solid #e5e7eb; font-size: 13px; text-align: center; color: #1f2937;">${course.units}</td>
+                        <td style="padding: 10px 8px; border-top: 1px solid #e5e7eb; font-size: 13px; text-align: center;">
+                            <span style="${course.grade === 'F' ? 'color: #dc2626; font-weight: bold;' : 'color: #1f2937;'}">${course.grade}</span>
+                        </td>
+                    </tr>
+                `;
                     });
 
                     html += `
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
+                        </tbody>
+                    </table>
+                </div>
+            `;
                 }
 
                 html += `</div>`;
@@ -330,6 +461,21 @@ function RouteComponent() {
             pronounElement.textContent = request?.pronoun || 'him/her';
         }
 
+
+        const elements = tempDiv.querySelectorAll('.address, .meta-box');
+
+        elements.forEach((el: any) => {
+            if (el.classList.contains('address')) {
+                el.style.setProperty('max-width', '95%', 'important');
+                el.style.setProperty('white-space', 'nowrap', 'important');
+                el.style.setProperty('word-break', 'keep-all', 'important');
+            } else if (el.classList.contains('meta-box')) {
+                // Apply date-specific styles
+                el.style.setProperty('max-width', '95%', 'important');
+                el.style.setProperty('white-space', 'nowrap', 'important');
+                el.style.setProperty('word-break', 'keep-all', 'important');
+            }
+        });
         return tempDiv.innerHTML;
     };
 
@@ -422,12 +568,17 @@ function RouteComponent() {
                                 </Select>
                             </div>
                         </CardHeader>
-                        <CardContent className='flex items-center justify-center'>
+                        <CardContent className='flex justify-center p-6 overflow-auto'>
                             {selectedTemplate ? (
-                                <div className="template-builder">
+                                <div className="template-builder w-full max-w-[800px] bg-white">
                                     <div
                                         className="no-tailwind"
-                                        style={{ all: 'initial' }}
+                                        style={{
+                                            all: 'initial',
+                                            display: 'block',
+                                            width: '100%',
+                                            fontFamily: 'inherit'
+                                        }}
                                         dangerouslySetInnerHTML={{
                                             __html: getProcessedTemplateContent(selectedTemplate?.content || ''),
                                         }}
@@ -443,7 +594,7 @@ function RouteComponent() {
 
                     <Card>
                         <CardContent className="space-y-4">
-                            <div>
+                            <div className='grid gap-2'>
                                 <Label htmlFor="action">Action</Label>
                                 <Select
                                     value={action || undefined}

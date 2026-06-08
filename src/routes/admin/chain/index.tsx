@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Plus, MoreHorizontal, Copy, Eye, Edit, Trash2, User, Shield, Link2, GripVertical } from 'lucide-react'
+import { ArrowUpDown, Plus, MoreHorizontal, Copy, Eye, Edit, Trash2, User, Shield, Link2, GripVertical, Unlink } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm, useFieldArray } from 'react-hook-form'
@@ -382,6 +382,8 @@ function RouteComponent() {
               columns={columns}
               filterColumn="name"
               filterPlaceholder="Search chain name..."
+              recordName='CHAIN'
+              recordIcon={<Unlink className="h-20 w-20" />}
             />
           </Card>
         </div>

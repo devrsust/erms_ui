@@ -57,9 +57,6 @@ function Dashboard() {
   const activity = activityQuery.data;
   const requests = requestQuery?.data?.data;
 
-  console.log(requests);
-
-
 
   const columns: ColumnDef<Request>[] = [
     {
@@ -174,84 +171,88 @@ function Dashboard() {
     <>
       <SiteHeader title="Dashboard" />
 
-      <div className="flex flex-1 flex-col">
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 p-4">
-            <section className="col-span-1 md:col-span-2 lg:col-span-4 space-y-4">
-              {/* Top Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
-                <Card className="grid gap-4 p-4">
-                  <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <TrendingUp className="h-6 w-6 text-purple-600" />
+      <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
+        <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 p-4">
+              <section className="col-span-1 md:col-span-2 lg:col-span-4 space-y-4">
+                {/* Top Stats */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
+                  <Card className="grid gap-4 p-4">
+                    <p className="text-sm font-medium text-gray-600">Total Requests</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <TrendingUp className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold">{stats?.totalRequests}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{stats?.totalRequests}</h3>
-                  </div>
-                  <p className="text-xs text-gray-500">Total number of requests</p>
-                </Card>
+                    <p className="text-xs text-gray-500">Total number of requests</p>
+                  </Card>
 
-                <Card className="grid gap-4 p-4">
-                  <p className="text-sm font-medium text-gray-600">Total Admins</p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
-                      <ShieldUser className="h-6 w-6 text-amber-600" />
+                  <Card className="grid gap-4 p-4">
+                    <p className="text-sm font-medium text-gray-600">Total Admins</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <ShieldUser className="h-6 w-6 text-amber-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold">{stats?.totalAdmins}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{stats?.totalAdmins}</h3>
-                  </div>
-                  <p className="text-xs text-gray-500">Total number of admins</p>
-                </Card>
+                    <p className="text-xs text-gray-500">Total number of admins</p>
+                  </Card>
 
-                <Card className="grid gap-4 p-4">
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <Users className="h-6 w-6 text-green-600" />
+                  <Card className="grid gap-4 p-4">
+                    <p className="text-sm font-medium text-gray-600">Total Users</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <Users className="h-6 w-6 text-green-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold">{stats?.totalAlumnis}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{stats?.totalAlumnis}</h3>
-                  </div>
-                  <p className="text-xs text-gray-500">Total number of users</p>
-                </Card>
+                    <p className="text-xs text-gray-500">Total number of users</p>
+                  </Card>
 
-                <Card className="grid gap-4 p-4">
-                  <p className="text-sm font-medium text-gray-600">Total Transactions</p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <BanknoteArrowDown className="h-6 w-6 text-purple-600" />
+                  <Card className="grid gap-4 p-4">
+                    <p className="text-sm font-medium text-gray-600">Total Transactions</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <BanknoteArrowDown className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold">
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "NGN",
+                          minimumFractionDigits: 0,
+                        }).format(stats?.totalSuccessfulTransactionAmount)}
+                      </h3>
                     </div>
-                    <h3 className="text-2xl font-bold">
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "NGN",
-                        minimumFractionDigits: 0,
-                      }).format(stats?.totalSuccessfulTransactionAmount)}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {/* {completionRate.toFixed(0)}% completion rate */}
-                  </p>
+                    <p className="text-xs text-gray-500">
+                      {/* {completionRate.toFixed(0)}% completion rate */}
+                    </p>
+                  </Card>
+                </div>
+                <Card className="px-4">
+                  <DataTable
+                    columns={columns}
+                    data={requests!}
+                    filterColumn="email"
+                    filterPlaceholder="Search by email, user, or document…"
+                    recordIcon={<FileText className="h-20 w-20" />}
+                    recordName="REQUEST"
+                  />
                 </Card>
-              </div>
-              <div>
-                <DataTable
-                  columns={columns}
-                  data={requests!}
-                  filterColumn="email"
-                  filterPlaceholder="Search by email, user, or document…"
-                />
-              </div>
-            </section>
-            <section className="col-span-1 md:col-span-2 lg:col-span-2 grid md:grid-cols-2 lg:grid-cols-1 gap-4">
-              <div className="w-full overflow-hidden">
-                <RequestSummary />
-              </div>
-              <div className="w-full overflow-hidden">
-                <ActivityCard activities={activity} maxDisplay={5} />
-              </div>
-            </section>
+              </section>
+              <section className="col-span-1 md:col-span-2 lg:col-span-2 grid md:grid-cols-2 lg:grid-cols-1 gap-4">
+                <div className="w-full overflow-hidden">
+                  <RequestSummary />
+                </div>
+                <div className="w-full overflow-hidden">
+                  <ActivityCard activities={activity} maxDisplay={5} />
+                </div>
+              </section>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

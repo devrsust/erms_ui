@@ -136,15 +136,13 @@ function RouteComponent() {
     mutationKey: ["Login", role],
     mutationFn: async (data: z.infer<typeof loginSchema>) => {
       if (role === "admin") {
-        return LoginUser({ email: data.email, password: data.password! })
+        return LoginUser({ email: data.email, password: data.password! });
       }
-
       return LoginAlumni({ matric_number: data.email });
     },
     onSuccess(data) {
-      console.log(data);
       if (data.status === 200) {
-        toast.success(`Logged in as ${data.user.email}`)
+        toast.success(`Logged in as ${data.user.email}`);
 
         switch (data.user?.role?.name) {
           case "ALUMNI":
@@ -165,32 +163,25 @@ function RouteComponent() {
           default:
             break;
         }
+
+        dispatch(
+          setAuth({
+            user: data?.user,
+            access_token: data?.access_token,
+            refresh_token: data?.refresh_token
+          })
+        );
       }
 
       if (data.status === 203) {
         toast.warning(data.message);
-        return
       }
-
-      if (data.status === 404) {
-        toast.error(data.message);
-        return
-      }
-
-
-      dispatch(
-        setAuth({
-          user: data?.user,
-          access_token: data?.access_token,
-          refresh_token: data?.refresh_token
-        })
-      );
     },
-    onError(error) {
-      console.log(error)
-      toast.error("An error occured while logging in.");
+    onError(error: any) {
+      const serverMessage = error.response?.data?.message || error.message;
+      toast.error(serverMessage);
     }
-  })
+  });
 
   // Animated background effect
   useEffect(() => {

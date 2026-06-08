@@ -454,7 +454,7 @@ function RouteComponent() {
 
 
           await createRequests(requestPayload);
-          
+
           await queryClient.invalidateQueries({
             queryKey: ["requests", user?.id],
           });
@@ -726,6 +726,8 @@ function RouteComponent() {
                   data={filteredRequests}
                   filterColumn="reference"
                   filterPlaceholder="Search by document name or reference…"
+                  recordName='REQUEST'
+                  recordIcon={<FileText className="h-20 w-20" />}
                 />
               ) : (
                 <div className="p-8 text-center">
