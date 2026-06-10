@@ -39,8 +39,8 @@ function RouteComponent() {
 
   const [signatureQuery, stampQuery] = results;
 
-  const signature = signatureQuery?.data?.data
-  const stamp = stampQuery?.data?.data
+  const signature = signatureQuery?.data
+  const stamp = stampQuery?.data
 
   console.log(signature);
 
@@ -153,9 +153,9 @@ function RouteComponent() {
           onDrop={(e) => handleFileDrop(e, type)}
         >
           <div className="text-center">
-            <Upload className="w-5 h-5 text-[#0061FE] mx-auto mb-2" />
+            <Upload className="w-5 h-5 text-green-700 mx-auto mb-2" />
 
-            <label className="text-sm text-[#0061FE] cursor-pointer">
+            <label className="text-sm text-green-700 cursor-pointer">
               Click to upload
               <input
                 type="file"
@@ -177,7 +177,7 @@ function RouteComponent() {
 
         <button
           onClick={type === 'signature' ? uploadSignature : uploadStamp}
-          className="w-full bg-[#0061FE] text-white py-2 rounded-lg"
+          className="w-full bg-green-700 text-white py-2 rounded-lg"
         >
           Save {title}
         </button>

@@ -13,7 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { getRequestByAdmin } from '@/service' // adjust import as needed
+import { getRequestByAdmin } from '@/service'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Calendar, CheckCircle, FileText, Mail, MapPin, TriangleAlert, User, XCircle } from 'lucide-react'
@@ -27,22 +27,12 @@ export const Route = createFileRoute('/admin/vet/$id')({
     component: RouteComponent,
 })
 
-// type Course = {
-//     course: string;
-//     title: string;
-//     units: number;
-//     grade: string;
-//     session: string;
-//     semester: string;
-// };
-
-// type GroupedCourses = Record<string, Record<string, Course[]>>;
-
 function RouteComponent() {
     const { id } = Route.useParams()
     const navigate = useNavigate()
     const { user: currentUser } = useAppSelector((state) => state.auth);
     const [comment, setComment] = useState('')
+    const [selectedAction, setSelectedAction] = useState('') // Added missing state
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const { data, isPending, isError, error } = useQuery({
@@ -70,7 +60,7 @@ function RouteComponent() {
                             </CardHeader>
                             <CardContent>
                                 <Button asChild variant="outline">
-                                    <Link to="/power/vet">Go back</Link>
+                                    <Link to="/records/vet">Go back</Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -94,7 +84,7 @@ function RouteComponent() {
                             </CardHeader>
                             <CardContent>
                                 <Button asChild variant="outline">
-                                    <Link to="/power/vet">Back to vetting</Link>
+                                    <Link to="/records/vet">Back to vetting</Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -103,8 +93,6 @@ function RouteComponent() {
             </>
         )
     }
-
-    console.log(request);
 
     const user = request.user
     const academicData = user?.data?.acaddata
@@ -117,8 +105,9 @@ function RouteComponent() {
             ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(dateString))
             : 'N/A'
 
-
     const handleAction = async (action: 'APPROVE' | 'REJECT' | 'RETURN') => {
+        if (!action) return
+
         if (!comment.trim() && (action === 'REJECT' || action === 'RETURN')) {
             toast.error('Please provide a reason')
             return
@@ -128,6 +117,7 @@ function RouteComponent() {
             toast.error('You must be logged in')
             return
         }
+
         setIsSubmitting(true)
         try {
             const payload: any = {
@@ -148,7 +138,7 @@ function RouteComponent() {
                         ? 'Request rejected successfully'
                         : 'Request sent back successfully'
             )
-            navigate({ to: '/power/vet' })
+            navigate({ to: '/records/vet' })
         } catch (err: any) {
             toast.error(err?.message || 'Action failed')
         } finally {
@@ -162,10 +152,10 @@ function RouteComponent() {
 
             <main className="min-h-screen bg-gray-50 p-4 lg:p-6">
                 <div className="mx-auto max-w-7xl space-y-6">
-                    {/* Back button */}
+                    {/* Back button and status */}
                     <div className="flex items-center justify-between">
                         <Button asChild variant="ghost" size="sm" className="gap-2">
-                            <Link to="/power/vet">
+                            <Link to="/records/vet">
                                 <ArrowLeft className="h-4 w-4" />
                                 Back to vetting list
                             </Link>
@@ -292,7 +282,7 @@ function RouteComponent() {
                         </Card>
                     )}
 
-                    {/* Academic data - grouped by session and semester */}
+                    {/* Academic records */}
                     {courses.length > 0 && (
                         <Card>
                             <CardHeader>
@@ -303,11 +293,9 @@ function RouteComponent() {
                             </CardHeader>
                             <CardContent>
                                 {(() => {
-                                    // Define types for better inference
-                                    type Course = any; // Replace with actual type if available
+                                    type Course = any;
                                     type GroupedCourses = Record<string, Record<string, Course[]>>;
 
-                                    // Group courses by session, then by semester
                                     const grouped: GroupedCourses = courses.reduce((acc: GroupedCourses, course: Course) => {
                                         const { session, semester } = course;
 
@@ -356,7 +344,7 @@ function RouteComponent() {
                                     ));
                                 })()}
 
-                                {/* Yearly CGPA breakdown */}
+                                {/* Yearly GPA breakdown */}
                                 {Object.keys(finalClassification).length > 0 && (
                                     <div className="mt-6 pt-4 border-t">
                                         <h3 className="text-lg font-semibold mb-3">Year‑by‑Year GPA</h3>
@@ -398,17 +386,45 @@ function RouteComponent() {
                         </Card>
                     )}
 
+                    {/* Comments section */}
                     <CommentComponent comments={request?.comments} />
 
-                    {/* Comment and actions */}
+                    {/* Decision card with select and actions */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-xl">Your Decision</CardTitle>
                             <CardDescription>
-                                Add a comment (required for rejection) and choose an action.
+                                Add a comment (required for rejection or send back) and choose an action.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            {/* Action select */}
+                            <div className="space-y-2">
+                                <Label htmlFor="action">Action</Label>
+                                <select
+                                    id="action"
+                                    value={selectedAction}
+                                    onChange={(e) => {
+                                        const action = e.target.value;
+                                        setSelectedAction(action);
+
+                                        if (action === 'APPROVE') {
+                                            setComment('Request has been approved.');
+                                        } else if (action === 'RETURN' || action === 'REJECT') {
+                                            setComment('');
+                                        }
+                                    }}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    disabled={isSubmitting}
+                                >
+                                    <option value="">Select an action...</option>
+                                    <option value="APPROVE">Approve</option>
+                                    <option value="RETURN">Send Back</option>
+                                    <option value="REJECT">Reject</option>
+                                </select>
+                            </div>
+
+                            {/* Comment textarea */}
                             <div className="space-y-2">
                                 <Label htmlFor="comment">Comment</Label>
                                 <Textarea
@@ -418,33 +434,25 @@ function RouteComponent() {
                                     onChange={(e) => setComment(e.target.value)}
                                     rows={4}
                                 />
+                                {selectedAction === 'REJECT' && !comment.trim() && (
+                                    <p className="text-sm text-red-500">⚠️ Comment is required for rejection</p>
+                                )}
+                                {selectedAction === 'RETURN' && !comment.trim() && (
+                                    <p className="text-sm text-yellow-600">⚠️ Comment is required to send back</p>
+                                )}
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+
+                            {/* Submit button */}
+                            <div className="flex justify-end">
                                 <Button
-                                    variant="outline"
-                                    className="gap-2 border-yellow-300 hover:bg-yellow-50 text-yellow-600"
-                                    onClick={() => handleAction('RETURN')}
-                                    disabled={isSubmitting}
+                                    onClick={() => handleAction(selectedAction as 'APPROVE' | 'REJECT' | 'RETURN')}
+                                    disabled={!selectedAction || isSubmitting || (selectedAction !== 'APPROVE' && !comment.trim())}
+                                    className="gap-2"
                                 >
-                                    <TriangleAlert className="h-4 w-4" />
-                                    Send Back
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 border-red-300 hover:bg-red-50 text-red-600"
-                                    onClick={() => handleAction('REJECT')}
-                                    disabled={isSubmitting}
-                                >
-                                    <XCircle className="h-4 w-4" />
-                                    Reject
-                                </Button>
-                                <Button
-                                    className="gap-2 bg-green-600 hover:bg-green-700"
-                                    onClick={() => handleAction('APPROVE')}
-                                    disabled={isSubmitting}
-                                >
-                                    <CheckCircle className="h-4 w-4" />
-                                    Approve
+                                    {selectedAction === 'APPROVE' && <CheckCircle className="h-4 w-4" />}
+                                    {selectedAction === 'RETURN' && <TriangleAlert className="h-4 w-4" />}
+                                    {selectedAction === 'REJECT' && <XCircle className="h-4 w-4" />}
+                                    {isSubmitting ? 'Processing...' : 'Submit'}
                                 </Button>
                             </div>
                         </CardContent>

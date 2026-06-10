@@ -102,13 +102,10 @@ function RouteComponent() {
     ]
   })
 
-  const [documentsQuery, chainQuery] = results
+  const [documentsQuery, chainQuery] = results;
 
-  console.log(documentsQuery?.data?.data);
-
-
-  const documents = documentsQuery.data?.data ?? []
-  const chains = chainQuery.data?.data ?? []
+  const documents = documentsQuery.data?.data ?? [];
+  const chains = chainQuery.data?.data ?? [];
 
   const isPending = documentsQuery.isPending || chainQuery.isPending
   const isError = documentsQuery.isError || chainQuery.isError

@@ -823,7 +823,9 @@ export const createApproval = async (payload: {
     requestId: number
     stepId: number
     action: string
-    comment: String
+    comment?: string;
+    pdfUrl?: string;
+    publicId?: string;
 }) => {
     const { data } = await http.post('/approvals', payload)
     return data

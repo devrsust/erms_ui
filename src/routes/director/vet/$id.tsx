@@ -2,7 +2,7 @@ import ApprovalTimeline from '@/components/approval-timeline'
 import { SiteHeader } from '@/components/site-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -25,11 +25,13 @@ function RouteComponent() {
     const navigate = useNavigate()
     const { user: currentUser } = useAppSelector((state) => state.auth)
     const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-    const [action, setAction] = useState<'approve' | 'reject' | 'return' | null>(null)
+    const [action, setAction] = useState<'APPROVE' | 'REJECT' | 'RETURN' | null>(null)
     const [comment, setComment] = useState('')
     const [isProcessing, setIsProcessing] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null)
+    const [generatedPdfUrl, setGeneratedPdfUrl] = useState<string | null>(null);
+    const [generatedPublicId, setGeneratedPublicId] = useState<string | null>(null);
 
     const results = useQueries({
         queries: [
@@ -61,6 +63,7 @@ function RouteComponent() {
     const [requestResult, templateResult, signatureResult, stampResult] = results;
     const request = requestResult?.data?.data;
     const template = templateResult?.data?.data;
+
 
     const selectedTemplate = template?.find(
         (t: any) => String(t.id) === selectedTemplateId
@@ -249,10 +252,17 @@ function RouteComponent() {
     }
 
     const getStepId = () => {
-        // Find the current step from approval timeline
-        const currentStep = request?.approvalSteps?.find((step: any) => step.adminId === currentUser?.id)
-        return currentStep?.id || null
-    }
+        const currentStep = request?.currentStep;
+
+        // 1. Verify if the current user is authorized to act on the ACTIVE step
+        const isUserAssigned = currentStep && (
+            currentStep.userId === currentUser?.id ||
+            (currentStep.roleId && currentStep.roleId === currentUser?.id)
+        );
+
+        // 2. Return the step ID if authorized, otherwise null
+        return isUserAssigned ? currentStep.id : null;
+    };
 
     const handleApprove = async () => {
         setIsProcessing(true)
@@ -264,25 +274,43 @@ function RouteComponent() {
                 showPdfPreview(pdfBlob)
                 const pdfUrl = await uploadToCloudinary(pdfBlob)
                 console.log(pdfUrl);
-            }
 
-            setIsProcessing(false)
+                // Store the generated URL and extract public ID
+                setGeneratedPdfUrl(pdfUrl);
+                const publicId = pdfUrl.split('/').pop()?.split('.')[0] || null;
+                setGeneratedPublicId(publicId);
+            }
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'Failed to generate PDF')
+        } finally {
             setIsProcessing(false)
         }
     }
 
     const handleConfirmApprove = async () => {
+        if (!generatedPdfUrl) {
+            toast.error('PDF not generated yet')
+            return
+        }
+
         try {
-            await createApproval({
+            const approval = await createApproval({
                 adminId: currentUser!.id,
                 requestId: Number(id),
                 stepId: getStepId(),
                 action: 'APPROVED',
-                comment: comment
+                comment: comment,
+                pdfUrl: generatedPdfUrl,
+                publicId: generatedPublicId!
             })
-            toast.success('Request approved successfully')
+            console.log("Approval :", approval);
+
+            if (approval?.status == 404) {
+                toast.error(approval?.message);
+                return;
+            }
+
+            toast.success(approval?.message);
             navigate({ to: '/director/vet' })
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'Failed to approve request')
@@ -291,6 +319,8 @@ function RouteComponent() {
             setShowPreview(false)
             if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
             setPdfPreviewUrl(null)
+            setGeneratedPdfUrl(null)
+            setGeneratedPublicId(null)
         }
     }
 
@@ -593,73 +623,126 @@ function RouteComponent() {
                     </Card>
 
                     <Card>
-                        <CardContent className="space-y-4">
-                            <div className='grid gap-2'>
-                                <Label htmlFor="action">Action</Label>
+                        <CardHeader>
+                            <CardTitle className="text-xl">Your Decision</CardTitle>
+                            <CardDescription>
+                                Review the transcript template and take action on this request.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Action Selection */}
+                            <div className="space-y-2">
+                                <Label htmlFor="action" className="text-base font-semibold">Select Action</Label>
                                 <Select
                                     value={action || undefined}
-                                    onValueChange={(value) => setAction(value as 'approve' | 'reject' | 'return')}
+                                    onValueChange={(value) => {
+                                        const newAction = value as 'APPROVE' | 'RETURN' | 'REJECT';
+                                        setAction(newAction);
+
+                                        // Set default comment text for approve
+                                        if (newAction === 'APPROVE') {
+                                            setComment('Request has been approved. The transcript has been generated and uploaded successfully.');
+                                        } else if (newAction === 'RETURN') {
+                                            setComment('');
+                                        } else if (newAction === 'REJECT') {
+                                            setComment('');
+                                        }
+                                    }}
                                 >
-                                    <SelectTrigger id="action">
-                                        <SelectValue placeholder="Select action..." />
+                                    <SelectTrigger id="action" className="w-full">
+                                        <SelectValue placeholder="Choose an action..." />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="approve" className="text-green-600">
-                                            ✅ Approve
+                                        <SelectItem value="APPROVE">
+                                            Approve
                                         </SelectItem>
-                                        <SelectItem value="reject" className="text-red-600">
-                                            ❌ Reject
+                                        <SelectItem value="RETURN">
+                                            Send Back
                                         </SelectItem>
-                                        <SelectItem value="return" className="text-yellow-600">
-                                            🔄 Send Back
+                                        <SelectItem value="REJECT">
+                                            Reject
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
+                            {/* Comment Section - Conditional based on action */}
                             {action && (
                                 <div className="space-y-2">
-                                    <Label htmlFor="comment">
-                                        Comment {action !== 'approve' && <span className="text-red-500">*</span>}
+                                    <Label htmlFor="comment" className="text-base font-semibold">
+                                        Comment
+                                        {action !== 'APPROVE' && <span className="text-red-500 ml-1">*</span>}
                                     </Label>
                                     <Textarea
                                         id="comment"
                                         placeholder={
-                                            action === 'approve'
-                                                ? "Enter your comment here... (optional)"
-                                                : "Please provide reason for this action..."
+                                            action === 'APPROVE'
+                                                ? "Add any additional notes or comments..."
+                                                : action === 'REJECT'
+                                                    ? "Please provide a clear reason for rejection..."
+                                                    : "Please specify what changes are needed..."
                                         }
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
                                         rows={4}
+                                        className="resize-none"
                                     />
+                                    {action !== 'APPROVE' && !comment.trim() && (
+                                        <p className="text-sm text-red-500 flex items-center gap-1">
+                                            <span>⚠️</span> Comment is required for {action === 'REJECT' ? 'rejection' : 'sending back'}
+                                        </p>
+                                    )}
                                 </div>
                             )}
 
+                            {/* Action Button */}
                             {action && (
-                                <Button
-                                    className="w-full"
-                                    variant={
-                                        action === 'approve' ? 'default' :
-                                            action === 'reject' ? 'destructive' :
-                                                'outline'
-                                    }
-                                    onClick={() => {
-                                        if (action === 'approve') handleApprove()
-                                        if (action === 'reject') handleReject()
-                                        if (action === 'return') handleReturn()
-                                    }}
-                                    disabled={
-                                        (action !== 'approve' && !comment) ||
-                                        isProcessing
-                                    }
-                                >
-                                    {isProcessing ? 'Processing...' :
-                                        action === 'approve' ? 'Approve & Generate' :
-                                            action === 'reject' ? 'Reject Request' :
-                                                'Send Back'
-                                    }
-                                </Button>
+                                <div className="pt-2">
+                                    <Button
+                                        className="w-full"
+                                        variant={
+                                            action === 'APPROVE' ? 'default' :
+                                                action === 'REJECT' ? 'destructive' :
+                                                    'outline'
+                                        }
+                                        size="lg"
+                                        onClick={() => {
+                                            if (action === 'APPROVE') handleApprove()
+                                            if (action === 'REJECT') handleReject()
+                                            if (action === 'RETURN') handleReturn()
+                                        }}
+                                        disabled={
+                                            (action !== 'APPROVE' && !comment.trim()) ||
+                                            isProcessing
+                                        }
+                                    >
+                                        {isProcessing ? (
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                Processing...
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                {action === 'APPROVE' && <span>✅</span>}
+                                                {action === 'REJECT' && <span>❌</span>}
+                                                {action === 'RETURN' && <span>🔄</span>}
+                                                {action === 'APPROVE' ? 'Approve & Generate Transcript' :
+                                                    action === 'REJECT' ? 'Reject Request' :
+                                                        'Send Back for Changes'}
+                                            </div>
+                                        )}
+                                    </Button>
+                                </div>
+                            )}
+
+                            {/* Helper Text */}
+                            {!action && (
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <p className="text-sm text-blue-800 flex items-center gap-2">
+                                        <span>ℹ️</span>
+                                        Select an action above to proceed with this request.
+                                    </p>
+                                </div>
                             )}
                         </CardContent>
                     </Card>
