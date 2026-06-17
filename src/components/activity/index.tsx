@@ -67,15 +67,15 @@ function formatFullDate(iso: string) {
   return new Date(iso).toLocaleString();
 }
 
-export function ActivityCard({ 
+export function ActivityCard({
   activities,
-  maxDisplay = 5 
-}: { 
+  maxDisplay = 5
+}: {
   activities?: ActivityData;
   maxDisplay?: number;
 }) {
   const [expanded, setExpanded] = useState(false);
-  
+
   // Handle loading/empty states
   if (!activities || !activities.data || activities.data.length === 0) {
     return (
@@ -99,21 +99,17 @@ export function ActivityCard({
   const visibleItems = expanded ? activityList : activityList.slice(0, maxDisplay);
 
   return (
-    <Card className="w-full shadow-md">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-base font-semibold">
-            Recent Activity
-          </CardTitle>
-          <p className="text-xs text-muted-foreground mt-1">
-            Total {activities.total} activities
-          </p>
-        </div>
-      </CardHeader>
-
+    <div className="w-full shadow-md bg-white p-4 rounded-lg border">
+      <div className="flex flex-row items-center justify-between p-2">
+        <CardTitle className="text-base font-semibold">
+          Recent Activity
+        </CardTitle>
+        <p className="text-xs text-muted-foreground mt-1">
+          Total {activities.total} activities
+        </p>
+      </div>
       <Separator />
-
-      <CardContent className="pt-4">
+      <div className="pt-5">
         <div className="relative">
           {/* Timeline line */}
           <div className="absolute left-4 top-2 bottom-2 w-px bg-gradient-to-b from-gray-200 via-gray-200 to-transparent" />
@@ -149,12 +145,12 @@ export function ActivityCard({
                             {config.label}
                           </span>
                         </p>
-                        
+
                         {/* Description */}
                         <p className="text-xs text-muted-foreground mt-0.5 break-words">
                           {item.description}
                         </p>
-                        
+
                         {/* Meta info if available */}
                         {item.meta && (
                           <p className="text-xs text-gray-400 mt-1 font-mono">
@@ -190,7 +186,7 @@ export function ActivityCard({
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

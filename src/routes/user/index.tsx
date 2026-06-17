@@ -1,26 +1,23 @@
 import { SiteHeader } from "@/components/site-header";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { CheckCircle, Clock, TrendingUp } from "lucide-react";
+import { AlertCircle, ArrowUpDown, CalendarDays, CheckCircle, Clock, CreditCard, Download, Eye, FileText, MoreVertical, Trash2, TrendingUp, XCircle } from "lucide-react";
 
 import { useQueries } from "@tanstack/react-query";
-import axios from "axios";
-import { AlumniActivityLog, alumniStats } from "@/service";
+import { AlumniActivityLog, alumniStats, getRequestsByUser, type Request } from "@/service";
 import { useAppSelector } from "@/store/hooks";
 import { ActivityCard } from "@/components/activity";
 import IsPending from "@/components/Illustrations/isPending";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DataTable } from "@/components/table";
 
 
 
@@ -30,6 +27,7 @@ export const Route = createFileRoute("/user/")({
 
 function Dashboard() {
   const { user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const results = useQueries({
     queries: [
@@ -46,11 +44,10 @@ function Dashboard() {
         staleTime: 30_000,
       },
       {
-        queryKey: ["recent-requests"],
-        queryFn: async () => {
-          const { data } = await axios.get("/api/requests/recent");
-          return data;
-        },
+        queryKey: ["requests", user?.id],
+        queryFn: () => getRequestsByUser(user!.id),
+        enabled: !!user?.id,
+        staleTime: 30_000,
       }
     ],
   });
@@ -58,13 +55,163 @@ function Dashboard() {
   const [statsQuery, activityQuery, recentQuery] = results;
 
   if (statsQuery.isLoading || activityQuery.isLoading || recentQuery.isLoading) {
-    return <IsPending page="Dashboard"/>;
+    return <IsPending page="Dashboard" />;
   }
 
   const stats = statsQuery.data;
   const activity = activityQuery.data;
+  const requests = recentQuery?.data?.data;
 
-  console.log(stats);
+  
+
+  const columns: ColumnDef<Request>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) =>
+            table.toggleAllPageRowsSelected(!!value)
+          }
+          className="border-gray-300"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          className="border-gray-300"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "request",
+      header: () => (
+        <div className="flex items-center gap-2 font-semibold">
+          <FileText className="h-4 w-4 text-blue-500" />
+          <span>Request</span>
+        </div>
+      ),
+      accessorFn: (row) => row.document?.title ?? "—",
+      cell: ({ row }) => {
+        const request = row.original
+        return (
+          <div className="space-y-1">
+            <div className="font-medium text-gray-900">
+              {request.document?.title}
+            </div>
+            <div className="text-xs text-gray-500 flex items-center gap-1">
+              <FileText className="h-3 w-3" />
+              {request.type}
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }
+          className="font-semibold hover:bg-gray-50"
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string
+        // const request = row.original
+
+        type Status = "PENDING" | "SUCCESSFUL" | "FAILED";
+
+        const statusStyles: Record<Status, string> = {
+          PENDING: "bg-yellow-100 text-yellow-700",
+          SUCCESSFUL: "bg-green-100 text-green-700",
+          FAILED: "bg-red-100 text-red-700",
+        };
+
+
+
+        return (
+          <div className="space-y-1.5">
+            <Badge
+              className={`gap-1.5 ${statusStyles[status as Status] || "bg-gray-100 text-gray-700"
+                }`}
+            >
+              {status === "PENDING" && <Clock className="h-3 w-3" />}
+              {status === "SUCCESSFUL" && <CheckCircle className="h-3 w-3" />}
+              {status === "FAILED" && <XCircle className="h-3 w-3" />}
+              {status}
+            </Badge>
+            {status === "PENDING" && (
+              <div className="flex items-center gap-2">
+                <Progress value={50} className="h-1.5 w-20 [&>div]:bg-green-800" />
+                <span className="text-xs text-gray-500">Processing</span>
+              </div>
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "reference_number",
+      header: () => (
+        <div className="flex items-center gap-2 font-semibold">
+          <CreditCard className="h-4 w-4 text-purple-500" />
+          <span>Reference</span>
+        </div>
+      ),
+      cell: ({ getValue }) => (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="font-mono text-sm font-medium bg-gray-50 px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer">
+                {getValue<string>().slice(0, 8)}...
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="font-mono">{getValue<string>()}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: () => (
+        <div className="flex items-center gap-2 font-semibold">
+          <CalendarDays className="h-4 w-4" />
+          <span>Created</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return (
+          <div className="space-y-0.5">
+            <div className="text-sm font-medium">
+              {new Intl.DateTimeFormat("en-US", {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              }).format(date)}
+            </div>
+          </div>
+        )
+      },
+    }
+  ]
+
   return (
     <>
       <SiteHeader title="Dashboard" />
@@ -130,44 +277,21 @@ function Dashboard() {
         {/* Middle Section */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Recent Requests Table */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
+          <div className="lg:col-span-2 bg-white p-5 rounded-lg border">
+            <div>
               <CardTitle>Recent Requests</CardTitle>
-            </CardHeader>
+            </div>
 
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Request ID</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  <TableRow>
-                    <TableCell>#REQ-1021</TableCell>
-                    <TableCell>ID Verification</TableCell>
-                    <TableCell>
-                      <Badge>Pending</Badge>
-                    </TableCell>
-                    <TableCell>12 Mar 2026</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>#REQ-1020</TableCell>
-                    <TableCell>Document Request</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">Completed</Badge>
-                    </TableCell>
-                    <TableCell>10 Mar 2026</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+              <DataTable
+                columns={columns}
+                data={requests!}
+                filterColumn="reference"
+                filterPlaceholder="Search by document name or reference…"
+                recordName='REQUEST'
+                recordIcon={<FileText className="h-20 w-20" />}
+              />
+            
+          </div>
 
           <div className="w-full overflow-hidden">
             <ActivityCard activities={activity} maxDisplay={5} />
