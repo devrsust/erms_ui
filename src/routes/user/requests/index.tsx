@@ -4,7 +4,7 @@ import * as React from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQueries, useQueryClient } from "@tanstack/react-query"
 import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, MoreVertical } from "lucide-react"
+import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, AlertCircle, MoreVertical } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { DataTable } from "@/components/table"

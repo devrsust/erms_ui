@@ -6,7 +6,7 @@ export const Route = createFileRoute('/user/transactions/$id')({
 })
 
 function RouteComponent() {
-  const { id } = Route.useParams()
+  // const { id } = Route.useParams()
 
 
   return (

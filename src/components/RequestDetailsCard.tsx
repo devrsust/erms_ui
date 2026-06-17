@@ -3,7 +3,6 @@ import {
     Mail,
     MapPin,
     Calendar,
-    FileText,
     Copy,
     Globe,
     GraduationCap,

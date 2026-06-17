@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreVertical, Mail, Calendar, FileText, User, Eye, FileCog } from 'lucide-react'
+import { MoreVertical, Mail, Calendar, FileText, User, FileCog } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 

@@ -43,7 +43,7 @@ const ApprovalTimeline = ({ request }: Props) => {
 
     const isApproved = request?.status === "APPROVED";
     const isRejected = request?.status === "REJECTED";
-    const isFinalized = isApproved || isRejected;
+    // const isFinalized = isApproved || isRejected;
 
     // ✅ ISSUE 1 FIX: If finalized, handle step states safely without relying on currentStep
     const currentStepOrder = request?.currentStep?.stepOrder ?? 0;

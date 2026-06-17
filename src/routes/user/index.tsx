@@ -1,10 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { AlertCircle, ArrowUpDown, CalendarDays, CheckCircle, Clock, CreditCard, Download, Eye, FileText, MoreVertical, Trash2, TrendingUp, XCircle } from "lucide-react";
+import { ArrowUpDown, CalendarDays, CheckCircle, Clock, CreditCard, FileText, TrendingUp, XCircle } from "lucide-react";
 
 import { useQueries } from "@tanstack/react-query";
 import { AlumniActivityLog, alumniStats, getRequestsByUser, type Request } from "@/service";
@@ -16,7 +16,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/table";
 
 
@@ -27,7 +26,6 @@ export const Route = createFileRoute("/user/")({
 
 function Dashboard() {
   const { user } = useAppSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   const results = useQueries({
     queries: [
