@@ -56,12 +56,7 @@ const alumniNav = {
       title: "Transactions",
       url: "/user/transactions/",
       icon: WalletMinimal,
-    },
-    {
-      title: "Documents",
-      url: "/user/documents/",
-      icon: FileCheckCorner,
-    },
+    }
   ],
   navSecondary: [
     {

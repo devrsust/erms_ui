@@ -20,6 +20,7 @@ import axios from "axios";
 import { AlumniActivityLog, alumniStats } from "@/service";
 import { useAppSelector } from "@/store/hooks";
 import { ActivityCard } from "@/components/activity";
+import IsPending from "@/components/Illustrations/isPending";
 
 
 
@@ -57,7 +58,7 @@ function Dashboard() {
   const [statsQuery, activityQuery, recentQuery] = results;
 
   if (statsQuery.isLoading || activityQuery.isLoading || recentQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <IsPending page="Dashboard"/>;
   }
 
   const stats = statsQuery.data;

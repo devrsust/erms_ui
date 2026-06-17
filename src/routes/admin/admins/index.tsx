@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, UserCog, Mail, Shield, Calendar, CheckCircle, XCircle, Plus, X } from 'lucide-react'
+import { ArrowUpDown, UserCog, Mail, Shield, Calendar, CheckCircle, XCircle, Plus, X, MoreVertical } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Controller, useForm } from 'react-hook-form'
@@ -324,7 +324,7 @@ function RouteComponent() {
                 size="icon"
               >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

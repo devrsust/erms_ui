@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, CreditCard, Calendar, DollarSign, CheckCircle, Eye, Receipt, AlertCircle, User, Wallet } from 'lucide-react'
+import { ArrowUpDown, MoreVertical, CreditCard, Calendar, DollarSign, CheckCircle, Eye, Receipt, AlertCircle, User, Wallet } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -240,7 +240,7 @@ function RouteComponent() {
                 size="icon"
               >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

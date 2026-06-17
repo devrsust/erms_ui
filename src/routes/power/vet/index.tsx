@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, Mail, Calendar, CheckCircle, FileText, User, Download, Eye, Filter, Clock } from 'lucide-react'
+import { MoreVertical, Mail, Calendar, CheckCircle, FileText, User, Download, Eye, Filter, Clock } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -252,7 +252,7 @@ function RouteComponent() {
                 size="icon"
               >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -347,10 +347,10 @@ function RouteComponent() {
 
           <Tabs defaultValue="all" className="space-y-4">
             <TabsList className="bg-white border">
-              <TabsTrigger value="all">All Requests</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="failed">Failed</TabsTrigger>
+              <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="all">All Requests</TabsTrigger>
+              <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="pending">Pending</TabsTrigger>
+              <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="completed">Completed</TabsTrigger>
+              <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="failed">Failed</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">

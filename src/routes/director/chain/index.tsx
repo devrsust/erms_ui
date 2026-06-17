@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Plus, MoreHorizontal, Copy, Eye, Edit, Trash2, User, Shield, Link2, GripVertical, Unlink } from 'lucide-react'
+import { ArrowUpDown, Plus, Copy, Eye, Edit, Trash2, User, Shield, Link2, GripVertical, Unlink, MoreVertical } from 'lucide-react'
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useForm, useFieldArray } from 'react-hook-form'
@@ -283,7 +283,7 @@ function RouteComponent() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-green-100 hover:text-green-700">
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

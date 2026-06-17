@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActivityCard } from "@/components/activity";
-import { BanknoteArrowDown, Calendar, Eye, FileText, Mail, MoreHorizontal, ShieldUser, TrendingUp, Users } from "lucide-react";
+import { BanknoteArrowDown, Calendar, Eye, FileText, Mail, MoreVertical, ShieldUser, TrendingUp, Users } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { useQueries } from "@tanstack/react-query";
 import { adminStats, getPendingRequests, AdminActivityLog, type Request } from "@/service";
@@ -221,7 +221,7 @@ function Dashboard() {
                 size="icon"
               >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

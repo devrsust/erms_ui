@@ -67,6 +67,7 @@ import { Route as AdminComboIndexRouteImport } from './routes/admin/combo/index'
 import { Route as AdminChainIndexRouteImport } from './routes/admin/chain/index'
 import { Route as AdminApprovedIndexRouteImport } from './routes/admin/approved/index'
 import { Route as AdminAdminsIndexRouteImport } from './routes/admin/admins/index'
+import { Route as UserTransactionsIdRouteImport } from './routes/user/transactions/$id'
 import { Route as UserRequestsIdRouteImport } from './routes/user/requests/$id'
 import { Route as RecordsVetIdRouteImport } from './routes/records/vet/$id'
 import { Route as RecordsRequestsIdRouteImport } from './routes/records/requests/$id'
@@ -378,6 +379,11 @@ const AdminAdminsIndexRoute = AdminAdminsIndexRouteImport.update({
   path: '/admins/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const UserTransactionsIdRoute = UserTransactionsIdRouteImport.update({
+  id: '/transactions/$id',
+  path: '/transactions/$id',
+  getParentRoute: () => UserRouteRoute,
+} as any)
 const UserRequestsIdRoute = UserRequestsIdRouteImport.update({
   id: '/requests/$id',
   path: '/requests/$id',
@@ -504,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/user/transactions/$id': typeof UserTransactionsIdRoute
   '/admin/admins': typeof AdminAdminsIndexRoute
   '/admin/approved': typeof AdminApprovedIndexRoute
   '/admin/chain': typeof AdminChainIndexRoute
@@ -577,6 +584,7 @@ export interface FileRoutesByTo {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/user/transactions/$id': typeof UserTransactionsIdRoute
   '/admin/admins': typeof AdminAdminsIndexRoute
   '/admin/approved': typeof AdminApprovedIndexRoute
   '/admin/chain': typeof AdminChainIndexRoute
@@ -656,6 +664,7 @@ export interface FileRoutesById {
   '/records/requests/$id': typeof RecordsRequestsIdRoute
   '/records/vet/$id': typeof RecordsVetIdRoute
   '/user/requests/$id': typeof UserRequestsIdRoute
+  '/user/transactions/$id': typeof UserTransactionsIdRoute
   '/admin/admins/': typeof AdminAdminsIndexRoute
   '/admin/approved/': typeof AdminApprovedIndexRoute
   '/admin/chain/': typeof AdminChainIndexRoute
@@ -736,6 +745,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/user/transactions/$id'
     | '/admin/admins'
     | '/admin/approved'
     | '/admin/chain'
@@ -809,6 +819,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/user/transactions/$id'
     | '/admin/admins'
     | '/admin/approved'
     | '/admin/chain'
@@ -887,6 +898,7 @@ export interface FileRouteTypes {
     | '/records/requests/$id'
     | '/records/vet/$id'
     | '/user/requests/$id'
+    | '/user/transactions/$id'
     | '/admin/admins/'
     | '/admin/approved/'
     | '/admin/chain/'
@@ -1351,6 +1363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/user/transactions/$id': {
+      id: '/user/transactions/$id'
+      path: '/transactions/$id'
+      fullPath: '/user/transactions/$id'
+      preLoaderRoute: typeof UserTransactionsIdRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
     '/user/requests/$id': {
       id: '/user/requests/$id'
       path: '/requests/$id'
@@ -1647,6 +1666,7 @@ const RecordsRouteRouteWithChildren = RecordsRouteRoute._addFileChildren(
 interface UserRouteRouteChildren {
   UserIndexRoute: typeof UserIndexRoute
   UserRequestsIdRoute: typeof UserRequestsIdRoute
+  UserTransactionsIdRoute: typeof UserTransactionsIdRoute
   UserDocumentsIndexRoute: typeof UserDocumentsIndexRoute
   UserRequestsIndexRoute: typeof UserRequestsIndexRoute
   UserTransactionsIndexRoute: typeof UserTransactionsIndexRoute
@@ -1655,6 +1675,7 @@ interface UserRouteRouteChildren {
 const UserRouteRouteChildren: UserRouteRouteChildren = {
   UserIndexRoute: UserIndexRoute,
   UserRequestsIdRoute: UserRequestsIdRoute,
+  UserTransactionsIdRoute: UserTransactionsIdRoute,
   UserDocumentsIndexRoute: UserDocumentsIndexRoute,
   UserRequestsIndexRoute: UserRequestsIndexRoute,
   UserTransactionsIndexRoute: UserTransactionsIndexRoute,

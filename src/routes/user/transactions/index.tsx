@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, CreditCard, Calendar, DollarSign, CheckCircle, XCircle, TrendingUp, Filter, Download, Eye, Receipt, AlertCircle, Clock, ExternalLink, Wallet } from 'lucide-react'
+import { ArrowUpDown, CreditCard, Calendar, DollarSign, CheckCircle, XCircle, TrendingUp, Receipt, AlertCircle, Clock, Wallet, MoreVertical } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Progress } from '@/components/ui/progress'
 import React from 'react'
 import { SiteHeader } from '@/components/site-header'
+import { useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/user/transactions/')({
   component: RouteComponent,
@@ -25,6 +26,7 @@ export const Route = createFileRoute('/user/transactions/')({
 
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth)
   const [activeTab, setActiveTab] = React.useState("all")
 
@@ -67,9 +69,6 @@ function RouteComponent() {
       </div>
     )
   }
-
-
-  console.log("Transaction Data", data);
 
   if (isError) {
     toast.error(
@@ -257,7 +256,7 @@ function RouteComponent() {
                 className="h-8 w-8 p-0 hover:bg-gray-100 transition-colors"
               >
                 <span className="sr-only">Open menu</span>
-                <ExternalLink className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -272,18 +271,16 @@ function RouteComponent() {
                 <CreditCard className="h-4 w-4" />
                 Copy Transaction ID
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                <Eye className="h-4 w-4" />
-                View Details
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2">
+              <DropdownMenuItem className="cursor-pointer gap-2"
+                onClick={() => navigate({ to: `/user/transactions/${payment.id}` })}
+              >
                 <Receipt className="h-4 w-4" />
-                Download Receipt
+                View Receipt
               </DropdownMenuItem>
               {payment.status === "PENDING" && (
-                <DropdownMenuItem className="cursor-pointer gap-2 text-amber-600">
+                <DropdownMenuItem className="cursor-pointer gap-2 text-yello-600">
                   <Clock className="h-4 w-4" />
-                  Track Payment
+                  Query Payment
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -318,7 +315,7 @@ function RouteComponent() {
     <>
       <SiteHeader title="Transactions" />
 
-      <main className="min-h-screen p-4 lg:p-6">
+      <main className="min-h-screen p-4 lg:p-6 bg-gray-50">
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1">
@@ -327,20 +324,10 @@ function RouteComponent() {
                 View and manage your payment history and transactions
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
-            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="grid gap-2 p-4 shadow rounded-2xl">
+            <div className="grid gap-2 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Total Transactions</p>
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -357,7 +344,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className="grid gap-2 p-4 shadow rounded-2xl">
+            <div className="grid gap-2 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Total Amount</p>
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -378,7 +365,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className="grid gap-2 p-4 shadow rounded-2xl">
+            <div className="grid gap-2 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Successful</p>
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -391,7 +378,7 @@ function RouteComponent() {
               </p>
             </div>
 
-            <div className="grid gap-2 p-4 shadow rounded-2xl">
+            <div className="grid gap-2 p-4 shadow rounded-2xl bg-white">
               <p className="text-sm font-medium text-gray-600">Pending</p>
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
@@ -417,10 +404,10 @@ function RouteComponent() {
                 <div className="flex items-center gap-2">
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
                     <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-                      <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-                      <TabsTrigger value="successful" className="text-xs">Successful</TabsTrigger>
-                      <TabsTrigger value="pending" className="text-xs">Pending</TabsTrigger>
-                      <TabsTrigger value="failed" className="text-xs">Failed</TabsTrigger>
+                      <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="all">All</TabsTrigger>
+                      <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="successful">Successful</TabsTrigger>
+                      <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="pending">Pending</TabsTrigger>
+                      <TabsTrigger className='text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white' value="failed">Failed</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
@@ -435,19 +422,6 @@ function RouteComponent() {
                 recordName='TRANSACTION'
                 recordIcon={<Wallet className="h-20 w-20" />}
               />
-              {filteredTransactions.length === 0 && (
-                <div className="p-8 text-center">
-                  <CreditCard className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No {activeTab !== 'all' ? activeTab : ''} transactions found
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    {activeTab === 'all'
-                      ? "You haven't made any transactions yet."
-                      : `You don't have any ${activeTab} transactions.`}
-                  </p>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>

@@ -4,7 +4,7 @@ import * as React from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQueries, useQueryClient } from "@tanstack/react-query"
 import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, Trash2, FileText, Building2, Mail, CreditCard, CalendarDays, PlusCircle, Eye, Download, Clock, CheckCircle, XCircle, TrendingUp, AlertCircle, MoreVertical } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { DataTable } from "@/components/table"
@@ -120,7 +120,6 @@ function RouteComponent() {
   const faculties = facultyQuery.data?.data ?? []
   const requests = requestQuery.data?.data ?? []
 
-  console.log(requests);
 
   const form = useForm<RequestForm>({
     defaultValues: {
@@ -258,25 +257,6 @@ function RouteComponent() {
       ),
     },
     {
-      id: "amount",
-      header: () => (
-        <div className="flex items-center gap-2 font-semibold">
-          <TrendingUp className="h-4 w-4 text-green-500" />
-          <span>Amount</span>
-        </div>
-      ),
-      accessorFn: (row) => row.document?.totalAmount ?? 0,
-      cell: ({ getValue }) => (
-        <div className="font-semibold text-gray-900">
-          {new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "NGN",
-            minimumFractionDigits: 0,
-          }).format(getValue<number>())}
-        </div>
-      ),
-    },
-    {
       id: "payment",
       header: "Payment Status",
       accessorFn: (row) => row.payments?.[0]?.status ?? "—",
@@ -343,7 +323,7 @@ function RouteComponent() {
                 className="h-8 w-8 p-0 hover:bg-gray-100 transition-colors"
               >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -491,8 +471,8 @@ function RouteComponent() {
     ? requests
     : activeTab === "pending"
       ? requests.filter(req => req.status === "PENDING")
-      : activeTab === "completed"
-        ? requests.filter(req => req.status === "SUCCESSFUL")
+      : activeTab === "approved"
+        ? requests.filter(req => req.status === "APPROVED")
         : requests.filter(req => req.status === "FAILED")
 
   return (
@@ -707,12 +687,12 @@ function RouteComponent() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto ">
-              <TabsList className="grid grid-cols-4 w-full sm:w-auto bg-white shadow">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+              <TabsList className="grid grid-cols-4 w-full sm:w-auto bg-white shadow px-4">
                 <TabsTrigger value="all" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white"> All</TabsTrigger>
                 <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Pending</TabsTrigger>
-                <TabsTrigger value="completed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Completed</TabsTrigger>
-                <TabsTrigger value="failed" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Failed</TabsTrigger>
+                <TabsTrigger value="approved" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Approved</TabsTrigger>
+                <TabsTrigger value="rejected" className="text-xs data-[state=active]:bg-green-800 data-[state=active]:text-white">Rejected</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>

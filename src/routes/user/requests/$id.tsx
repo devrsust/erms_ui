@@ -1,23 +1,13 @@
 import ApprovalTimeline from '@/components/approval-timeline'
 import IsPending from '@/components/Illustrations/isPending'
+import RequestDetailsCard from '@/components/RequestDetailsCard'
 import { SiteHeader } from '@/components/site-header'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { getRequestById } from '@/service'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  ArrowLeft,
-  Copy,
-  FileText,
-  Calendar,
-  Building2,
-  Mail,
-  MapPin,
-  Clock
-} from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/user/requests/$id')({
@@ -100,8 +90,8 @@ function RouteComponent() {
     toast.success('Reference number copied')
   }
 
-
   console.log(request);
+  
 
   return (
     <>
@@ -109,118 +99,24 @@ function RouteComponent() {
 
       <main className="min-h-screen bg-gray-50 p-4 lg:p-6">
         <div className="mx-auto max-w-7xl space-y-6">
-          {/* Back button */}
+          {/* Back button action link */}
           <div className="flex items-center justify-between">
-            <Button asChild variant="ghost" size="sm" className="gap-2">
+            <Button asChild variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900">
               <Link to="/user/requests">
                 <ArrowLeft className="h-4 w-4" />
                 Back to requests
               </Link>
             </Button>
-            <Button size="sm" variant="outline" className="gap-2">
-              <Clock className="h-4 w-4" />
-              Track Progress
-            </Button>
           </div>
 
-          {/* Request details card */}
-          <Card>
-            <CardHeader>
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="text-2xl">Request Details</CardTitle>
-                    <Badge variant={request.status === 'PENDING' ? 'secondary' : 'default'}>
-                      {request.status}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <span className="font-mono">{request.reference_number}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={copyReference}
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-                <FileText className="h-8 w-8 text-gray-400" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Type */}
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  {request.type === 'internal' ? (
-                    <Building2 className="h-5 w-5 text-gray-500 mt-0.5" />
-                  ) : (
-                    <Mail className="h-5 w-5 text-gray-500 mt-0.5" />
-                  )}
-                  <div>
-                    <p className="text-sm text-gray-500">Type</p>
-                    <p className="font-medium capitalize">{request.type}</p>
-                  </div>
-                </div>
+          {/* Redesigned Request details component card */}
+          <RequestDetailsCard
+            request={request}
+            copyReference={copyReference}
+            formatDate={formatDate}
+          />
 
-                {/* Destination */}
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  {request.type === 'internal' ? (
-                    <Building2 className="h-5 w-5 text-gray-500 mt-0.5" />
-                  ) : (
-                    <Mail className="h-5 w-5 text-gray-500 mt-0.5" />
-                  )}
-                  <div>
-                    <p className="text-sm text-gray-500">Destination</p>
-                    <p className="font-medium">
-                      {request.type === 'internal'
-                        ? request.faculty?.name || `Faculty #${request.facultyId}`
-                        : request.email || '—'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Address */}
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-500">Address</p>
-                    <p className="font-medium">{request.address || '—'}</p>
-                  </div>
-                </div>
-
-                {/* Created at */}
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-500">Requested on</p>
-                    <p className="font-medium">{formatDate(request.createdAt)}</p>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Document summary */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Document</h3>
-                  <p className="text-sm text-gray-600">{request.document?.title || '—'}</p>
-                </div>
-                {request.document?.id && (
-                  <Button asChild variant="outline" size="sm" className="gap-2">
-                    {/* <Link to={`/user/documents/${request.document.id}`}>
-                      <FileText className="h-4 w-4" />
-                    </Link> */}
-                    View Document
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-
+          {/* Fixed & Sorted Approval workflow timeline element */}
           <ApprovalTimeline request={request} />
         </div>
       </main>
